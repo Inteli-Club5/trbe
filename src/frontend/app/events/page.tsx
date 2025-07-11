@@ -15,75 +15,75 @@ export default function EventsPage() {
   const events = [
     {
       id: 1,
-      title: "Caravana para São Paulo",
-      description: "Viagem organizada para o jogo Flamengo vs Corinthians",
+      title: "Away Day to Manchester",
+      description: "Organized trip for Chelsea vs Manchester United",
       date: "15/12/2024",
       time: "06:00",
-      location: "Sede da Torcida Jovem",
-      organizer: "Torcida Jovem",
+      location: "Blue Pride HQ",
+      organizer: "Blue Pride",
       participants: 45,
       maxParticipants: 50,
-      price: "R$ 120",
+      price: "£120",
       category: "travel",
       status: "open",
       image: "/placeholder.svg?height=100&width=100",
     },
     {
       id: 2,
-      title: "Festa de Fim de Ano",
-      description: "Confraternização anual da torcida com shows e sorteios",
+      title: "End of Year Party",
+      description: "Annual celebration with shows and prize draws",
       date: "20/12/2024",
       time: "19:00",
-      location: "Clube Recreativo Flamengo",
-      organizer: "Torcida Jovem",
+      location: "Chelsea Social Club",
+      organizer: "Blue Pride",
       participants: 120,
       maxParticipants: 150,
-      price: "R$ 50",
+      price: "£50",
       category: "social",
       status: "open",
       image: "/placeholder.svg?height=100&width=100",
     },
     {
       id: 3,
-      title: "Ação Social - Natal",
-      description: "Distribuição de presentes para crianças carentes",
+      title: "Christmas Charity Drive",
+      description: "Gift distribution for underprivileged children",
       date: "22/12/2024",
       time: "14:00",
-      location: "Comunidade da Rocinha",
-      organizer: "Charanga Rubro-Negra",
+      location: "Local Community Center",
+      organizer: "Blue Army",
       participants: 25,
       maxParticipants: 30,
-      price: "Gratuito",
+      price: "Free",
       category: "charity",
       status: "open",
       image: "/placeholder.svg?height=100&width=100",
     },
     {
       id: 4,
-      title: "Treino Aberto",
-      description: "Acompanhe o treino do elenco no Ninho do Urubu",
+      title: "Open Training Session",
+      description: "Watch the team train at Cobham Training Centre",
       date: "18/12/2024",
       time: "10:00",
-      location: "CT Ninho do Urubu",
-      organizer: "Clube Oficial",
+      location: "Cobham Training Centre",
+      organizer: "Official Club",
       participants: 200,
       maxParticipants: 200,
-      price: "R$ 30",
+      price: "£30",
       category: "official",
       status: "full",
       image: "/placeholder.svg?height=100&width=100",
     },
     {
       id: 5,
-      title: "Encontro de Veteranos",
-      description: "Reunião dos torcedores mais antigos da Torcida Jovem",
+      title: "Veterans Meetup",
+      description: "Gathering of longtime Blue Pride members",
       date: "10/12/2024",
       time: "15:00",
-      location: "Sede da Torcida",
-      organizer: "Torcida Jovem",
+      location: "Fan Group Headquarters",
+      organizer: "Blue Pride",
       participants: 30,
       maxParticipants: 30,
-      price: "Gratuito",
+      price: "Free",
       category: "social",
       status: "finished",
       image: "/placeholder.svg?height=100&width=100",
@@ -91,11 +91,11 @@ export default function EventsPage() {
   ]
 
   const categories = [
-    { id: "all", name: "Todos", count: events.length },
-    { id: "travel", name: "Viagens", count: events.filter((e) => e.category === "travel").length },
+    { id: "all", name: "All", count: events.length },
+    { id: "travel", name: "Travel", count: events.filter((e) => e.category === "travel").length },
     { id: "social", name: "Social", count: events.filter((e) => e.category === "social").length },
-    { id: "charity", name: "Solidário", count: events.filter((e) => e.category === "charity").length },
-    { id: "official", name: "Oficial", count: events.filter((e) => e.category === "official").length },
+    { id: "charity", name: "Charity", count: events.filter((e) => e.category === "charity").length },
+    { id: "official", name: "Official", count: events.filter((e) => e.category === "official").length },
   ]
 
   const filteredEvents = filter === "all" ? events : events.filter((event) => event.category === filter)
@@ -116,13 +116,13 @@ export default function EventsPage() {
   const getStatusText = (status: string) => {
     switch (status) {
       case "open":
-        return "Inscrições Abertas"
+        return "Registration Open"
       case "full":
-        return "Lotado"
+        return "Full"
       case "finished":
-        return "Finalizado"
+        return "Finished"
       default:
-        return "Indisponível"
+        return "Unavailable"
     }
   }
 
@@ -142,21 +142,21 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
       {/* Header */}
-      <header className="bg-black border-b border-gray-800 p-4">
+      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4 shadow-sm dark:shadow-none">
         <div className="flex items-center justify-between">
           <Link href="/">
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-6 w-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-semibold">Eventos</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Events</h1>
           <div className="flex gap-2">
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <Search className="h-6 w-6" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <Filter className="h-6 w-6" />
             </Button>
           </div>
@@ -166,29 +166,29 @@ export default function EventsPage() {
       <div className="p-4 space-y-6">
         {/* Stats Summary */}
         <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-[#28CA00]">8</div>
-              <div className="text-sm text-gray-400">Este Mês</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">This Month</div>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-yellow-500">3</div>
-              <div className="text-sm text-gray-400">Inscritos</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Registered</div>
             </CardContent>
           </Card>
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-500">12</div>
-              <div className="text-sm text-gray-400">Participados</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Attended</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Category Filters */}
         <Tabs value={filter} onValueChange={setFilter} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-gray-800">
+          <TabsList className="grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800">
             {categories.map((category) => (
               <TabsTrigger
                 key={category.id}
@@ -205,90 +205,63 @@ export default function EventsPage() {
 
           <TabsContent value={filter} className="space-y-4 mt-6">
             {filteredEvents.map((event) => (
-              <Card key={event.id} className="bg-gray-900 border-gray-800">
+              <Card key={event.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                 <CardContent className="p-4">
                   <div className="flex gap-4">
-                    <img
-                      src={event.image || "/placeholder.svg"}
-                      alt={event.title}
-                      className="w-20 h-20 rounded-lg object-cover bg-gray-800"
-                    />
+                    <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                      {getCategoryIcon(event.category)}
+                    </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-semibold text-white">{event.title}</h3>
-                          <p className="text-sm text-gray-400">{event.description}</p>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">{event.title}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
                         </div>
-                        <Badge className={`${getStatusColor(event.status)} text-xs`}>
+                        <Badge className={getStatusColor(event.status)}>
                           {getStatusText(event.status)}
                         </Badge>
                       </div>
-
-                      <div className="flex items-center gap-4 text-sm text-gray-300">
+                      
+                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>
-                            {event.date} • {event.time}
-                          </span>
+                          <span>{event.date} • {event.time}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <MapPin className="h-4 w-4" />
                           <span>{event.location}</span>
                         </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          <span>{event.participants}/{event.maxParticipants}</span>
+                        </div>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-sm">
-                          <div className="flex items-center gap-1">
-                            {getCategoryIcon(event.category)}
-                            <span className="text-gray-400">{event.organizer}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Users className="h-4 w-4 text-gray-400" />
-                            <span className="text-gray-400">
-                              {event.participants}/{event.maxParticipants}
-                            </span>
-                          </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600 dark:text-gray-400">Organized by:</span>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">{event.organizer}</span>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-semibold text-[#28CA00]">{event.price}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-[#28CA00]">{event.price}</span>
+                          <Button size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
+                            Register
+                          </Button>
                         </div>
                       </div>
 
-                      {event.status === "open" && event.participants < event.maxParticipants && (
-                        <div className="space-y-2">
-                          <Progress
-                            value={(event.participants / event.maxParticipants) * 100}
-                            className="h-2 bg-gray-800"
-                          >
+                      {event.status === "open" && (
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600 dark:text-gray-400">Registration Progress</span>
+                            <span className="text-[#28CA00]">{Math.round((event.participants / event.maxParticipants) * 100)}%</span>
+                          </div>
+                          <Progress value={(event.participants / event.maxParticipants) * 100} className="h-2 bg-gray-200 dark:bg-gray-800">
                             <div
-                              className="h-full bg-[#28CA00] rounded-full"
+                              className="h-full bg-[#28CA00] rounded-full transition-all"
                               style={{ width: `${(event.participants / event.maxParticipants) * 100}%` }}
                             />
                           </Progress>
-                          <Button size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
-                            Participar
-                          </Button>
-                        </div>
-                      )}
-
-                      {event.status === "full" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-yellow-600 text-yellow-600 bg-transparent"
-                          disabled
-                        >
-                          Lista de Espera
-                        </Button>
-                      )}
-
-                      {event.status === "finished" && (
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-gray-600 text-white text-xs">Finalizado</Badge>
-                          <Button size="sm" variant="outline" className="border-gray-700 text-gray-400 bg-transparent">
-                            Ver Fotos
-                          </Button>
                         </div>
                       )}
                     </div>
@@ -298,25 +271,6 @@ export default function EventsPage() {
             ))}
           </TabsContent>
         </Tabs>
-
-        {/* Create Event CTA */}
-        <Card className="bg-gradient-to-r from-[#28CA00]/20 to-[#28CA00]/10 border-[#28CA00]">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Star className="h-5 w-5 text-[#28CA00]" />
-              Organize um Evento
-            </CardTitle>
-            <CardDescription className="text-gray-300">
-              Membros da torcida podem criar eventos para a comunidade
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="bg-[#28CA00] hover:bg-[#20A000] text-black">
-              <Trophy className="h-4 w-4 mr-2" />
-              Criar Evento
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

@@ -9,58 +9,58 @@ import Link from "next/link"
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0)
-  const [selectedTorcida, setSelectedTorcida] = useState("")
+  const [selectedFanGroup, setSelectedFanGroup] = useState("")
 
-  const torcidas = [
+  const fanGroups = [
     {
-      name: "Torcida Jovem",
+      name: "Blue Pride",
       members: 15420,
-      description: "A maior torcida organizada do Flamengo, fundada em 1967",
-      requirements: "Aprovação necessária",
+      description: "The largest organized supporter group of Chelsea FC, founded in 1998",
+      requirements: "Approval required",
     },
     {
-      name: "Charanga Rubro-Negra",
+      name: "Blue Army",
       members: 8350,
-      description: "Tradição e festa nas arquibancadas desde 1942",
-      requirements: "Aprovação necessária",
+      description: "Tradition and celebration in the stands since 1985",
+      requirements: "Approval required",
     },
     {
-      name: "Raça Rubro-Negra",
+      name: "Chelsea Faithful",
       members: 12100,
-      description: "Paixão e garra em cada jogo",
-      requirements: "Aprovação necessária",
+      description: "Passion and spirit in every game",
+      requirements: "Approval required",
     },
   ]
 
   const steps = [
     {
-      title: "Escolha sua Torcida",
-      description: "Selecione uma torcida organizada ou continue como torcedor independente",
+      title: "Choose your Fan Group",
+      description: "Select an organized fan group or continue as an independent supporter",
       content: (
         <div className="space-y-4">
           <div className="space-y-3">
-            {torcidas.map((torcida) => (
+            {fanGroups.map((fanGroup) => (
               <Card
-                key={torcida.name}
+                key={fanGroup.name}
                 className={`cursor-pointer transition-all ${
-                  selectedTorcida === torcida.name
+                  selectedFanGroup === fanGroup.name
                     ? "bg-[#28CA00]/10 border-[#28CA00]"
                     : "bg-gray-800 border-gray-700 hover:bg-gray-750"
                 }`}
-                onClick={() => setSelectedTorcida(torcida.name)}
+                onClick={() => setSelectedFanGroup(fanGroup.name)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-white">{torcida.name}</h3>
-                      <p className="text-sm text-gray-400 mt-1">{torcida.description}</p>
+                      <h3 className="font-semibold text-white">{fanGroup.name}</h3>
+                      <p className="text-sm text-gray-400 mt-1">{fanGroup.description}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <Badge variant="secondary" className="bg-gray-700 text-gray-300">
                           <Users className="h-3 w-3 mr-1" />
-                          {torcida.members.toLocaleString()} membros
+                          {fanGroup.members.toLocaleString()} members
                         </Badge>
                         <Badge variant="outline" className="border-yellow-500 text-yellow-500">
-                          {torcida.requirements}
+                          {fanGroup.requirements}
                         </Badge>
                       </div>
                     </div>
@@ -71,18 +71,18 @@ export default function OnboardingPage() {
 
             <Card
               className={`cursor-pointer transition-all ${
-                selectedTorcida === "independente"
+                selectedFanGroup === "independent"
                   ? "bg-[#28CA00]/10 border-[#28CA00]"
                   : "bg-gray-800 border-gray-700 hover:bg-gray-750"
               }`}
-              onClick={() => setSelectedTorcida("independente")}
+              onClick={() => setSelectedFanGroup("independent")}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <Shield className="h-8 w-8 text-[#28CA00]" />
                   <div>
-                    <h3 className="font-semibold text-white">Torcedor Independente</h3>
-                    <p className="text-sm text-gray-400">Torça sem vínculos com organizadas</p>
+                    <h3 className="font-semibold text-white">Independent Supporter</h3>
+                    <p className="text-sm text-gray-400">Support without organized group affiliations</p>
                   </div>
                 </div>
               </CardContent>
@@ -92,8 +92,8 @@ export default function OnboardingPage() {
       ),
     },
     {
-      title: "Como funciona o TRBE",
-      description: "Entenda o sistema de tokens e gamificação",
+      title: "How TRIBE Works",
+      description: "Understand the token system and gamification",
       content: (
         <div className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
@@ -101,10 +101,10 @@ export default function OnboardingPage() {
               <div className="flex items-start gap-3">
                 <Coins className="h-8 w-8 text-[#28CA00] mt-1" />
                 <div>
-                  <h3 className="font-semibold text-white mb-2">Sistema de Tokens</h3>
+                  <h3 className="font-semibold text-white mb-2">Token System</h3>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Ganhe tokens por atividades como presença nos jogos, engajamento social, compras oficiais e
-                    participação em eventos. Use os tokens para resgatar recompensas exclusivas.
+                    Earn tokens through activities like game attendance, social engagement, official purchases, and 
+                    event participation. Use tokens to redeem exclusive rewards.
                   </p>
                 </div>
               </div>
@@ -116,10 +116,10 @@ export default function OnboardingPage() {
               <div className="flex items-start gap-3">
                 <Trophy className="h-8 w-8 text-[#28CA00] mt-1" />
                 <div>
-                  <h3 className="font-semibold text-white mb-2">Gamificação</h3>
+                  <h3 className="font-semibold text-white mb-2">Gamification</h3>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Suba de nível, desbloqueie badges, participe de rankings e complete desafios. Quanto mais engajado,
-                    maiores as recompensas!
+                    Level up, unlock badges, participate in rankings, and complete challenges. The more engaged 
+                    you are, the greater the rewards!
                   </p>
                 </div>
               </div>
@@ -131,10 +131,10 @@ export default function OnboardingPage() {
               <div className="flex items-start gap-3">
                 <Users className="h-8 w-8 text-[#28CA00] mt-1" />
                 <div>
-                  <h3 className="font-semibold text-white mb-2">Comunidade</h3>
+                  <h3 className="font-semibold text-white mb-2">Community</h3>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Conecte-se com outros torcedores, participe de eventos exclusivos e ajude a construir uma torcida
-                    mais unida e respeitosa.
+                    Connect with other supporters, participate in exclusive events, and help build a more 
+                    united and respectful fan community.
                   </p>
                 </div>
               </div>
@@ -144,35 +144,35 @@ export default function OnboardingPage() {
       ),
     },
     {
-      title: "Primeiros Passos",
-      description: "Comece sua jornada no TRBE",
+      title: "Get Started",
+      description: "Begin your TRIBE journey",
       content: (
         <div className="space-y-4">
           <div className="text-center mb-6">
             <div className="text-6xl mb-4">🎉</div>
-            <h3 className="text-xl font-semibold text-white mb-2">Bem-vindo ao TRBE!</h3>
-            <p className="text-gray-400">Você ganhou 100 tokens de boas-vindas</p>
+            <h3 className="text-xl font-semibold text-white mb-2">Welcome to TRIBE!</h3>
+            <p className="text-gray-400">You earned 100 welcome tokens</p>
           </div>
 
           <Card className="bg-[#28CA00]/10 border-[#28CA00]">
             <CardContent className="p-4">
-              <h4 className="font-semibold text-white mb-3">Suas primeiras tarefas:</h4>
+              <h4 className="font-semibold text-white mb-3">Your first tasks:</h4>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-[#28CA00] rounded-full"></div>
-                  Complete seu perfil (+50 tokens)
+                  Complete your profile (+50 tokens)
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-[#28CA00] rounded-full"></div>
-                  Faça seu primeiro check-in (+200 tokens)
+                  Make your first check-in (+200 tokens)
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-[#28CA00] rounded-full"></div>
-                  Compartilhe um post do clube (+50 tokens)
+                  Share a club post (+50 tokens)
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-[#28CA00] rounded-full"></div>
-                  Conecte suas redes sociais (+25 tokens)
+                  Connect your social media (+25 tokens)
                 </li>
               </ul>
             </CardContent>
@@ -183,13 +183,13 @@ export default function OnboardingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-black p-4">
+    <div className="min-h-screen bg-black p-4 pb-28">
       <div className="max-w-md mx-auto">
         {/* Progress */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-400">
-              Passo {currentStep + 1} de {steps.length}
+              Step {currentStep + 1} of {steps.length}
             </span>
             <span className="text-sm text-[#28CA00]">{Math.round(((currentStep + 1) / steps.length) * 100)}%</span>
           </div>
@@ -218,22 +218,22 @@ export default function OnboardingPage() {
             className="border-gray-700 text-gray-400 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Anterior
+            Previous
           </Button>
 
           {currentStep < steps.length - 1 ? (
             <Button
               onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
               className="bg-[#28CA00] hover:bg-[#20A000] text-black"
-              disabled={currentStep === 0 && !selectedTorcida}
+              disabled={currentStep === 0 && !selectedFanGroup}
             >
-              Próximo
+              Next
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
             <Link href="/">
               <Button className="bg-[#28CA00] hover:bg-[#20A000] text-black">
-                Começar
+                Get Started
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </Link>

@@ -1,174 +1,244 @@
 require('dotenv').config();
 const express = require('express');
-const { ethers } = require('ethers');
 const fs = require('fs');
 const path = require('path');
+const { ethers } = require('ethers');
 
 const app = express();
-const port = process.env.PORT || 3000;
-
 app.use(express.json());
 
-const ABI_FILE_PATH = path.join(__dirname, 'abis', 'FanClub.json');
+const PORT = process.env.PORT || 3000;
 
-let FANCLUB_ABI;
+const RPC_URL = process.env.RPC_URL;
+const CHAIN_ID = Number(process.env.CHAIN_ID);
+const CONTRACT_ADDRESS_SCORE_USER = process.env.CONTRACT_ADDRESS_SCORE_USER;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
-let provider;
-let signer;
-let contract;
-
-function initializeContract() {
-    const rpcUrl = process.env.RPC_URL;
-    const chainId = parseInt(process.env.CHAIN_ID, 10);
-    const contractAddress = process.env.CONTRACT_ADDRESS;
-    const privateKey = process.env.PRIVATE_KEY;
-
-    if (!rpcUrl || !chainId || !contractAddress) {
-        console.error('Error: RPC_URL, CHAIN_ID, and CONTRACT_ADDRESS environment variables are required.');
-        process.exit(1);
-    }
-
-    try {
-        const abiJson = JSON.parse(fs.readFileSync(ABI_FILE_PATH, 'utf8'));
-        FANCLUB_ABI = abiJson.abi;
-        console.log('FanClub contract ABI successfully loaded from file.');
-
-        provider = new ethers.providers.JsonRpcProvider(rpcUrl, chainId);
-        console.log(`Connected to RPC provider: ${rpcUrl} (Chain ID: ${chainId})`);
-
-        if (privateKey) {
-            signer = new ethers.Wallet(privateKey, provider);
-            console.log(`Signer initialized with address: ${signer.address}`);
-            contract = new ethers.Contract(contractAddress, FANCLUB_ABI, signer);
-        } else {
-            console.warn('WARNING: No PRIVATE_KEY provided. Only view functions will be available.');
-            contract = new ethers.Contract(contractAddress, FANCLUB_ABI, provider);
-        }
-        console.log(`FanClub contract initialized at address: ${contractAddress}`);
-    } catch (error) {
-        console.error('Error initializing contract:', error);
-        if (error.code === 'ENOENT') {
-            console.error(`Ensure ABI file exists at: ${ABI_FILE_PATH}`);
-        } else if (error instanceof SyntaxError) {
-            console.error(`Syntax error in ABI JSON file: ${error.message}`);
-        }
-        process.exit(1);
-    }
+if (!RPC_URL || !CHAIN_ID || !CONTRACT_ADDRESS_SCORE_USER || !PRIVATE_KEY) {
+  console.error('Error: Missing env variables');
+  process.exit(1);
 }
 
-initializeContract();
+const ABI_PATH = path.join(__dirname, 'abis', 'ScoreUser.json');
 
-app.get('/join-price', async (req, res) => {
-    try {
-        const price = await contract.joinPrice();
-        res.json({
-            priceWei: price.toString(),
-            priceEth: ethers.utils.formatEther(price)
-        });
-    } catch (error) {
-        console.error('Error calling joinPrice:', error);
-        res.status(500).json({ error: error.message });
-    }
+let ScoreUserABI;
+try {
+  const abiFile = fs.readFileSync(ABI_PATH, 'utf8');
+  ScoreUserABI = JSON.parse(abiFile).abi || JSON.parse(abiFile);
+} catch (error) {
+  console.error('Failed to load ABI file:', error.message);
+  process.exit(1);
+}
+
+const provider = new ethers.JsonRpcProvider(RPC_URL, CHAIN_ID);
+const wallet = new ethers.Wallet(PRIVATE_KEY).connect(provider);
+const scoreUserContract = new ethers.Contract(CONTRACT_ADDRESS_SCORE_USER, ScoreUserABI, wallet);
+
+function isValidAddress(address) {
+  try {
+    ethers.getAddress(address); 
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+app.post('/calculateReputation', async (req, res) => {
+  const { user, likes, comments, retweets, hashtag, checkEvents, gamesId, reports } = req.body;
+
+  if (
+    !user ||
+    likes === undefined ||
+    comments === undefined ||
+    retweets === undefined ||
+    hashtag === undefined ||
+    checkEvents === undefined ||
+    gamesId === undefined ||
+    reports === undefined
+  ) {
+    return res.status(400).json({ error: 'All parameters are required.' });
+  }
+
+  if (!isValidAddress(user)) {
+    return res.status(400).json({ error: 'Invalid user address.' });
+  }
+
+  try {
+    const tx = await scoreUserContract.calculateReputation(
+      user,
+      likes,
+      comments,
+      retweets,
+      hashtag,
+      checkEvents,
+      gamesId,
+      reports
+    );
+
+    await tx.wait();
+
+    res.status(200).json({ message: 'Reputation calculated successfully!', transactionHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: 'Error calculating reputation on contract.', details: error.message });
+  }
 });
 
-app.get('/owner', async (req, res) => {
-    try {
-        const ownerAddress = await contract.owner();
-        res.json({ owner: ownerAddress });
-    } catch (error) {
-        console.error('Error calling owner:', error);
-        res.status(500).json({ error: error.message });
-    }
+app.get('/getReputation/:userAddress', async (req, res) => {
+  const userAddress = req.params.userAddress;
+
+  if (!isValidAddress(userAddress)) {
+    return res.status(400).json({ error: 'Invalid user address.' });
+  }
+
+  try {
+    const reputation = await scoreUserContract.getReputation(userAddress);
+    res.status(200).json({ user: userAddress, reputation: reputation.toString() });
+  } catch (error) {
+    res.status(500).json({ error: 'Error getting reputation from contract.', details: error.message });
+  }
 });
 
-app.get('/check-member/:userAddress', async (req, res) => {
-    const userAddress = req.params.userAddress;
-    if (!ethers.utils.isAddress(userAddress)) {
-        return res.status(400).json({ error: 'Invalid user address.' });
-    }
-    try {
-        const isMember = await contract.checkMember(userAddress);
-        res.json({ user: userAddress, isMember: isMember });
-    } catch (error) {
-        console.error('Error calling checkMember:', error);
-        res.status(500).json({ error: error.message });
-    }
+const CONTRACT_ADDRESS_FAN_CLUBS = process.env.CONTRACT_ADDRESS_FAN_CLUBS;
+const ABI_PATH_TWO = path.join(__dirname, 'abis', 'FanClubs.json');
+
+let FanClubsABI;
+
+try {
+  const abiFile = fs.readFileSync(ABI_PATH_TWO, 'utf8');
+  FanClubsABI = JSON.parse(abiFile).abi || JSON.parse(abiFile);
+} catch (error) {
+  console.error('Failed to load ABI file:', error.message);
+  process.exit(1);
+}
+
+const fanClubsContract = new ethers.Contract(CONTRACT_ADDRESS_FAN_CLUBS, FanClubsABI, wallet);
+
+app.post('/fanclub/create', async (req, res) => {
+  try {
+    const { fanClubId, price } = req.body;
+    if (!fanClubId || price === undefined) return res.status(400).json({ error: 'fanClubId and price are required' });
+
+    const tx = await fanClubsContract.createFanClub(fanClubId, ethers.parseUnits(price.toString(), 'wei'));
+    await tx.wait();
+
+    res.json({ message: 'Fan club created', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.get('/members', async (req, res) => {
-    try {
-        const members = await contract.getMembers();
-        res.json({ members: members });
-    } catch (error) {
-        console.error('Error calling getMembers:', error);
-        res.status(500).json({ error: error.message });
-    }
+app.get('/fanclub/:fanClubId/checkMember/:user', async (req, res) => {
+  try {
+    const { fanClubId, user } = req.params;
+    const isMember = await fanClubsContract.checkMember(fanClubId, user);
+    res.json({ isMember });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.use((req, res, next) => {
-    if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
-        if (!signer || signer === provider) {
-            return res.status(403).json({ error: 'Private key required to send transactions.' });
-        }
-    }
-    next();
+app.get('/fanclub/:fanClubId/balance', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const balance = await fanClubsContract.getBalance(fanClubId);
+    res.json({ balance: balance.toString() });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post('/join', async (req, res) => {
-    const { amountEth } = req.body;
-    if (!amountEth || isNaN(amountEth) || parseFloat(amountEth) <= 0) {
-        return res.status(400).json({ error: 'Invalid ETH amount for joining.' });
-    }
-
-    try {
-        const valueWei = ethers.utils.parseEther(amountEth.toString());
-        const tx = await contract.join({ value: valueWei });
-        await tx.wait();
-        res.json({ message: 'Successfully joined!', transactionHash: tx.hash });
-    } catch (error) {
-        console.error('Error calling join:', error);
-        res.status(500).json({ error: error.message });
-    }
+app.get('/fanclub/:fanClubId/price', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const price = await fanClubsContract.getJoinPrice(fanClubId);
+    res.json({ price: price.toString() });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post('/leave', async (req, res) => {
-    try {
-        const tx = await contract.leave();
-        await tx.wait();
-        res.json({ message: 'Successfully left!', transactionHash: tx.hash });
-    } catch (error) {
-        console.error('Error calling leave:', error);
-        res.status(500).json({ error: error.message });
-    }
+app.get('/fanclub/:fanClubId/members', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const members = await fanClubsContract.getMembers(fanClubId);
+    res.json({ members });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post('/update-price', async (req, res) => {
+app.get('/fanclub/:fanClubId/owner', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const owner = await fanClubsContract.getOwner(fanClubId);
+    res.json({ owner });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/join', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const price = await fanClubsContract.getJoinPrice(fanClubId);
+
+    const tx = await fanClubsContract.join(fanClubId, { value: price });
+    await tx.wait();
+
+    res.json({ message: 'Joined fan club', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/leave', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const tx = await fanClubsContract.leave(fanClubId);
+    await tx.wait();
+
+    res.json({ message: 'Left fan club', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/updatePrice', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
     const { newPrice } = req.body;
-    if (newPrice === undefined || isNaN(newPrice) || parseInt(newPrice, 10) <= 0) {
-        return res.status(400).json({ error: 'Invalid new price (must be a positive number in Wei).' });
-    }
+    if (newPrice === undefined) return res.status(400).json({ error: 'newPrice is required' });
 
-    try {
-        const tx = await contract.updatePrice(newPrice);
-        await tx.wait();
-        res.json({ message: `Price updated to ${newPrice} Wei!`, transactionHash: tx.hash });
-    } catch (error) {
-        console.error('Error calling updatePrice:', error);
-        res.status(500).json({ error: error.message });
-    }
+    const tx = await fanClubsContract.updatePrice(fanClubId, ethers.parseUnits(newPrice.toString(), 'wei'));
+    await tx.wait();
+
+    res.json({ message: 'Price updated', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.post('/withdraw', async (req, res) => {
-    try {
-        const tx = await contract.withdraw();
-        await tx.wait();
-        res.json({ message: 'Funds withdrawn successfully!', transactionHash: tx.hash });
-    } catch (error) {
-        console.error('Error calling withdraw:', error);
-        res.status(500).json({ error: error.message });
-    }
+app.post('/fanclub/:fanClubId/withdraw', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { amount } = req.body;
+    if (!amount) return res.status(400).json({ error: 'amount is required' });
+
+    const tx = await fanClubsContract.withdraw(fanClubId, ethers.parseUnits(amount.toString(), 'wei'));
+    await tx.wait();
+
+    res.json({ message: 'Withdraw successful', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-app.listen(port, () => {
-    console.log(`API running on http://localhost:${port}`);
+app.get('/', (req, res) => {
+  res.send('Trybe Backend API is running!');
 });
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+module.exports = app;

@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Sidebar } from "@/components/sidebar"
 import {
-  ArrowLeft,
+  Menu,
   MapPin,
   Share2,
   ShoppingBag,
@@ -18,109 +19,143 @@ import {
   Star,
   Filter,
   Coins,
+  Users,
+  Crown,
 } from "lucide-react"
 import Link from "next/link"
 
 export default function TasksPage() {
   const [filter, setFilter] = useState("all")
+  const [showFilterOptions, setShowFilterOptions] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const tasks = [
     {
-      id: 1,
-      title: "Check-in no Maracanã",
-      description: "Faça check-in no próximo jogo em casa",
+      id: "daily-checkin",
+      title: "Daily Check-in",
+      description: "Check in at Stamford Bridge today",
       category: "presence",
-      tokens: 200,
       difficulty: "easy",
-      deadline: "Hoje, 16:00",
-      status: "available",
-      progress: 0,
-      maxProgress: 1,
-      icon: MapPin,
-    },
-    {
-      id: 2,
-      title: "Compartilhar 5 Posts",
-      description: "Compartilhe 5 posts oficiais do clube nas redes sociais",
-      category: "social",
-      tokens: 250,
-      difficulty: "medium",
-      deadline: "Em 3 dias",
-      status: "in_progress",
-      progress: 3,
-      maxProgress: 5,
-      icon: Share2,
-    },
-    {
-      id: 3,
-      title: "Compra na Loja Oficial",
-      description: "Faça uma compra de qualquer valor na loja oficial",
-      category: "purchase",
-      tokens: 300,
-      difficulty: "easy",
-      deadline: "Em 1 semana",
-      status: "available",
-      progress: 0,
-      maxProgress: 1,
-      icon: ShoppingBag,
-    },
-    {
-      id: 4,
-      title: "Presença Semanal",
-      description: "Vá a 2 jogos esta semana",
-      category: "presence",
-      tokens: 500,
-      difficulty: "hard",
-      deadline: "Em 4 dias",
-      status: "in_progress",
-      progress: 1,
-      maxProgress: 2,
-      icon: Calendar,
-    },
-    {
-      id: 5,
-      title: "Engajamento Diário",
-      description: "Faça login por 7 dias consecutivos",
-      category: "engagement",
-      tokens: 150,
-      difficulty: "easy",
-      deadline: "Contínuo",
-      status: "in_progress",
-      progress: 4,
-      maxProgress: 7,
-      icon: Star,
-    },
-    {
-      id: 6,
-      title: "Primeira Compra",
-      description: "Faça sua primeira compra usando tokens",
-      category: "purchase",
       tokens: 100,
+      deadline: "Today",
+      status: "available",
+      icon: MapPin,
+      progress: 0,
+      maxProgress: 1,
+    },
+    {
+      id: "share-post",
+      title: "Share on Social Media",
+      description: "Share a post about today's match",
+      category: "social",
       difficulty: "easy",
-      deadline: "Sem prazo",
+      tokens: 50,
+      deadline: "Today",
+      status: "in_progress",
+      icon: Share2,
+      progress: 1,
+      maxProgress: 3,
+    },
+    {
+      id: "buy-merchandise",
+      title: "Purchase Official Merchandise",
+      description: "Buy any item from the official store",
+      category: "purchase",
+      difficulty: "medium",
+      tokens: 200,
+      deadline: "This week",
+      status: "available",
+      icon: ShoppingBag,
+      progress: 0,
+      maxProgress: 1,
+    },
+    {
+      id: "invite-friends",
+      title: "Invite 3 Friends",
+      description: "Invite friends to join the fan community",
+      category: "social",
+      difficulty: "medium",
+      tokens: 300,
+      deadline: "This month",
+      status: "in_progress",
+      icon: Users,
+      progress: 1,
+      maxProgress: 3,
+    },
+    {
+      id: "attend-away-game",
+      title: "Attend Away Game",
+      description: "Check in at an away match",
+      category: "presence",
+      difficulty: "hard",
+      tokens: 500,
+      deadline: "Next month",
+      status: "available",
+      icon: MapPin,
+      progress: 0,
+      maxProgress: 1,
+    },
+    {
+      id: "premium-purchase",
+      title: "Make Premium Purchase",
+      description: "Purchase items worth £100 or more",
+      category: "purchase",
+      difficulty: "hard",
+      tokens: 400,
+      deadline: "No deadline",
       status: "completed",
+      icon: Star,
       progress: 1,
       maxProgress: 1,
-      icon: ShoppingBag,
+    },
+    {
+      id: "weekly-engagement",
+      title: "7-Day Activity Streak",
+      description: "Be active for 7 consecutive days",
+      category: "engagement",
+      difficulty: "medium",
+      tokens: 250,
+      deadline: "Ongoing",
+      status: "in_progress",
+      icon: Calendar,
+      progress: 3,
+      maxProgress: 7,
+    },
+    {
+      id: "fan-group-leader",
+      title: "Become Fan Group Leader",
+      description: "Lead activities in your fan group",
+      category: "engagement",
+      difficulty: "hard",
+      tokens: 600,
+      deadline: "No deadline",
+      status: "available",
+      icon: Crown,
+      progress: 0,
+      maxProgress: 1,
     },
   ]
 
   const categories = [
-    { id: "all", name: "Todas", count: tasks.length },
-    { id: "presence", name: "Presença", count: tasks.filter((t) => t.category === "presence").length },
+    { id: "all", name: "All", count: tasks.length },
+    { id: "presence", name: "Attendance", count: tasks.filter((t) => t.category === "presence").length },
     { id: "social", name: "Social", count: tasks.filter((t) => t.category === "social").length },
-    { id: "purchase", name: "Compras", count: tasks.filter((t) => t.category === "purchase").length },
-    { id: "engagement", name: "Engajamento", count: tasks.filter((t) => t.category === "engagement").length },
+    { id: "purchase", name: "Purchases", count: tasks.filter((t) => t.category === "purchase").length },
+    { id: "engagement", name: "Engagement", count: tasks.filter((t) => t.category === "engagement").length },
   ]
 
   const filteredTasks = filter === "all" ? tasks : tasks.filter((task) => task.category === filter)
+
+  const handleFilterToggle = () => {
+    setShowFilterOptions(!showFilterOptions)
+  }
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
         return "bg-green-600"
       case "medium":
-        return "bg-yellow-600"
+        return "bg-orange-500"
       case "hard":
         return "bg-red-600"
       default:
@@ -131,13 +166,13 @@ export default function TasksPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "available":
-        return "border-gray-700"
+        return "border-gray-200 dark:border-gray-800"
       case "in_progress":
         return "border-[#28CA00]"
       case "completed":
-        return "border-green-600 bg-green-600/10"
+        return "border-green-600 bg-green-50 dark:bg-green-900/20"
       default:
-        return "border-gray-700"
+        return "border-gray-200 dark:border-gray-800"
     }
   }
 
@@ -153,177 +188,161 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
       {/* Header */}
-      <header className="bg-black border-b border-gray-800 p-4">
+      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4 shadow-sm dark:shadow-none">
         <div className="flex items-center justify-between">
-          <Link href="/">
-            <Button variant="ghost" size="icon" className="text-white">
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-          </Link>
-          <h1 className="text-xl font-semibold">Tarefas de Engajamento</h1>
-          <Button variant="ghost" size="icon" className="text-white">
+          <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" onClick={() => setSidebarOpen(true)}>
+            <Menu className="h-6 w-6" />
+          </Button>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Engagement Tasks</h1>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+            onClick={handleFilterToggle}
+          >
             <Filter className="h-6 w-6" />
           </Button>
         </div>
       </header>
 
-      <div className="p-4 space-y-6">
-        {/* Stats Summary */}
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-gray-900 border-gray-800">
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-[#28CA00]">12</div>
-              <div className="text-sm text-gray-400">Disponíveis</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900 border-gray-800">
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-yellow-500">3</div>
-              <div className="text-sm text-gray-400">Em Progresso</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900 border-gray-800">
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-500">8</div>
-              <div className="text-sm text-gray-400">Concluídas</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Category Filters */}
-        <Tabs value={filter} onValueChange={setFilter} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-gray-800">
+      {/* Filter Options */}
+      {showFilterOptions && (
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+          <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
-              <TabsTrigger
+              <Button
                 key={category.id}
-                value={category.id}
-                className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                variant={filter === category.id ? "default" : "outline"}
+                size="sm"
+                className={`${
+                  filter === category.id
+                    ? "bg-[#28CA00] hover:bg-[#20A000] text-black"
+                    : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+                onClick={() => setFilter(category.id)}
               >
-                <div className="text-center">
-                  <div>{category.name}</div>
-                  <div className="text-xs opacity-70">({category.count})</div>
-                </div>
-              </TabsTrigger>
+                {category.name} ({category.count})
+              </Button>
             ))}
-          </TabsList>
+          </div>
+        </div>
+      )}
 
-          <TabsContent value={filter} className="space-y-4 mt-6">
-            {filteredTasks.map((task) => {
-              const IconComponent = task.icon
-              return (
-                <Card key={task.id} className={`bg-gray-900 ${getStatusColor(task.status)}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 bg-[#28CA00]/10 rounded-full">
-                        <IconComponent className="h-6 w-6 text-[#28CA00]" />
+      <div className="p-4 space-y-4">
+        {/* Task Cards */}
+        {filteredTasks.map((task) => {
+          const IconComponent = task.icon
+          const progressPercentage = (task.progress / task.maxProgress) * 100
+
+          return (
+            <Card
+              key={task.id}
+              className={`bg-white dark:bg-gray-900 border ${getStatusColor(task.status)} shadow-sm`}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-full ${
+                    task.status === "completed" 
+                      ? "bg-green-100 dark:bg-green-900/30" 
+                      : task.status === "in_progress"
+                      ? "bg-[#28CA00]/10 dark:bg-[#28CA00]/20"
+                      : "bg-gray-100 dark:bg-gray-800"
+                  }`}>
+                    <IconComponent className={`h-6 w-6 ${
+                      task.status === "completed"
+                        ? "text-green-600 dark:text-green-400"
+                        : task.status === "in_progress"
+                        ? "text-[#28CA00]"
+                        : "text-gray-400 dark:text-gray-500"
+                    }`} />
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className={`font-semibold ${
+                            task.status === "completed"
+                              ? "text-gray-500 dark:text-gray-400 line-through"
+                              : "text-gray-900 dark:text-white"
+                          }`}>
+                            {task.title}
+                          </h3>
+                          {getStatusIcon(task.status)}
+                        </div>
+                        <p className={`text-sm ${
+                          task.status === "completed"
+                            ? "text-gray-500 dark:text-gray-400"
+                            : "text-gray-600 dark:text-gray-400"
+                        }`}>
+                          {task.description}
+                        </p>
                       </div>
-
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-white">{task.title}</h3>
-                            <p className="text-sm text-gray-400">{task.description}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(task.status)}
-                            <div className="text-right">
-                              <div className="text-lg font-bold text-[#28CA00]">+{task.tokens}</div>
-                              <div className="text-xs text-gray-400">tokens</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {task.status === "in_progress" && task.maxProgress > 1 && (
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Progresso</span>
-                              <span className="text-[#28CA00]">
-                                {task.progress}/{task.maxProgress}
-                              </span>
-                            </div>
-                            <Progress value={(task.progress / task.maxProgress) * 100} className="h-2 bg-gray-800">
-                              <div
-                                className="h-full bg-[#28CA00] rounded-full transition-all"
-                                style={{ width: `${(task.progress / task.maxProgress) * 100}%` }}
-                              />
-                            </Progress>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Badge className={`${getDifficultyColor(task.difficulty)} text-white text-xs`}>
-                              {task.difficulty === "easy"
-                                ? "Fácil"
-                                : task.difficulty === "medium"
-                                  ? "Médio"
-                                  : "Difícil"}
-                            </Badge>
-                            <span className="text-xs text-gray-400">{task.deadline}</span>
-                          </div>
-
-                          {task.status === "available" && (
-                            <Button size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
-                              Iniciar
-                            </Button>
-                          )}
-
-                          {task.status === "in_progress" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-[#28CA00] text-[#28CA00] bg-transparent"
-                            >
-                              Continuar
-                            </Button>
-                          )}
-
-                          {task.status === "completed" && (
-                            <Badge className="bg-green-600 text-white">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Concluída
-                            </Badge>
-                          )}
-                        </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-[#28CA00]">+{task.tokens}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">tokens</div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </TabsContent>
-        </Tabs>
 
-        {/* Daily Challenge */}
-        <Card className="bg-gradient-to-r from-[#28CA00]/20 to-[#28CA00]/10 border-[#28CA00]">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-[#28CA00]" />
-              Desafio Diário
-            </CardTitle>
-            <CardDescription className="text-gray-300">Complete 3 tarefas hoje e ganhe bônus</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-white">Progresso do dia</span>
-                <span className="text-[#28CA00] font-semibold">1/3</span>
-              </div>
-              <Progress value={33} className="h-3 bg-gray-800">
-                <div className="h-full bg-[#28CA00] rounded-full" style={{ width: "33%" }} />
-              </Progress>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">Recompensa:</span>
-                <div className="flex items-center gap-1">
-                  <Coins className="h-4 w-4 text-[#28CA00]" />
-                  <span className="font-semibold text-[#28CA00]">+500 tokens</span>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getDifficultyColor(task.difficulty)}>
+                        {task.difficulty}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                        {task.deadline}
+                      </Badge>
+                    </div>
+
+                    {task.status === "in_progress" && task.maxProgress > 1 && (
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-600 dark:text-gray-400">Progress</span>
+                          <span className="text-[#28CA00]">{task.progress}/{task.maxProgress}</span>
+                        </div>
+                        <Progress value={progressPercentage} className="h-2 bg-gray-200 dark:bg-gray-800">
+                          <div
+                            className="h-full bg-[#28CA00] rounded-full transition-all"
+                            style={{ width: `${progressPercentage}%` }}
+                          />
+                        </Progress>
+                      </div>
+                    )}
+
+                    {task.status === "available" && (
+                      <Button
+                        size="sm"
+                        className="bg-[#28CA00] hover:bg-[#20A000] text-black"
+                      >
+                        Start Task
+                      </Button>
+                    )}
+
+                    {task.status === "in_progress" && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-[#28CA00] text-[#28CA00] hover:bg-[#28CA00] hover:text-black"
+                      >
+                        Continue
+                      </Button>
+                    )}
+
+                    {task.status === "completed" && (
+                      <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="text-sm font-medium">Completed</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
     </div>
   )

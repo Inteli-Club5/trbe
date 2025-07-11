@@ -56,7 +56,11 @@
 
 ## 5. Demo
 
-****FanClub Contract****: 0xcAeFEc77F848504C2559801180d8284B5dBcD86E
+****Chiliz Spicy Testnet****
+
+****FanClub Contract****: 0xF74d6d202ebF8d4497d21F52Aca2A759c317305B
+<br/>
+****ScoreUser Contract****: 0x42DC444aA142f78a8de8c7304BBBCd5B6581fe32
 
 ## 6. Market and Business Model
 

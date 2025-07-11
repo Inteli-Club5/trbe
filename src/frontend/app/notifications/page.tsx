@@ -13,9 +13,9 @@ export default function NotificationsPage() {
     {
       id: 1,
       type: "game",
-      title: "Jogo começando em 1 hora!",
-      message: "Flamengo vs Vasco no Maracanã às 16:00",
-      time: "Há 45 min",
+      title: "Game starting in 1 hour!",
+      message: "Chelsea vs Arsenal at Stamford Bridge at 4:00 PM",
+      time: "45 min ago",
       read: false,
       icon: MapPin,
       color: "text-[#28CA00]",
@@ -23,9 +23,9 @@ export default function NotificationsPage() {
     {
       id: 2,
       type: "reward",
-      title: "Tokens recebidos!",
-      message: "Você ganhou 200 tokens pelo check-in no estádio",
-      time: "Há 2 horas",
+      title: "Tokens received!",
+      message: "You earned 200 tokens for stadium check-in",
+      time: "2 hours ago",
       read: false,
       icon: Trophy,
       color: "text-yellow-500",
@@ -33,9 +33,9 @@ export default function NotificationsPage() {
     {
       id: 3,
       type: "social",
-      title: "Nova menção",
-      message: "Carlos Mendes mencionou você em um comentário",
-      time: "Há 3 horas",
+      title: "New mention",
+      message: "Michael Thompson mentioned you in a comment",
+      time: "3 hours ago",
       read: true,
       icon: Users,
       color: "text-blue-500",
@@ -43,9 +43,9 @@ export default function NotificationsPage() {
     {
       id: 4,
       type: "challenge",
-      title: "Desafio completado!",
-      message: "Parabéns! Você completou o desafio 'Presença Semanal'",
-      time: "Ontem",
+      title: "Challenge completed!",
+      message: "Congratulations! You completed the 'Weekly Attendance' challenge",
+      time: "Yesterday",
       read: true,
       icon: CheckCircle,
       color: "text-green-500",
@@ -53,9 +53,9 @@ export default function NotificationsPage() {
     {
       id: 5,
       type: "warning",
-      title: "Advertência aplicada",
-      message: "Você recebeu uma advertência por linguagem inadequada",
-      time: "2 dias atrás",
+      title: "Warning issued",
+      message: "You received a warning for inappropriate language",
+      time: "2 days ago",
       read: true,
       icon: AlertCircle,
       color: "text-red-500",
@@ -63,9 +63,9 @@ export default function NotificationsPage() {
     {
       id: 6,
       type: "offer",
-      title: "Oferta especial!",
-      message: "20% de desconto na loja oficial - válido até amanhã",
-      time: "3 dias atrás",
+      title: "Special offer!",
+      message: "20% discount at official store - valid until tomorrow",
+      time: "3 days ago",
       read: true,
       icon: Gift,
       color: "text-purple-500",
@@ -91,7 +91,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="bg-black text-white">
       {/* Header */}
       <header className="bg-black border-b border-gray-800 p-4">
         <div className="flex items-center justify-between">
@@ -101,10 +101,10 @@ export default function NotificationsPage() {
             </Button>
           </Link>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold">Notificações</h1>
+            <h1 className="text-xl font-semibold">Notifications</h1>
             {unreadCount > 0 && <Badge className="bg-red-500 text-white">{unreadCount}</Badge>}
           </div>
-          <Link href="/">
+          <Link href="/settings">
             <Button variant="ghost" size="icon" className="text-white">
               <Settings className="h-6 w-6" />
             </Button>
@@ -118,7 +118,7 @@ export default function NotificationsPage() {
           <div className="flex gap-3">
             <Button onClick={markAllAsRead} size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
               <CheckCircle className="h-4 w-4 mr-2" />
-              Marcar todas como lidas
+              Mark all as read
             </Button>
           </div>
         )}
@@ -130,19 +130,19 @@ export default function NotificationsPage() {
               value="all"
               className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
             >
-              Todas ({notifications.length})
+              All ({notifications.length})
             </TabsTrigger>
             <TabsTrigger
               value="game"
               className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
             >
-              Jogos
+              Games
             </TabsTrigger>
             <TabsTrigger
               value="reward"
               className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
             >
-              Recompensas
+              Rewards
             </TabsTrigger>
             <TabsTrigger
               value="social"
@@ -203,8 +203,8 @@ export default function NotificationsPage() {
               <Card className="bg-gray-900 border-gray-800">
                 <CardContent className="p-8 text-center">
                   <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Nenhuma notificação</h3>
-                  <p className="text-gray-400">Você está em dia com todas as suas notificações!</p>
+                  <h3 className="text-lg font-semibold text-white mb-2">No notifications</h3>
+                  <p className="text-gray-400">You're all caught up with your notifications!</p>
                 </CardContent>
               </Card>
             )}
