@@ -1,92 +1,87 @@
 const request = require('supertest');
-const express = require('express');
-const { ethers } = require('ethers');
+const app = require('./server');
 
-jest.mock('ethers');
+jest.mock('ethers', () => {
+  const original = jest.requireActual('ethers');
 
-describe('FanClub API', () => {
-  let mockContract;
+  class MockTransactionResponse {
+    constructor() {
+      this.hash = '0xmockedtxhash';
+    }
+    wait() {
+      return Promise.resolve(true);
+    }
+  }
+  class MockBigNumber {
+    toString() {
+      return '42';
+    }
+  }
+  const mockContract = {
+    calculateReputation: jest.fn(() => Promise.resolve(new MockTransactionResponse())),
+    getReputation: jest.fn(() => Promise.resolve(new MockBigNumber())),
+  };
 
-  beforeAll(() => {
+  return {
+    ...original,
+    Contract: jest.fn(() => mockContract),
+    JsonRpcProvider: jest.fn(),
+    Wallet: jest.fn(() => ({
+      connect: jest.fn(() => mockContract),
+    })),
+    getAddress: (address) => {
+      if (typeof address !== 'string' || !address.startsWith('0x') || address.length !== 42) {
+        throw new Error('invalid address');
+      }
+      return address;
+    },
+  };
+});
 
-    const mockSigner = { address: '0xtestsigner' };
-    global.signer = mockSigner;
-    global.provider = {}; 
+describe('ScoreUser API', () => {
 
-    mockContract = {
-      joinPrice: jest.fn().mockResolvedValue(ethers.BigNumber.from('1000000000000000000')),
-      owner: jest.fn().mockResolvedValue('0x1234567890abcdef1234567890abcdef12345678'),
-      checkMember: jest.fn().mockResolvedValue(true),
-      getMembers: jest.fn().mockResolvedValue([
-        '0x1234567890abcdef1234567890abcdef12345678',
-        '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-      ]),
-      join: jest.fn().mockResolvedValue({ hash: '0xtxjoin', wait: jest.fn() }),
-      leave: jest.fn().mockResolvedValue({ hash: '0xtxleave', wait: jest.fn() }),
-      updatePrice: jest.fn().mockResolvedValue({ hash: '0xtxupdate', wait: jest.fn() }),
-      withdraw: jest.fn().mockResolvedValue({ hash: '0xtxwithdraw', wait: jest.fn() }),
-    };
-
-    global.contract = mockContract;
-    ethers.Contract.mockImplementation(() => mockContract);
-    ethers.utils.parseEther = jest.fn((eth) => ethers.BigNumber.from('1000000000000000000'));
-    ethers.utils.formatEther = jest.fn((wei) => '1.0');
-    ethers.utils.isAddress = jest.fn().mockReturnValue(true);
-
-
-     ({ app, initializeContract } = require('./server.js'));
-    initializeContract();
-  });
-
-  test('GET /owner returns the owner', async () => {
-    const res = await request(app).get('/owner');
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({
-      owner: '0x1234567890abcdef1234567890abcdef12345678',
+  describe('GET /', () => {
+    it('should return 200 and a welcome message', async () => {
+      const res = await request(app).get('/');
+      expect(res.statusCode).toBe(200);
+      expect(res.text).toBe('ScoreUser Express API is running!');
     });
   });
 
-  test('GET /check-member/:userAddress returns if it is a member', async () => {
-    const address = '0x1234567890abcdef1234567890abcdef12345678';
-    const res = await request(app).get(`/check-member/${address}`);
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual({
-      user: address,
-      isMember: true,
+  describe('POST /calculateReputation', () => {
+    it('should return 400 if any param is missing', async () => {
+      const res = await request(app)
+        .post('/calculateReputation')
+        .send({ user: '0x0000000000000000000000000000000000000000' }); 
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error).toBe('All parameters are required.');
+    });
+
+    it('should return 400 for invalid user address', async () => {
+      const res = await request(app)
+        .post('/calculateReputation')
+        .send({
+          user: 'invalidaddress',
+          likes: 1,
+          comments: 2,
+          retweets: 3,
+          hashtag: true,
+          checkEvents: true,
+          gamesId: 123,
+          reports: 0
+        });
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error).toBe('Invalid user address.');
     });
   });
 
-  test('GET /members returns a member list', async () => {
-    const res = await request(app).get('/members');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.members.length).toBe(2);
-  });
-
-  test('POST /join works fine', async () => {
-    const res = await request(app)
-      .post('/join')
-      .send({ amountEth: '1' });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.transactionHash).toBe('0xtxjoin');
-  });
-
-  test('POST /leave works fine', async () => {
-    const res = await request(app).post('/leave');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.transactionHash).toBe('0xtxleave');
-  });
-
-  test('POST /update-price updates the price', async () => {
-    const res = await request(app)
-      .post('/update-price')
-      .send({ newPrice: '1000' });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.transactionHash).toBe('0xtxupdate');
-  });
-
-  test('POST /withdraw works fine', async () => {
-    const res = await request(app).post('/withdraw');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.transactionHash).toBe('0xtxwithdraw');
+  describe('GET /getReputation/:userAddress', () => {
+    it('should return 400 for invalid user address', async () => {
+      const res = await request(app).get('/getReputation/invalidaddress');
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error).toBe('Invalid user address.');
+    });
   });
 });
