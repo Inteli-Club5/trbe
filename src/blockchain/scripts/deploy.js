@@ -1,25 +1,29 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const initialPrice = ethers.parseEther("0.1"); 
-  const deployer = (await ethers.getSigners())[0];
+    const deployer = (await ethers.getSigners())[0];
 
-  console.log("Deploying FanClub with the account:", deployer.address);
-  console.log("Account balance:", (await ethers.provider.getBalance(deployer.address)).toString());
+    console.log("Deploying contracts with the account:", deployer.address);
+    console.log("Account balance:", (await ethers.provider.getBalance(deployer.address)).toString());
 
-  const FanClub = await ethers.getContractFactory("FanClub");
-  const fanClub = await FanClub.deploy(initialPrice, deployer.address);
+    // --- Deploy FanClubs Contract ---
+    const FanClubs = await ethers.getContractFactory("FanClubs");
+    const fanClubs = await FanClubs.deploy();
+    await fanClubs.waitForDeployment();
 
-  await fanClub.waitForDeployment();
+    console.log("FanClubs contract deployed to:", fanClubs.target);
 
-  console.log("FanClub deployed to:", fanClub.target);
-  console.log("Initial Join Price:", ethers.formatEther(await fanClub.joinPrice()));
-  console.log("Owner set to:", await fanClub.owner());
+    // --- Deploy ScoreUser Contract ---
+    const ScoreUser = await ethers.getContractFactory("ScoreUser");
+    const scoreUser = await ScoreUser.deploy();
+    await scoreUser.waitForDeployment();
+
+    console.log("ScoreUser contract deployed to:", scoreUser.target);
 }
 
 main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });

@@ -15,7 +15,7 @@ let FANCLUB_ABI;
 
 let provider;
 let signer;
-let contract;
+global.contract = null;
 
 function initializeContract() {
     const rpcUrl = process.env.RPC_URL;
@@ -31,36 +31,29 @@ function initializeContract() {
     try {
         const abiJson = JSON.parse(fs.readFileSync(ABI_FILE_PATH, 'utf8'));
         FANCLUB_ABI = abiJson.abi;
-        console.log('FanClub contract ABI successfully loaded from file.');
 
         provider = new ethers.providers.JsonRpcProvider(rpcUrl, chainId);
-        console.log(`Connected to RPC provider: ${rpcUrl} (Chain ID: ${chainId})`);
 
         if (privateKey) {
             signer = new ethers.Wallet(privateKey, provider);
             console.log(`Signer initialized with address: ${signer.address}`);
-            contract = new ethers.Contract(contractAddress, FANCLUB_ABI, signer);
+            global.contract = new ethers.Contract(contractAddress, FANCLUB_ABI, signer);
         } else {
             console.warn('WARNING: No PRIVATE_KEY provided. Only view functions will be available.');
-            contract = new ethers.Contract(contractAddress, FANCLUB_ABI, provider);
+            global.contract = new ethers.Contract(contractAddress, FANCLUB_ABI, provider);
         }
-        console.log(`FanClub contract initialized at address: ${contractAddress}`);
+
+        console.log('FanClub contract initialized at address:', contractAddress);
     } catch (error) {
         console.error('Error initializing contract:', error);
-        if (error.code === 'ENOENT') {
-            console.error(`Ensure ABI file exists at: ${ABI_FILE_PATH}`);
-        } else if (error instanceof SyntaxError) {
-            console.error(`Syntax error in ABI JSON file: ${error.message}`);
-        }
         process.exit(1);
     }
 }
 
-initializeContract();
 
 app.get('/join-price', async (req, res) => {
     try {
-        const price = await contract.joinPrice();
+        const price = await global.contract.joinPrice();
         res.json({
             priceWei: price.toString(),
             priceEth: ethers.utils.formatEther(price)
@@ -73,7 +66,7 @@ app.get('/join-price', async (req, res) => {
 
 app.get('/owner', async (req, res) => {
     try {
-        const ownerAddress = await contract.owner();
+        const ownerAddress = await global.contract.owner();
         res.json({ owner: ownerAddress });
     } catch (error) {
         console.error('Error calling owner:', error);
@@ -87,7 +80,7 @@ app.get('/check-member/:userAddress', async (req, res) => {
         return res.status(400).json({ error: 'Invalid user address.' });
     }
     try {
-        const isMember = await contract.checkMember(userAddress);
+        const isMember = await global.contract.checkMember(userAddress);
         res.json({ user: userAddress, isMember: isMember });
     } catch (error) {
         console.error('Error calling checkMember:', error);
@@ -97,7 +90,7 @@ app.get('/check-member/:userAddress', async (req, res) => {
 
 app.get('/members', async (req, res) => {
     try {
-        const members = await contract.getMembers();
+        const members = await global.contract.getMembers();
         res.json({ members: members });
     } catch (error) {
         console.error('Error calling getMembers:', error);
@@ -122,7 +115,7 @@ app.post('/join', async (req, res) => {
 
     try {
         const valueWei = ethers.utils.parseEther(amountEth.toString());
-        const tx = await contract.join({ value: valueWei });
+        const tx = await global.contract.join({ value: valueWei });
         await tx.wait();
         res.json({ message: 'Successfully joined!', transactionHash: tx.hash });
     } catch (error) {
@@ -133,7 +126,7 @@ app.post('/join', async (req, res) => {
 
 app.post('/leave', async (req, res) => {
     try {
-        const tx = await contract.leave();
+        const tx = await global.contract.leave();
         await tx.wait();
         res.json({ message: 'Successfully left!', transactionHash: tx.hash });
     } catch (error) {
@@ -149,7 +142,7 @@ app.post('/update-price', async (req, res) => {
     }
 
     try {
-        const tx = await contract.updatePrice(newPrice);
+        const tx = await global.contract.updatePrice(newPrice);
         await tx.wait();
         res.json({ message: `Price updated to ${newPrice} Wei!`, transactionHash: tx.hash });
     } catch (error) {
@@ -160,7 +153,7 @@ app.post('/update-price', async (req, res) => {
 
 app.post('/withdraw', async (req, res) => {
     try {
-        const tx = await contract.withdraw();
+        const tx = await global.contract.withdraw();
         await tx.wait();
         res.json({ message: 'Funds withdrawn successfully!', transactionHash: tx.hash });
     } catch (error) {
@@ -169,6 +162,15 @@ app.post('/withdraw', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`API running on http://localhost:${port}`);
-});
+function startServer() {
+    initializeContract();
+    app.listen(port, () => {
+        console.log(`API running on http://localhost:${port}`);
+    });
+}
+
+if (require.main === module) {
+    startServer();
+}
+
+module.exports = { app, initializeContract };
