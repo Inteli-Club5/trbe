@@ -1,50 +1,92 @@
-const request = require('supertest');
-const app = require('./server');
-
 jest.mock('ethers', () => {
   const original = jest.requireActual('ethers');
 
-  class MockTransactionResponse {
+  class MockTx {
     constructor() {
       this.hash = '0xmockedtxhash';
     }
     wait() {
-      return Promise.resolve(true);
+      return Promise.resolve();
     }
   }
-  class MockBigNumber {
-    toString() {
-      return '42';
-    }
-  }
+
   const mockContract = {
-    calculateReputation: jest.fn(() => Promise.resolve(new MockTransactionResponse())),
-    getReputation: jest.fn(() => Promise.resolve(new MockBigNumber())),
+    createFanClub: jest.fn(() => new MockTx()),
+    joinFanClub: jest.fn(() => new MockTx()),
+    leaveFanClub: jest.fn(() => new MockTx()),
+    updatePrice: jest.fn(() => new MockTx()),
+    withdraw: jest.fn(() => new MockTx()),
+    checkMember: jest.fn(() => Promise.resolve(true)),
+    getBalance: jest.fn(() => Promise.resolve('42')),
+    getJoinPrice: jest.fn(() => Promise.resolve('42')),
+    getMembers: jest.fn(() => Promise.resolve(['0xabc'])),
   };
 
   return {
     ...original,
     Contract: jest.fn(() => mockContract),
-    JsonRpcProvider: jest.fn(),
-    Wallet: jest.fn(() => ({
-      connect: jest.fn(() => mockContract),
-    })),
-    getAddress: (address) => {
-      if (typeof address !== 'string' || !address.startsWith('0x') || address.length !== 42) {
-        throw new Error('invalid address');
-      }
-      return address;
+    Wallet: jest.fn(() => ({})),
+    providers: {
+      JsonRpcProvider: jest.fn(() => ({})),
     },
   };
 });
 
-describe('ScoreUser API', () => {
+const request = require('supertest');
+const app = require('./server');
 
+describe('FanClubs API', () => {
+  it('GET / should respond with API status', async () => {
+    const res = await request(app).get('/');
+    expect(res.statusCode).toBe(200);
+  });
+
+  it('GET /fanclub/:fanClubId/balance should respond', async () => {
+    const res = await request(app).get('/fanclub/club1/balance');
+    expect(res.statusCode).toBeGreaterThanOrEqual(200);
+    expect(res.statusCode).toBeLessThan(500);
+  });
+
+  it('GET /fanclub/:fanClubId/price should respond', async () => {
+    const res = await request(app).get('/fanclub/club1/price');
+    expect(res.statusCode).toBeGreaterThanOrEqual(200);
+    expect(res.statusCode).toBeLessThan(500);
+  });
+
+  it('GET /fanclub/:fanClubId/members should respond', async () => {
+    const res = await request(app).get('/fanclub/club1/members');
+    expect(res.statusCode).toBeGreaterThanOrEqual(200);
+    expect(res.statusCode).toBeLessThan(500);
+  });
+
+  it('POST /fanclub/:fanClubId/join should respond', async () => {
+    const res = await request(app).post('/fanclub/club1/join');
+    expect(res.statusCode).toBeGreaterThanOrEqual(200);
+    expect(res.statusCode).toBeLessThan(500);
+  });
+
+  it('POST /fanclub/:fanClubId/leave should respond', async () => {
+    const res = await request(app).post('/fanclub/club1/leave');
+    expect(res.statusCode).toBeGreaterThanOrEqual(200);
+    expect(res.statusCode).toBeLessThan(500);
+  });
+
+  it('POST /fanclub/:fanClubId/updatePrice should respond', async () => {
+    const res = await request(app)
+      .post('/fanclub/club1/updatePrice')
+      .send({ newPrice: '500' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(200);
+    expect(res.statusCode).toBeLessThan(500);
+  });
+});
+
+
+describe('ScoreUser API', () => {
   describe('GET /', () => {
     it('should return 200 and a welcome message', async () => {
       const res = await request(app).get('/');
       expect(res.statusCode).toBe(200);
-      expect(res.text).toBe('ScoreUser Express API is running!');
+      expect(res.text).toBe('Trybe Backend API is running!');
     });
   });
 
