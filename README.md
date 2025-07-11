@@ -56,6 +56,8 @@
 
 ## 5. Demo
 
+****FanClub Contract****: 0xcAeFEc77F848504C2559801180d8284B5dBcD86E
+
 ## 6. Market and Business Model
 
 ## 7. Benchmark and Competitive Analysis
