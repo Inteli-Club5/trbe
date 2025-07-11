@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { BottomNavigation } from '@/components/bottom-navigation'
+import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'TRIBE - Fan Engagement Platform',
+  description: 'The ultimate fan engagement platform with gamification, rewards, and community features',
+  generator: 'TRIBE',
 }
 
 export default function RootLayout({
@@ -13,8 +15,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-white dark:bg-black transition-colors" suppressHydrationWarning={true}>
+        <ThemeProvider>
+          <div className="pb-28">
+            {children}
+          </div>
+          <BottomNavigation />
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

@@ -15,47 +15,47 @@ export default function RankingPage() {
 
   const currentUser = {
     id: "current",
-    name: "João da Silva",
+    name: "John Smith",
     position: 156,
     points: 15420,
     change: 12,
     avatar: "/placeholder.svg?height=40&width=40",
-    club: "Flamengo",
-    torcida: "Torcida Jovem",
+    club: "Chelsea FC",
+    fanGroup: "Blue Pride",
   }
 
   const topUsers = [
     {
       id: 1,
-      name: "Carlos Mendes",
+      name: "Michael Thompson",
       position: 1,
       points: 45230,
       change: 0,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Torcida Jovem",
+      club: "Chelsea FC",
+      fanGroup: "Blue Pride",
       badges: ["👑", "🏆", "⭐"],
     },
     {
       id: 2,
-      name: "Ana Silva",
+      name: "Sarah Wilson",
       position: 2,
       points: 42180,
       change: 1,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Charanga",
+      club: "Chelsea FC",
+      fanGroup: "Blue Army",
       badges: ["🥈", "🔥", "⚡"],
     },
     {
       id: 3,
-      name: "Pedro Santos",
+      name: "David Brown",
       position: 3,
       points: 38950,
       change: -1,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Raça Rubro-Negra",
+      club: "Chelsea FC",
+      fanGroup: "Chelsea Faithful",
       badges: ["🥉", "💪", "🎯"],
     },
   ]
@@ -63,50 +63,50 @@ export default function RankingPage() {
   const nearbyUsers = [
     {
       id: 154,
-      name: "Maria Costa",
+      name: "Emma Davis",
       position: 154,
       points: 15680,
       change: 3,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Independente",
+      club: "Chelsea FC",
+      fanGroup: "Independent",
     },
     {
       id: 155,
-      name: "Roberto Lima",
+      name: "James Miller",
       position: 155,
       points: 15550,
       change: -2,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Torcida Jovem",
+      club: "Chelsea FC",
+      fanGroup: "Blue Pride",
     },
     currentUser,
     {
       id: 157,
-      name: "Fernanda Rocha",
+      name: "Robert Wilson",
       position: 157,
       points: 15320,
       change: 5,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Charanga",
+      club: "Chelsea FC",
+      fanGroup: "Blue Army",
     },
     {
       id: 158,
-      name: "Lucas Oliveira",
+      name: "Alice Johnson",
       position: 158,
       points: 15180,
       change: -1,
       avatar: "/placeholder.svg?height=40&width=40",
-      club: "Flamengo",
-      torcida: "Independente",
+      club: "Chelsea FC",
+      fanGroup: "Independent",
     },
   ]
 
-  const torcidaRanking = [
+  const fanGroupRanking = [
     {
-      name: "Torcida Jovem",
+      name: "Blue Pride",
       members: 15420,
       totalPoints: 2450000,
       avgPoints: 159,
@@ -114,7 +114,7 @@ export default function RankingPage() {
       change: 0,
     },
     {
-      name: "Charanga Rubro-Negra",
+      name: "Blue Army",
       members: 8350,
       totalPoints: 1890000,
       avgPoints: 226,
@@ -122,7 +122,7 @@ export default function RankingPage() {
       change: 1,
     },
     {
-      name: "Raça Rubro-Negra",
+      name: "Chelsea Faithful",
       members: 12100,
       totalPoints: 1650000,
       avgPoints: 136,
@@ -140,7 +140,7 @@ export default function RankingPage() {
       case 3:
         return <Award className="h-6 w-6 text-orange-500" />
       default:
-        return <span className="text-lg font-bold text-gray-400">#{position}</span>
+        return <span className="text-lg font-bold text-gray-500 dark:text-gray-400">#{position}</span>
     }
   }
 
@@ -157,16 +157,16 @@ export default function RankingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
       {/* Header */}
-      <header className="bg-black border-b border-gray-800 p-4">
+      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4 shadow-sm dark:shadow-none">
         <div className="flex items-center justify-between">
           <Link href="/">
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-6 w-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-semibold">Rankings</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Rankings</h1>
           <div></div>
         </div>
       </header>
@@ -175,65 +175,61 @@ export default function RankingPage() {
         {/* Filters */}
         <div className="grid grid-cols-2 gap-4">
           <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+            <SelectTrigger className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="weekly" className="text-white hover:bg-gray-700">
-                Semanal
+            <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+              <SelectItem value="weekly" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                Weekly
               </SelectItem>
-              <SelectItem value="monthly" className="text-white hover:bg-gray-700">
-                Mensal
+              <SelectItem value="monthly" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                Monthly
               </SelectItem>
-              <SelectItem value="yearly" className="text-white hover:bg-gray-700">
-                Anual
+              <SelectItem value="yearly" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                Annual
               </SelectItem>
-              <SelectItem value="all-time" className="text-white hover:bg-gray-700">
-                Histórico
+              <SelectItem value="all-time" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                All Time
               </SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={rankingType} onValueChange={setRankingType}>
-            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+            <SelectTrigger className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="general" className="text-white hover:bg-gray-700">
-                Geral
+            <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+              <SelectItem value="general" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                General
               </SelectItem>
-              <SelectItem value="club" className="text-white hover:bg-gray-700">
-                Por Clube
-              </SelectItem>
-              <SelectItem value="region" className="text-white hover:bg-gray-700">
-                Por Região
+              <SelectItem value="fan-groups" className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
+                Fan Groups
               </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Current User Position */}
-        <Card className="bg-[#28CA00]/10 border-[#28CA00]">
+        <Card className="bg-[#28CA00]/10 dark:bg-[#28CA00]/20 border-[#28CA00]">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="text-2xl font-bold text-[#28CA00]">#{currentUser.position}</div>
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={currentUser.avatar || "/placeholder.svg"} />
-                  <AvatarFallback className="bg-[#28CA00] text-black">JD</AvatarFallback>
+                  <AvatarImage src={currentUser.avatar} />
+                  <AvatarFallback className="bg-[#28CA00] text-black">
+                    {currentUser.name.split(" ").map((n) => n[0]).join("")}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold text-white">{currentUser.name}</h3>
-                  <p className="text-sm text-gray-300">{currentUser.torcida}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{currentUser.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{currentUser.club} • {currentUser.fanGroup}</p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-lg font-bold text-[#28CA00]">{currentUser.points.toLocaleString()}</div>
-                <div className="flex items-center gap-1">
-                  {getChangeIcon(currentUser.change)}
-                  <span className={`text-sm ${getChangeColor(currentUser.change)}`}>
-                    {Math.abs(currentUser.change)}
-                  </span>
+                <div className="text-2xl font-bold text-[#28CA00]">#{currentUser.position}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{currentUser.points.toLocaleString()} pts</div>
+                <div className={`text-xs ${getChangeColor(currentUser.change)}`}>
+                  {currentUser.change > 0 ? "+" : ""}{currentUser.change}
                 </div>
               </div>
             </div>
@@ -241,159 +237,123 @@ export default function RankingPage() {
         </Card>
 
         {/* Tabs */}
-        <Tabs defaultValue="individual" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-800">
-            <TabsTrigger value="individual" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
-              Individual
+        <Tabs defaultValue="top" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
+            <TabsTrigger value="top" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+              Top 3
             </TabsTrigger>
-            <TabsTrigger value="torcidas" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
-              Torcidas
+            <TabsTrigger value="nearby" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+              Nearby
+            </TabsTrigger>
+            <TabsTrigger value="groups" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+              Groups
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="individual" className="space-y-6">
-            {/* Top 3 */}
-            <Card className="bg-gray-900 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-[#28CA00]" />
-                  Top 3
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {topUsers.map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+          <TabsContent value="top" className="space-y-3">
+            {topUsers.map((user) => (
+              <Card key={user.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {getPositionIcon(user.position)}
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={user.avatar || "/placeholder.svg"} />
-                        <AvatarFallback className="bg-gray-700 text-white">
-                          {user.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="flex items-center gap-2">
+                        {getPositionIcon(user.position)}
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={user.avatar} />
+                          <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                            {user.name.split(" ").map((n) => n[0]).join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
                       <div>
-                        <h4 className="font-semibold text-white">{user.name}</h4>
-                        <p className="text-sm text-gray-400">{user.torcida}</p>
-                      </div>
-                      <div className="flex gap-1">
-                        {user.badges?.map((badge, index) => (
-                          <span key={index} className="text-lg">
-                            {badge}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-[#28CA00]">{user.points.toLocaleString()}</div>
-                      <div className="flex items-center gap-1">
-                        {getChangeIcon(user.change)}
-                        <span className={`text-sm ${getChangeColor(user.change)}`}>
-                          {user.change === 0 ? "-" : Math.abs(user.change)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Nearby Rankings */}
-            <Card className="bg-gray-900 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white">Próximos a Você</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Posições {nearbyUsers[0].position} - {nearbyUsers[nearbyUsers.length - 1].position}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {nearbyUsers.map((user) => (
-                  <div
-                    key={user.id}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      user.id === "current" ? "bg-[#28CA00]/10 border border-[#28CA00]" : "bg-gray-800"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 text-center">
-                        <span className="text-sm font-bold text-gray-400">#{user.position}</span>
-                      </div>
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.avatar || "/placeholder.svg"} />
-                        <AvatarFallback
-                          className={`text-xs ${
-                            user.id === "current" ? "bg-[#28CA00] text-black" : "bg-gray-700 text-white"
-                          }`}
-                        >
-                          {user.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h4
-                          className={`text-sm font-medium ${user.id === "current" ? "text-[#28CA00]" : "text-white"}`}
-                        >
-                          {user.name}
-                        </h4>
-                        <p className="text-xs text-gray-400">{user.torcida}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div
-                        className={`text-sm font-semibold ${user.id === "current" ? "text-[#28CA00]" : "text-white"}`}
-                      >
-                        {user.points.toLocaleString()}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {getChangeIcon(user.change)}
-                        <span className={`text-xs ${getChangeColor(user.change)}`}>{Math.abs(user.change)}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="torcidas" className="space-y-4">
-            <Card className="bg-gray-900 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Users className="h-5 w-5 text-[#28CA00]" />
-                  Ranking de Torcidas
-                </CardTitle>
-                <CardDescription className="text-gray-400">Baseado na média de pontos por membro</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {torcidaRanking.map((torcida) => (
-                  <div key={torcida.name} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      {getPositionIcon(torcida.position)}
-                      <div>
-                        <h4 className="font-semibold text-white">{torcida.name}</h4>
-                        <div className="flex items-center gap-4 text-sm text-gray-400">
-                          <span>{torcida.members.toLocaleString()} membros</span>
-                          <span>Média: {torcida.avgPoints} pts</span>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{user.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.club} • {user.fanGroup}</p>
+                        <div className="flex gap-1 mt-1">
+                          {user.badges?.map((badge, index) => (
+                            <span key={index} className="text-sm">{badge}</span>
+                          ))}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-[#28CA00]">{(torcida.totalPoints / 1000000).toFixed(1)}M</div>
-                      <div className="flex items-center gap-1">
-                        {getChangeIcon(torcida.change)}
-                        <span className={`text-sm ${getChangeColor(torcida.change)}`}>
-                          {torcida.change === 0 ? "-" : Math.abs(torcida.change)}
-                        </span>
+                      <div className="text-lg font-bold text-[#28CA00]">{user.points.toLocaleString()}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
+                      <div className={`text-xs ${getChangeColor(user.change)}`}>
+                        {user.change > 0 ? "+" : ""}{user.change}
                       </div>
                     </div>
                   </div>
-                ))}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="nearby" className="space-y-3">
+            {nearbyUsers.map((user) => (
+              <Card 
+                key={user.id} 
+                className={`bg-white dark:bg-gray-900 border shadow-sm ${
+                  user.id === "current" 
+                    ? "border-[#28CA00] bg-[#28CA00]/5 dark:bg-[#28CA00]/10" 
+                    : "border-gray-200 dark:border-gray-800"
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-gray-500 dark:text-gray-400">#{user.position}</span>
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={user.avatar} />
+                          <AvatarFallback className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                            {user.name.split(" ").map((n) => n[0]).join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{user.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.club} • {user.fanGroup}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-[#28CA00]">{user.points.toLocaleString()}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
+                      <div className={`text-xs ${getChangeColor(user.change)}`}>
+                        {user.change > 0 ? "+" : ""}{user.change}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="groups" className="space-y-3">
+            {fanGroupRanking.map((group) => (
+              <Card key={group.name} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        {getPositionIcon(group.position)}
+                        <div className="p-2 bg-[#28CA00]/10 dark:bg-[#28CA00]/20 rounded-full">
+                          <Users className="h-5 w-5 text-[#28CA00]" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{group.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{group.members.toLocaleString()} members</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-[#28CA00]">{group.totalPoints.toLocaleString()}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">total points</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Avg: {group.avgPoints} pts/member</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </TabsContent>
         </Tabs>
       </div>

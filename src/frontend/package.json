@@ -1,7 +1,10 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "tribe-fan-platform",
+  "version": "1.0.0",
   "private": true,
+  "description": "TRIBE - The ultimate fan engagement platform with gamification, rewards, and community features",
+  "keywords": ["fan-engagement", "sports", "gamification", "blockchain", "community", "rewards"],
+  "author": "TRIBE Team",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -41,7 +44,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "4.1.0",
+    "date-fns": "3.6.0",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",

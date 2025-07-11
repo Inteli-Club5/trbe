@@ -37,24 +37,24 @@ export default function StatsPage() {
 
   const monthlyData = [
     { month: "Jul", tokens: 1200, activities: 12, games: 3 },
-    { month: "Ago", tokens: 1450, activities: 15, games: 4 },
-    { month: "Set", tokens: 1680, activities: 18, games: 2 },
-    { month: "Out", tokens: 1320, activities: 14, games: 3 },
+    { month: "Aug", tokens: 1450, activities: 15, games: 4 },
+    { month: "Sep", tokens: 1680, activities: 18, games: 2 },
+    { month: "Oct", tokens: 1320, activities: 14, games: 3 },
     { month: "Nov", tokens: 1890, activities: 21, games: 5 },
-    { month: "Dez", tokens: 2100, activities: 19, games: 4 },
+    { month: "Dec", tokens: 2100, activities: 19, games: 4 },
   ]
 
   const achievements = [
     {
-      title: "Sequência de Check-ins",
+      title: "Check-in Streak",
       current: 12,
       best: 25,
-      unit: "dias",
+      unit: "days",
       progress: 48,
       icon: MapPin,
     },
     {
-      title: "Tokens por Mês",
+      title: "Tokens per Month",
       current: 2100,
       best: 2500,
       unit: "tokens",
@@ -62,15 +62,15 @@ export default function StatsPage() {
       icon: Coins,
     },
     {
-      title: "Atividades Completadas",
+      title: "Activities Completed",
       current: 19,
       best: 25,
-      unit: "atividades",
+      unit: "activities",
       progress: 76,
       icon: Target,
     },
     {
-      title: "Engajamento Social",
+      title: "Social Engagement",
       current: 8,
       best: 15,
       unit: "posts",
@@ -81,28 +81,28 @@ export default function StatsPage() {
 
   const comparisons = [
     {
-      metric: "Tokens Ganhos",
+      metric: "Tokens Earned",
       myValue: 2100,
       avgValue: 1650,
       percentile: 78,
       trend: "up",
     },
     {
-      metric: "Jogos Assistidos",
+      metric: "Games Attended",
       myValue: 4,
       avgValue: 3.2,
       percentile: 65,
       trend: "up",
     },
     {
-      metric: "Atividades/Mês",
+      metric: "Activities/Month",
       myValue: 19,
       avgValue: 22,
       percentile: 45,
       trend: "down",
     },
     {
-      metric: "Reputação",
+      metric: "Reputation",
       myValue: 850,
       avgValue: 720,
       percentile: 82,
@@ -123,7 +123,7 @@ export default function StatsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="bg-black text-white">
       {/* Header */}
       <header className="bg-black border-b border-gray-800 p-4">
         <div className="flex items-center justify-between">
@@ -132,20 +132,20 @@ export default function StatsPage() {
               <ArrowLeft className="h-6 w-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-semibold">Estatísticas</h1>
+          <h1 className="text-xl font-semibold">Statistics</h1>
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-700">
               <SelectItem value="weekly" className="text-white hover:bg-gray-700">
-                Semanal
+                Weekly
               </SelectItem>
               <SelectItem value="monthly" className="text-white hover:bg-gray-700">
-                Mensal
+                Monthly
               </SelectItem>
               <SelectItem value="yearly" className="text-white hover:bg-gray-700">
-                Anual
+                Annual
               </SelectItem>
             </SelectContent>
           </Select>
@@ -159,7 +159,7 @@ export default function StatsPage() {
             <CardContent className="p-4 text-center">
               <Coins className="h-8 w-8 text-[#28CA00] mx-auto mb-2" />
               <div className="text-2xl font-bold text-white">{overallStats.totalTokens.toLocaleString()}</div>
-              <div className="text-sm text-gray-400">Total de Tokens</div>
+              <div className="text-sm text-gray-400">Total Tokens</div>
             </CardContent>
           </Card>
 
@@ -167,7 +167,7 @@ export default function StatsPage() {
             <CardContent className="p-4 text-center">
               <Trophy className="h-8 w-8 text-[#28CA00] mx-auto mb-2" />
               <div className="text-2xl font-bold text-white">#{overallStats.rankingPosition}</div>
-              <div className="text-sm text-gray-400">Posição no Ranking</div>
+              <div className="text-sm text-gray-400">Ranking Position</div>
             </CardContent>
           </Card>
 
@@ -175,7 +175,7 @@ export default function StatsPage() {
             <CardContent className="p-4 text-center">
               <MapPin className="h-8 w-8 text-[#28CA00] mx-auto mb-2" />
               <div className="text-2xl font-bold text-white">{overallStats.gamesAttended}</div>
-              <div className="text-sm text-gray-400">Jogos Assistidos</div>
+              <div className="text-sm text-gray-400">Games Attended</div>
             </CardContent>
           </Card>
 
@@ -183,7 +183,7 @@ export default function StatsPage() {
             <CardContent className="p-4 text-center">
               <Star className="h-8 w-8 text-[#28CA00] mx-auto mb-2" />
               <div className="text-2xl font-bold text-white">{overallStats.reputationScore}</div>
-              <div className="text-sm text-gray-400">Reputação</div>
+              <div className="text-sm text-gray-400">Reputation</div>
             </CardContent>
           </Card>
         </div>
@@ -192,13 +192,13 @@ export default function StatsPage() {
         <Tabs defaultValue="progress" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-800">
             <TabsTrigger value="progress" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
-              Progresso
+              Progress
             </TabsTrigger>
             <TabsTrigger value="comparison" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
-              Comparação
+              Comparison
             </TabsTrigger>
             <TabsTrigger value="trends" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
-              Tendências
+              Trends
             </TabsTrigger>
           </TabsList>
 
@@ -207,9 +207,9 @@ export default function StatsPage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Target className="h-5 w-5 text-[#28CA00]" />
-                  Metas Pessoais
+                  Personal Goals
                 </CardTitle>
-                <CardDescription className="text-gray-400">Seu progresso em relação aos seus recordes</CardDescription>
+                <CardDescription className="text-gray-400">Your progress against your personal records</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {achievements.map((achievement, index) => {
@@ -243,9 +243,9 @@ export default function StatsPage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Users className="h-5 w-5 text-[#28CA00]" />
-                  Comparação com Outros Torcedores
+                  Comparison with Other Supporters
                 </CardTitle>
-                <CardDescription className="text-gray-400">Como você se compara à média da comunidade</CardDescription>
+                <CardDescription className="text-gray-400">How you compare to the community average</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {comparisons.map((comparison, index) => (
@@ -254,7 +254,7 @@ export default function StatsPage() {
                       <h4 className="font-medium text-white">{comparison.metric}</h4>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-sm text-gray-400">
-                          Você: {comparison.myValue.toLocaleString()} | Média: {comparison.avgValue.toLocaleString()}
+                          You: {comparison.myValue.toLocaleString()} | Avg: {comparison.avgValue.toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -262,7 +262,7 @@ export default function StatsPage() {
                       <div className="flex items-center gap-1">
                         {getTrendIcon(comparison.trend)}
                         <span className={`text-sm font-semibold ${getTrendColor(comparison.trend)}`}>
-                          {comparison.percentile}º percentil
+                          {comparison.percentile}%
                         </span>
                       </div>
                     </div>
@@ -277,9 +277,9 @@ export default function StatsPage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-[#28CA00]" />
-                  Evolução Mensal
+                  Monthly Evolution
                 </CardTitle>
-                <CardDescription className="text-gray-400">Seu desempenho nos últimos 6 meses</CardDescription>
+                <CardDescription className="text-gray-400">Your performance over the last 6 months</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -293,11 +293,11 @@ export default function StatsPage() {
                         </div>
                         <div className="text-center">
                           <div className="text-blue-400 font-semibold">{data.activities}</div>
-                          <div className="text-gray-400">atividades</div>
+                          <div className="text-gray-400">activities</div>
                         </div>
                         <div className="text-center">
                           <div className="text-purple-400 font-semibold">{data.games}</div>
-                          <div className="text-gray-400">jogos</div>
+                          <div className="text-gray-400">games</div>
                         </div>
                       </div>
                     </div>
@@ -306,20 +306,7 @@ export default function StatsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#28CA00]/10 border-[#28CA00]">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Award className="h-5 w-5 text-[#28CA00]" />
-                  Insights
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-gray-300">
-                <p>• Você está 25% mais ativo que no mês passado</p>
-                <p>• Sua sequência de check-ins melhorou 40% este mês</p>
-                <p>• Você está no top 20% dos torcedores mais engajados</p>
-                <p>• Continue assim para alcançar o nível 13 em 2 semanas!</p>
-              </CardContent>
-            </Card>
+           
           </TabsContent>
         </Tabs>
       </div>

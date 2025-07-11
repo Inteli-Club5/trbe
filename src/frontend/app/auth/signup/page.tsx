@@ -27,27 +27,27 @@ export default function SignupPage() {
   const [acceptDataUsage, setAcceptDataUsage] = useState(false)
 
   const clubs = [
-    "Flamengo",
-    "Corinthians",
-    "Palmeiras",
-    "São Paulo",
-    "Santos",
-    "Vasco",
-    "Botafogo",
-    "Fluminense",
-    "Grêmio",
-    "Internacional",
-    "Cruzeiro",
-    "Atlético-MG",
+    "Chelsea FC",
+    "Arsenal",
+    "Manchester United",
+    "Manchester City",
+    "Liverpool",
+    "Tottenham",
+    "Newcastle United",
+    "Brighton",
+    "West Ham",
+    "Aston Villa",
+    "Real Madrid",
+    "Barcelona",
   ]
 
   return (
-    <div className="min-h-screen bg-black p-4 py-8">
+    <div className="min-h-screen bg-black p-4 py-8 pb-28">
       <Card className="w-full max-w-md mx-auto bg-gray-900 border-gray-800">
         <CardHeader className="text-center">
-          <div className="text-4xl font-bold text-[#28CA00] mb-2">TRBE</div>
-          <CardTitle className="text-white">Criar conta</CardTitle>
-          <CardDescription className="text-gray-400">Junte-se à maior plataforma de torcedores</CardDescription>
+          <div className="text-4xl font-bold text-[#28CA00] mb-2">TRIBE</div>
+          <CardTitle className="text-white">Create account</CardTitle>
+          <CardDescription className="text-gray-400">Join the ultimate fan platform</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Profile Photo */}
@@ -63,17 +63,17 @@ export default function SignupPage() {
               size="sm"
               className="border-gray-700 text-gray-400 hover:text-white bg-transparent"
             >
-              Adicionar foto
+              Add photo
             </Button>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="fullName" className="text-white">
-              Nome completo *
+              Full name *
             </Label>
             <Input
               id="fullName"
-              placeholder="Seu nome completo"
+              placeholder="Your full name"
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
               className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
@@ -82,12 +82,12 @@ export default function SignupPage() {
 
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white">
-              E-mail *
+              Email *
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="seu@email.com"
+              placeholder="your@email.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
@@ -96,11 +96,11 @@ export default function SignupPage() {
 
           <div className="space-y-2">
             <Label htmlFor="club" className="text-white">
-              Clube favorito *
+              Favorite club *
             </Label>
             <Select value={formData.club} onValueChange={(value) => setFormData({ ...formData, club: value })}>
               <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                <SelectValue placeholder="Selecione seu clube" />
+                <SelectValue placeholder="Select your club" />
               </SelectTrigger>
               <SelectContent className="bg-gray-800 border-gray-700">
                 {clubs.map((club) => (
@@ -114,13 +114,13 @@ export default function SignupPage() {
 
           <div className="space-y-2">
             <Label htmlFor="password" className="text-white">
-              Senha *
+              Password *
             </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Sua senha"
+                placeholder="Your password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 pr-10"
@@ -139,13 +139,13 @@ export default function SignupPage() {
 
           <div className="space-y-2">
             <Label htmlFor="confirmPassword" className="text-white">
-              Confirmar senha *
+              Confirm password *
             </Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirme sua senha"
+                placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 pr-10"
@@ -172,9 +172,9 @@ export default function SignupPage() {
                 className="border-gray-600 data-[state=checked]:bg-[#28CA00] data-[state=checked]:border-[#28CA00] mt-1"
               />
               <Label htmlFor="terms" className="text-sm text-gray-400 leading-relaxed">
-                Aceito os{" "}
+                I accept the{" "}
                 <Link href="/terms" className="text-[#28CA00] hover:underline">
-                  termos de uso
+                  terms of service
                 </Link>
               </Label>
             </div>
@@ -187,9 +187,9 @@ export default function SignupPage() {
                 className="border-gray-600 data-[state=checked]:bg-[#28CA00] data-[state=checked]:border-[#28CA00] mt-1"
               />
               <Label htmlFor="privacy" className="text-sm text-gray-400 leading-relaxed">
-                Aceito a{" "}
+                I accept the{" "}
                 <Link href="/privacy" className="text-[#28CA00] hover:underline">
-                  política de privacidade
+                  privacy policy
                 </Link>
               </Label>
             </div>
@@ -202,7 +202,7 @@ export default function SignupPage() {
                 className="border-gray-600 data-[state=checked]:bg-[#28CA00] data-[state=checked]:border-[#28CA00] mt-1"
               />
               <Label htmlFor="dataUsage" className="text-sm text-gray-400 leading-relaxed">
-                Consinto com o uso dos meus dados para personalização
+                I consent to the use of my data for personalization
               </Label>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function SignupPage() {
               className="w-full bg-[#28CA00] hover:bg-[#20A000] text-black font-semibold"
               disabled={!acceptTerms || !acceptPrivacy || !acceptDataUsage}
             >
-              Criar conta
+              Create account
             </Button>
           </Link>
 
@@ -221,7 +221,7 @@ export default function SignupPage() {
               <span className="w-full border-t border-gray-700" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gray-900 px-2 text-gray-400">Ou continue com</span>
+              <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
             </div>
           </div>
 
@@ -231,9 +231,9 @@ export default function SignupPage() {
           </Button>
 
           <div className="text-center">
-            <span className="text-gray-400">Já tem uma conta? </span>
+            <span className="text-gray-400">Already have an account? </span>
             <Link href="/auth/login" className="text-[#28CA00] hover:underline">
-              Entrar
+              Sign In
             </Link>
           </div>
         </CardContent>

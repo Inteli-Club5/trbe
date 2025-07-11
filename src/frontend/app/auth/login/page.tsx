@@ -16,22 +16,22 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 pb-28">
       <Card className="w-full max-w-md bg-gray-900 border-gray-800">
         <CardHeader className="text-center">
-          <div className="text-4xl font-bold text-[#28CA00] mb-2">TRBE</div>
-          <CardTitle className="text-white">Bem-vindo de volta</CardTitle>
-          <CardDescription className="text-gray-400">Entre na sua conta para continuar</CardDescription>
+          <div className="text-4xl font-bold text-[#28CA00] mb-2">TRIBE</div>
+          <CardTitle className="text-white">Welcome back</CardTitle>
+          <CardDescription className="text-gray-400">Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white">
-              E-mail
+              Email
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="seu@email.com"
+              placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
@@ -40,13 +40,13 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <Label htmlFor="password" className="text-white">
-              Senha
+              Password
             </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Sua senha"
+                placeholder="Your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 pr-10"
@@ -72,16 +72,16 @@ export default function LoginPage() {
                 className="border-gray-600 data-[state=checked]:bg-[#28CA00] data-[state=checked]:border-[#28CA00]"
               />
               <Label htmlFor="remember" className="text-sm text-gray-400">
-                Lembrar-me
+                Remember me
               </Label>
             </div>
             <Link href="/auth/forgot-password" className="text-sm text-[#28CA00] hover:underline">
-              Esqueci a senha
+              Forgot password
             </Link>
           </div>
 
           <Link href="/">
-            <Button className="w-full bg-[#28CA00] hover:bg-[#20A000] text-black font-semibold">Entrar</Button>
+            <Button className="w-full bg-[#28CA00] hover:bg-[#20A000] text-black font-semibold">Sign In</Button>
           </Link>
 
           <div className="relative">
@@ -89,7 +89,7 @@ export default function LoginPage() {
               <span className="w-full border-t border-gray-700" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gray-900 px-2 text-gray-400">Ou continue com</span>
+              <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
             </div>
           </div>
 
@@ -99,9 +99,9 @@ export default function LoginPage() {
           </Button>
 
           <div className="text-center">
-            <span className="text-gray-400">Não tem uma conta? </span>
+            <span className="text-gray-400">Don't have an account? </span>
             <Link href="/auth/signup" className="text-[#28CA00] hover:underline">
-              Cadastre-se
+              Sign Up
             </Link>
           </div>
         </CardContent>
