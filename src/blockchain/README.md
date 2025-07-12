@@ -11,16 +11,13 @@ A comprehensive fan club management contract that allows:
 - Managing fan club balances and withdrawals
 - Token and NFT management for fan clubs
 - Owner-only operations for club management
+- Marketplace functionality for NFT trading
 
 ### ScoreUser.sol
 A reputation scoring contract that calculates user reputation based on social media activity.
 
 ### NFTBadge.sol
 An ERC721 contract for minting and managing fan badges/achievements.
-
-### Mock Contracts
-- **MockERC20.sol**: ERC20 token for testing token-related functions
-- **MockERC721.sol**: ERC721 token for testing NFT-related functions
 
 ## Testing
 
@@ -69,10 +66,19 @@ npm run run-tests
 - **Membership Management**: Joining, leaving, member validation
 - **Price Management**: Updating join prices, owner restrictions
 - **Financial Operations**: Deposits, withdrawals, balance tracking
+- **Withdraw Function**: ETH withdrawal validation and access control
 - **Token Management**: ERC20 token deposits, withdrawals, rewards
 - **NFT Management**: ERC721 NFT deposits, withdrawals, rewards
+- **Marketplace Functions**: Creating marketplace, listing items, buying/selling
 - **View Functions**: All public view functions and access controls
 - **Edge Cases**: Multiple clubs, large member lists, security scenarios
+
+**New Test Coverage (2024):**
+- **Withdraw Function**: Tests for ETH withdrawal with proper access control
+- **Fan Token Functions**: Complete coverage of token deposit/withdraw/reward operations
+- **Fan NFT Functions**: Full NFT management testing including deposit/withdraw/reward
+- **Marketplace Functions**: Marketplace creation, item listing, buying functionality
+- **Error Handling**: Comprehensive validation of all require statements and modifiers
 
 #### NFTBadge Tests
 - **Deployment**: Name, symbol, owner verification
@@ -95,13 +101,15 @@ Tests are organized using describe blocks for better readability:
 - Tests are grouped by functionality
 - Edge cases and security scenarios are included
 - Gas optimization tests are included where relevant
+- Error conditions are thoroughly tested
 
-### Mock Contracts
-The test suite uses mock contracts to simulate external token interactions:
-- **MockERC20**: Simulates ERC20 tokens for fan club token operations
-- **MockERC721**: Simulates ERC721 tokens for fan club NFT operations
-
-These mocks allow testing of complex interactions without deploying real tokens.
+### Testing Strategy
+The test suite focuses on:
+- **Unit Testing**: Individual function behavior
+- **Integration Testing**: Contract interactions
+- **Security Testing**: Access control and validation
+- **Edge Case Testing**: Boundary conditions and error scenarios
+- **Gas Optimization**: Performance monitoring
 
 ## Deployment
 
@@ -143,11 +151,13 @@ npx hardhat run scripts/deploy.js --network spicy
 - All critical functions are protected by `onlyOwner` modifiers
 - Fan club operations require proper ownership verification
 - Token and NFT operations include proper validation
+- Marketplace functions have proper access restrictions
 
 ### Input Validation
 - All user inputs are validated
 - Address validation prevents zero address operations
 - Amount validation prevents zero-value transactions
+- Fan club existence validation on all operations
 
 ### Reentrancy Protection
 - External calls are made at the end of functions

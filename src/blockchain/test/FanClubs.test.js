@@ -182,6 +182,264 @@ describe("FanClubs", function () {
     });
   });
 
+  describe("Withdraw Function", function () {
+    beforeEach(async function () {
+      await fanClubs.connect(user1).createFanClub("spfc", ethers.parseEther("0.1"));
+      await fanClubs.connect(user2).join("spfc", { value: ethers.parseEther("0.1") });
+    });
+
+    it("Should fail to withdraw if not owner", async function () {
+      const fanClubId = "spfc";
+      const amount = ethers.parseEther("0.05");
+      
+      await expect(fanClubs.connect(user2).withdraw(fanClubId, amount))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to withdraw zero amount", async function () {
+      const fanClubId = "spfc";
+      const amount = 0;
+      
+      await expect(fanClubs.connect(user1).withdraw(fanClubId, amount))
+        .to.be.revertedWith("No balance to withdraw");
+    });
+
+    it("Should fail to withdraw more than available balance", async function () {
+      const fanClubId = "spfc";
+      const amount = ethers.parseEther("0.2"); // More than the 0.1 balance
+      
+      await expect(fanClubs.connect(user1).withdraw(fanClubId, amount))
+        .to.be.revertedWith("Insufficient balance");
+    });
+
+    it("Should fail to withdraw from non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const amount = ethers.parseEther("0.05");
+      
+      await expect(fanClubs.connect(user1).withdraw(fanClubId, amount))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+  });
+
+  describe("Fan Token Functions", function () {
+    beforeEach(async function () {
+      await fanClubs.connect(user1).createFanClub("spfc", ethers.parseEther("0.1"));
+    });
+
+    it("Should fail to deposit zero fan tokens", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = user2.address; // Using address as mock token
+      const amount = 0;
+      
+      await expect(fanClubs.connect(user2).depositFanTokens(fanClubId, tokenAddress, amount))
+        .to.be.revertedWith("Amount must be greater than 0");
+    });
+
+    it("Should fail to withdraw fan tokens if not owner", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = user2.address;
+      const amount = ethers.parseEther("10");
+      
+      await expect(fanClubs.connect(user2).withdrawFanTokens(fanClubId, tokenAddress, amount))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to withdraw fan tokens from non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const tokenAddress = user2.address;
+      const amount = ethers.parseEther("10");
+      
+      await expect(fanClubs.connect(user1).withdrawFanTokens(fanClubId, tokenAddress, amount))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+
+    it("Should fail to reward fan tokens if not owner", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = user2.address;
+      const recipient = user3.address;
+      const amount = ethers.parseEther("10");
+      
+      await expect(fanClubs.connect(user2).rewardFanToken(fanClubId, tokenAddress, recipient, amount))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to reward zero fan tokens", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = user2.address;
+      const recipient = user3.address;
+      const amount = 0;
+      
+      await expect(fanClubs.connect(user1).rewardFanToken(fanClubId, tokenAddress, recipient, amount))
+        .to.be.revertedWith("Amount must be greater than 0");
+    });
+
+    it("Should fail to get fan token balance if not owner", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = user2.address;
+      
+      await expect(fanClubs.connect(user2).getFanTokenBalance(fanClubId, tokenAddress))
+        .to.be.revertedWith("Only fan club owner");
+    });
+  });
+
+  describe("Fan NFT Functions", function () {
+    beforeEach(async function () {
+      await fanClubs.connect(user1).createFanClub("spfc", ethers.parseEther("0.1"));
+    });
+
+    it("Should fail to deposit NFT to non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user2).depositFanNFT(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+
+    it("Should fail to deposit NFT with invalid address", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = ethers.ZeroAddress;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user2).depositFanNFT(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Invalid NFT contract");
+    });
+
+    it("Should fail to withdraw NFT if not owner", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user2).withdrawFanNFT(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to withdraw NFT from non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user1).withdrawFanNFT(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+
+    it("Should fail to reward NFT if not owner", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const recipient = user3.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user2).rewardFanNFT(fanClubId, nftAddress, recipient, tokenId))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to reward NFT to invalid recipient", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const recipient = ethers.ZeroAddress;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user1).rewardFanNFT(fanClubId, nftAddress, recipient, tokenId))
+        .to.be.revertedWith("Invalid recipient");
+    });
+
+    it("Should fail to reward NFT from non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const nftAddress = user2.address;
+      const recipient = user3.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user1).rewardFanNFT(fanClubId, nftAddress, recipient, tokenId))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+
+    it("Should fail to get NFT from non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.getFanNFT(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+  });
+
+  describe("Marketplace Functions", function () {
+    beforeEach(async function () {
+      await fanClubs.connect(user1).createFanClub("spfc", ethers.parseEther("0.1"));
+    });
+
+    it("Should fail to create marketplace if not owner", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = user2.address;
+      
+      await expect(fanClubs.connect(user2).createMarketplace(fanClubId, tokenAddress))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to create marketplace for non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const tokenAddress = user2.address;
+      
+      await expect(fanClubs.connect(user1).createMarketplace(fanClubId, tokenAddress))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+
+    it("Should fail to create marketplace with invalid token address", async function () {
+      const fanClubId = "spfc";
+      const tokenAddress = ethers.ZeroAddress;
+      
+      await expect(fanClubs.connect(user1).createMarketplace(fanClubId, tokenAddress))
+        .to.be.revertedWith("Invalid token address");
+    });
+
+    it("Should fail to list item if not owner", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      const price = ethers.parseEther("1");
+      
+      await expect(fanClubs.connect(user2).listItem(fanClubId, nftAddress, tokenId, price))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to list item with zero price", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      const price = 0;
+      
+      await expect(fanClubs.connect(user1).listItem(fanClubId, nftAddress, tokenId, price))
+        .to.be.revertedWith("Price must be greater than 0");
+    });
+
+    it("Should fail to delist item if not owner", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user2).delistItem(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Only fan club owner");
+    });
+
+    it("Should fail to buy from non-existent fan club", async function () {
+      const fanClubId = "nonexistent";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user2).buy(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Fan club does not exist");
+    });
+
+    it("Should fail to buy if not a member", async function () {
+      const fanClubId = "spfc";
+      const nftAddress = user2.address;
+      const tokenId = 1;
+      
+      await expect(fanClubs.connect(user3).buy(fanClubId, nftAddress, tokenId))
+        .to.be.revertedWith("Only members can buy");
+    });
+  });
+
   describe("Edge Cases and Security", function () {
     it("Should handle multiple fan clubs correctly", async function () {
       await fanClubs.connect(user1).createFanClub("spfc", ethers.parseEther("0.1"));
