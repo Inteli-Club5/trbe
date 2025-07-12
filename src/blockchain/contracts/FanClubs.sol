@@ -2,6 +2,11 @@
 // Chiliz Spicy Testnet
 pragma solidity ^0.8.20;
 
+interface IERC20 {
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function transfer(address to, uint256 value) external returns (bool);
+}
+
 contract FanClubs {
     struct FanClub {
         address owner;
@@ -13,12 +18,15 @@ contract FanClubs {
     mapping(string => FanClub) private fanClubs;
     mapping(string => bool) private fanClubExists;
     mapping(string => uint256) private fanClubBalances;
+    mapping(string => mapping(address => uint256)) private fanTokenBalances; 
 
     modifier onlyClubOwner(string memory fanClubId) {
         require(fanClubExists[fanClubId], "Fan club does not exist");
         require(msg.sender == fanClubs[fanClubId].owner, "Only fan club owner");
         _;
     }
+
+    constructor() {}
 
     function createFanClub(string memory fanClubId, uint256 _price) external {
         require(!fanClubExists[fanClubId], "Fan club already exists");
@@ -84,7 +92,7 @@ contract FanClubs {
         require(amount > 0, "No balance to withdraw");
         require(fanClubBalances[fanClubId] >= amount, "Insufficient balance");
 
-        fanClubBalances[fanClubId] = fanClubBalances[fanClubId] - amount;
+        fanClubBalances[fanClubId] -= amount;
         payable(msg.sender).transfer(amount);
     }
 
@@ -101,5 +109,36 @@ contract FanClubs {
     function getBalance(string memory fanClubId) external onlyClubOwner(fanClubId) view returns (uint256) {
         require(fanClubExists[fanClubId], "Fan club does not exist");
         return fanClubBalances[fanClubId];
+    }
+
+    function depositFanTokens(string memory fanClubId, address tokenAddress, uint256 amount) external {
+        require(amount > 0, "Amount must be greater than 0");
+
+        bool success = IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
+        require(success, "Token transfer failed");
+
+        fanTokenBalances[fanClubId][tokenAddress] += amount;
+    }
+
+    function withdrawFanTokens(string memory fanClubId, address tokenAddress, uint256 amount) external onlyClubOwner(fanClubId) {
+        require(fanClubExists[fanClubId], "Fan club does not exist");
+        require(fanTokenBalances[fanClubId][tokenAddress] > amount, "Insufficient token balance");
+
+        fanTokenBalances[fanClubId][tokenAddress] -= amount;
+        bool success = IERC20(tokenAddress).transfer(msg.sender, amount);
+        require(success, "Token withdrawal failed");
+    }
+
+    function rewardFanToken(string memory fanClubId, address tokenAddress, address recipient, uint256 amount) external onlyClubOwner(fanClubId) {
+        require(amount > 0, "Amount must be greater than 0");
+        require(fanTokenBalances[fanClubId][tokenAddress] > amount, "Insufficient token balance");
+
+        fanTokenBalances[fanClubId][tokenAddress] -= amount;
+        bool success = IERC20(tokenAddress).transfer(recipient, amount);
+        require(success, "Token reward failed");
+    }
+
+    function getFanTokenBalance(string memory fanClubId, address tokenAddress) external onlyClubOwner(fanClubId) view returns (uint256) {
+        return fanTokenBalances[fanClubId][tokenAddress];
     }
 }
