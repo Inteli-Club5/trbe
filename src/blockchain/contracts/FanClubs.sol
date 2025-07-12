@@ -7,6 +7,11 @@ interface IERC20 {
     function transfer(address to, uint256 value) external returns (bool);
 }
 
+interface IERC721 {
+    function transferFrom(address from, address to, uint256 tokenId) external;
+}
+
+
 contract FanClubs {
     struct FanClub {
         address owner;
@@ -18,6 +23,7 @@ contract FanClubs {
     mapping(string => FanClub) private fanClubs;
     mapping(string => bool) private fanClubExists;
     mapping(string => uint256) private fanClubBalances;
+    mapping(string => mapping(address => uint256[])) private fanClubNFTs;
     mapping(string => mapping(address => uint256)) private fanTokenBalances; 
 
     modifier onlyClubOwner(string memory fanClubId) {
@@ -140,5 +146,76 @@ contract FanClubs {
 
     function getFanTokenBalance(string memory fanClubId, address tokenAddress) external onlyClubOwner(fanClubId) view returns (uint256) {
         return fanTokenBalances[fanClubId][tokenAddress];
+    }
+
+    function depositFanNFT(string memory fanClubId, address nftAddress, uint256 tokenId) external {
+        require(fanClubExists[fanClubId], "Fan club does not exist");
+        require(nftAddress != address(0), "Invalid NFT contract");
+
+        IERC721(nftAddress).transferFrom(msg.sender, address(this), tokenId);
+        fanClubNFTs[fanClubId][nftAddress].push(tokenId);
+    }
+
+    function withdrawFanNFT(string memory fanClubId, address nftAddress, uint256 tokenId) external onlyClubOwner(fanClubId) {
+        require(fanClubExists[fanClubId], "Fan club does not exist");
+
+        uint256[] storage tokenList = fanClubNFTs[fanClubId][nftAddress];
+        bool found = false;
+        uint256 index;
+
+        for (uint256 i = 0; i < tokenList.length; i++) {
+            if (tokenList[i] == tokenId) {
+                found = true;
+                index = i;
+                break;
+            }
+        }
+
+        require(found, "Token not found for this fan club");
+
+        tokenList[index] = tokenList[tokenList.length - 1];
+        tokenList.pop();
+
+        IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenId);
+    }
+
+    function rewardFanNFT(string memory fanClubId, address nftAddress, address recipient, uint256 tokenId) external onlyClubOwner(fanClubId) {
+        require(recipient != address(0), "Invalid recipient");
+        require(fanClubExists[fanClubId], "Fan club does not exist");
+
+        uint256[] storage tokenList = fanClubNFTs[fanClubId][nftAddress];
+        bool found = false;
+        uint256 index;
+
+        for (uint256 i = 0; i < tokenList.length; i++) {
+            if (tokenList[i] == tokenId) {
+                found = true;
+                index = i;
+                break;
+            }
+        }
+
+        require(found, "Token not owned by fan club");
+
+        tokenList[index] = tokenList[tokenList.length - 1];
+        tokenList.pop();
+
+        IERC721(nftAddress).transferFrom(address(this), recipient, tokenId);
+    }
+
+    function getFanNFT(string memory fanClubId, address nftAddress, uint256 tokenId) external view returns (bool) {
+        require(fanClubExists[fanClubId], "Fan club does not exist");
+
+        uint256[] storage tokenList = fanClubNFTs[fanClubId][nftAddress];
+        bool found = false;
+
+        for (uint256 i = 0; i < tokenList.length; i++) {
+            if (tokenList[i] == tokenId) {
+                found = true;
+                break;
+            }
+        }
+
+        return found;
     }
 }
