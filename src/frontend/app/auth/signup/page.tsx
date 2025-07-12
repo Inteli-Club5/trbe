@@ -10,8 +10,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Eye, EyeOff, Upload, Twitter } from "lucide-react"
 import Link from "next/link"
+import ConnectButton from "../../../hooks/ConnectButton"
 
 export default function SignupPage() {
+
+  const handleTwitterAuth = () => {
+    window.open("http://localhost:5001", "_blank", "width=500,height=600");
+  };
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -65,6 +71,19 @@ export default function SignupPage() {
             >
               Add photo
             </Button>
+          </div>
+
+          <div className="space-y-4">
+            <ConnectButton></ConnectButton>
+            
+            {/* Botão de conexão com Twitter */}
+            <button
+              onClick={handleTwitterAuth}
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#1DA1F2] hover:bg-[#1A91DA] text-white font-semibold transition-colors"
+            >
+              <Twitter className="h-5 w-5" />
+              Conectar com Twitter
+            </button>
           </div>
 
           <div className="space-y-2">
