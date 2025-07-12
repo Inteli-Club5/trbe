@@ -5,10 +5,16 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import { startAuth, handleCallback } from './oauth';
 import connectSqlite3 from 'connect-sqlite3';
+import cors from 'cors'
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:3000', // seu frontend
+  credentials: true, // se estiver usando cookies/sessão
+}));
 
 const SQLiteStore = connectSqlite3(session);
 
@@ -43,7 +49,7 @@ app.get('/api/oauth/twitter/status', (req, res) => {
 });
 
 
-const port = 5001;
+const port = 5000;
 app.listen(port, () => {
   console.log(`Servidor OAuth rodando em http://localhost:${port}`);
 });

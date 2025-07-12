@@ -103,7 +103,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/users - Create new user
-router.post('/', validateUser, handleValidationErrors, async (req, res) => {
+router.post('/users', validateUser, handleValidationErrors, async (req, res) => {
   try {
     const {
       password,
