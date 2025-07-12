@@ -50,10 +50,10 @@ export function BottomNavigation() {
 
           return (
             <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1">
-              <div className={`p-2 rounded-full ${item.isActive ? "bg-[#28CA00]" : ""}`}>
-                <IconComponent className={`h-5 w-5 ${item.isActive ? "text-black" : "text-gray-500 dark:text-gray-400"}`} />
+              <div className={`p-2 rounded-full ${item.isActive ? "bg-black dark:bg-white" : ""}`}>
+                <IconComponent className={`h-5 w-5 ${item.isActive ? "text-white dark:text-black" : "text-gray-500 dark:text-gray-400"}`} />
               </div>
-              <span className={`text-xs ${item.isActive ? "text-[#28CA00]" : "text-gray-500 dark:text-gray-400"}`}>
+              <span className={`text-xs ${item.isActive ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-400"}`}>
                 {item.label}
               </span>
             </Link>

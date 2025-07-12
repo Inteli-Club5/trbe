@@ -22,7 +22,7 @@ import {
   Heart,
   Award,
   Gem,
-  Fire,
+  Flame,
   Lock,
 } from "lucide-react"
 import Link from "next/link"
@@ -126,7 +126,7 @@ export default function BadgesPage() {
       category: "social",
       rarity: "gold",
       icon: "🔥",
-      iconComponent: Fire,
+      iconComponent: Flame,
       requirement: "100 social shares",
       earned: true,
       progress: 100,
@@ -311,43 +311,43 @@ export default function BadgesPage() {
   }
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
       {/* Header */}
-      <header className="bg-black border-b border-gray-800 p-4">
+      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4">
         <div className="flex items-center justify-between">
           <Link href="/profile">
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-6 w-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-semibold">Badge Collection</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Badge Collection</h1>
           <div className="w-10"></div>
         </div>
       </header>
 
       <div className="p-4 space-y-6">
         {/* Progress Summary */}
-        <Card className="bg-[#28CA00]/10 border-[#28CA00]">
+        <Card className="bg-black/10 dark:bg-white/20 border-black dark:border-white shadow-sm">
           <CardContent className="p-6">
             <div className="text-center space-y-4">
               <div className="flex items-center justify-center gap-2 mb-4">
-                <Trophy className="h-8 w-8 text-[#28CA00]" />
-                <span className="text-lg font-semibold text-white">Badge Progress</span>
+                <Trophy className="h-8 w-8 text-black dark:text-white" />
+                <span className="text-lg font-semibold text-gray-900 dark:text-white">Badge Progress</span>
               </div>
 
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-[#28CA00]">{earnedBadges.length}/{allBadges.length}</div>
-                <div className="text-sm text-gray-300">Badges Earned</div>
+                <div className="text-3xl font-bold text-black dark:text-white">{earnedBadges.length}/{allBadges.length}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Badges Earned</div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Collection Progress</span>
-                  <span className="text-[#28CA00]">{Math.round((earnedBadges.length / allBadges.length) * 100)}%</span>
+                  <span className="text-gray-600 dark:text-gray-400">Collection Progress</span>
+                  <span className="text-black dark:text-white">{Math.round((earnedBadges.length / allBadges.length) * 100)}%</span>
                 </div>
-                <Progress value={(earnedBadges.length / allBadges.length) * 100} className="h-3 bg-gray-800">
+                <Progress value={(earnedBadges.length / allBadges.length) * 100} className="h-3 bg-gray-200 dark:bg-gray-800">
                   <div
-                    className="h-full bg-[#28CA00] rounded-full transition-all"
+                    className="h-full bg-black dark:bg-white rounded-full transition-all"
                     style={{ width: `${(earnedBadges.length / allBadges.length) * 100}%` }}
                   />
                 </Progress>
@@ -358,43 +358,40 @@ export default function BadgesPage() {
 
         {/* Category Filters */}
         <Tabs value={filter} onValueChange={setFilter} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 gap-2 bg-gray-800 h-auto p-2">
+          <TabsList className="grid w-full grid-cols-6 gap-2 bg-gray-100 dark:bg-gray-800 h-auto p-2">
             <TabsTrigger
               value="all"
-              className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-sm py-2"
+              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-sm py-2"
             >
               All ({allBadges.length})
             </TabsTrigger>
             <TabsTrigger
               value="attendance"
-              className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-sm py-2"
+              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-sm py-2"
             >
               Attendance
             </TabsTrigger>
             <TabsTrigger
               value="social"
-              className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-sm py-2"
+              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-sm py-2"
             >
               Social
             </TabsTrigger>
-          </TabsList>
-          
-          <TabsList className="grid w-full grid-cols-3 gap-2 bg-gray-800 h-auto p-2 mt-2">
             <TabsTrigger
               value="shopping"
-              className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-sm py-2"
+              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-sm py-2"
             >
               Shopping
             </TabsTrigger>
             <TabsTrigger
               value="engagement"
-              className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-sm py-2"
+              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-sm py-2"
             >
               Engagement
             </TabsTrigger>
             <TabsTrigger
               value="special"
-              className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-sm py-2"
+              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-sm py-2"
             >
               Special
             </TabsTrigger>
@@ -410,7 +407,7 @@ export default function BadgesPage() {
               return (
                 <Card
                   key={badge.id}
-                  className={`bg-gray-900 border-gray-800 ${isLocked ? "opacity-75" : ""}`}
+                  className={`bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm ${isLocked ? "opacity-75" : ""}`}
                 >
                   <CardContent className="p-4 text-center">
                     {/* Lock overlay for unearned badges */}
@@ -428,10 +425,10 @@ export default function BadgesPage() {
                     </div>
 
                     {/* Badge Info */}
-                    <h3 className={`font-semibold text-sm mb-1 ${isLocked ? "text-gray-400" : "text-white"}`}>
+                    <h3 className={`font-semibold text-sm mb-1 ${isLocked ? "text-gray-400" : "text-gray-900 dark:text-white"}`}>
                       {badge.name}
                     </h3>
-                    <p className="text-xs text-gray-400 mb-2">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
                       {badge.description}
                     </p>
 
@@ -439,7 +436,7 @@ export default function BadgesPage() {
                     <Badge 
                       variant="outline" 
                       className={`text-xs mb-2 ${
-                        isLocked ? "border-gray-600 text-gray-500" : `${getRarityColor(badge.rarity)} border-current`
+                        isLocked ? "border-gray-300 dark:border-gray-600 text-gray-500" : `${getRarityColor(badge.rarity)} border-current`
                       }`}
                     >
                       {badge.rarity.charAt(0).toUpperCase() + badge.rarity.slice(1)}
@@ -449,15 +446,15 @@ export default function BadgesPage() {
                     {badge.maxProgress > 1 && (
                       <div className="space-y-1 mb-2">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-400">Progress</span>
-                          <span className={isLocked ? "text-gray-500" : "text-[#28CA00]"}>
+                          <span className="text-gray-600 dark:text-gray-400">Progress</span>
+                          <span className={isLocked ? "text-gray-500" : "text-black dark:text-white"}>
                             {badge.progress}/{badge.maxProgress}
                           </span>
                         </div>
-                        <Progress value={progressPercentage} className="h-1.5 bg-gray-800">
+                        <Progress value={progressPercentage} className="h-1.5 bg-gray-200 dark:bg-gray-800">
                           <div
                             className={`h-full rounded-full transition-all ${
-                              isLocked ? "bg-gray-600" : "bg-[#28CA00]"
+                              isLocked ? "bg-gray-400 dark:bg-gray-600" : "bg-black dark:bg-white"
                             }`}
                             style={{ width: `${progressPercentage}%` }}
                           />
@@ -467,14 +464,14 @@ export default function BadgesPage() {
 
                     {/* Tokens Reward */}
                     <div className="flex items-center justify-center gap-1">
-                      <Trophy className={`h-3 w-3 ${isLocked ? "text-gray-500" : "text-[#28CA00]"}`} />
-                      <span className={`text-xs font-medium ${isLocked ? "text-gray-500" : "text-[#28CA00]"}`}>
+                      <Trophy className={`h-3 w-3 ${isLocked ? "text-gray-500" : "text-black dark:text-white"}`} />
+                      <span className={`text-xs font-medium ${isLocked ? "text-gray-500" : "text-black dark:text-white"}`}>
                         +{badge.tokens} tokens
                       </span>
                     </div>
 
                     {/* Requirements */}
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-gray-500 dark:text-gray-500">
                       {badge.requirement}
                     </div>
                   </CardContent>

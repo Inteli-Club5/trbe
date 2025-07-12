@@ -103,7 +103,7 @@ export default function EventsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "open":
-        return "bg-[#28CA00] text-black"
+        return "bg-black dark:bg-white text-white dark:text-black"
       case "full":
         return "bg-yellow-600 text-white"
       case "finished":
@@ -168,7 +168,7 @@ export default function EventsPage() {
         <div className="grid grid-cols-3 gap-4">
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-[#28CA00]">8</div>
+              <div className="text-2xl font-bold text-black dark:text-white">8</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">This Month</div>
             </CardContent>
           </Card>
@@ -193,7 +193,7 @@ export default function EventsPage() {
               <TabsTrigger
                 key={category.id}
                 value={category.id}
-                className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
               >
                 <div className="text-center">
                   <div>{category.name}</div>
@@ -243,8 +243,8 @@ export default function EventsPage() {
                           <span className="text-sm font-medium text-gray-900 dark:text-white">{event.organizer}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold text-[#28CA00]">{event.price}</span>
-                          <Button size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
+                          <span className="text-lg font-bold text-black dark:text-white">{event.price}</span>
+                          <Button size="sm" className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">
                             Register
                           </Button>
                         </div>
@@ -254,11 +254,11 @@ export default function EventsPage() {
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600 dark:text-gray-400">Registration Progress</span>
-                            <span className="text-[#28CA00]">{Math.round((event.participants / event.maxParticipants) * 100)}%</span>
+                            <span className="text-black dark:text-white">{Math.round((event.participants / event.maxParticipants) * 100)}%</span>
                           </div>
                           <Progress value={(event.participants / event.maxParticipants) * 100} className="h-2 bg-gray-200 dark:bg-gray-800">
                             <div
-                              className="h-full bg-[#28CA00] rounded-full transition-all"
+                              className="h-full bg-black dark:bg-white rounded-full transition-all"
                               style={{ width: `${(event.participants / event.maxParticipants) * 100}%` }}
                             />
                           </Progress>
