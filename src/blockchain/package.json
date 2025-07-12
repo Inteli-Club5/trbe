@@ -4,10 +4,16 @@
     "test": "hardhat test",
     "compile": "hardhat compile",
     "deploy": "hardhat run scripts/deploy.js --network spicy",
+    "deploy:local": "hardhat run scripts/deploy.js --network hardhat",
+    "verify": "hardhat run scripts/verify-deployment.js --network spicy",
+    "verify:local": "hardhat run scripts/verify-deployment.js --network hardhat",
     "test:fanclubs": "hardhat test test/FanClubs.test.js",
     "test:scoreuser": "hardhat test test/ScoreUser.test.js",
+    "test:nftbadge": "hardhat test test/NftBadge.test.js",
     "run-tests": "node scripts/run-tests.js",
-    "test:all": "npm run test:fanclubs && npm run test:scoreuser"
+    "test:all": "npm run test:fanclubs && npm run test:scoreuser && npm run test:nftbadge",
+    "clean": "hardhat clean",
+    "compile:force": "hardhat clean && hardhat compile"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.9",

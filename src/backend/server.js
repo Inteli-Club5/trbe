@@ -394,6 +394,171 @@ app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
   }
 });
 
+app.post('/deploy/nftBadge', async (req, res) => {
+  try {
+    const { name, symbol, baseURI } = req.body;
+
+    if (!name || !symbol || !baseURI) {
+      return res.status(400).json({ error: 'name, symbol and baseURI are required' });
+    }
+
+    const artifactPathNFTBadge = path.join(__dirname, 'abis', 'NFTBadge.json');
+
+    const artifact = JSON.parse(fs.readFileSync(artifactPathNFTBadge, 'utf8'));
+    const { abi, bytecode } = artifact;
+
+    const factory = new ethers.ContractFactory(abi, bytecode, wallet);
+
+    const contract = await factory.deploy(name, symbol, baseURI);
+    await contract.waitForDeployment();
+
+    const deployedAddress = await contract.getAddress();
+
+    res.status(200).json({
+      message: 'NFTBadge deployed successfully',
+      contractAddress: deployedAddress,
+      name,
+      symbol,
+      baseURI
+    });
+  } catch (error) {
+    console.error('[DEPLOY NFTBADGE ERROR]', error);
+    res.status(500).json({ error: error.message || error.toString() });
+  }
+});
+
+app.post('/mint/nftBadge', async (req, res) => {
+  try {
+    const { contractAddress, to } = req.body;
+
+    if (!contractAddress || !to) {
+      return res.status(400).json({ error: 'contractAddress and to are required' });
+    }
+
+    const artifactPathNFTBadge = path.join(__dirname, 'abis', 'NFTBadge.json');
+    const artifact = JSON.parse(fs.readFileSync(artifactPathNFTBadge, 'utf8'));
+    const { abi } = artifact;
+
+    const contract = new ethers.Contract(contractAddress, abi, wallet);
+
+    const tx = await contract.mint(to);
+    const receipt = await tx.wait();
+    const tokenId = BigInt(receipt.logs[0].topics[3]).toString();
+
+    res.json({
+      transactionHash: tx.hash,
+      tokenId,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/approve/nftBadge', async (req, res) => {
+  try {
+    const { contractAddress, approvedAddress, tokenId } = req.body;
+
+    if (!contractAddress || !approvedAddress || !tokenId) {
+      return res.status(400).json({ error: 'contractAddress, approvedAddress and tokenId are required' });
+    }
+
+    const artifactPathNFTBadge = path.join(__dirname, 'abis', 'NFTBadge.json');
+    const artifact = JSON.parse(fs.readFileSync(artifactPathNFTBadge, 'utf8'));
+    const { abi } = artifact;
+
+    const contract = new ethers.Contract(contractAddress, abi, wallet);
+
+    const owner = await contract.ownerOf(tokenId);
+    console.log('Owner of token:', owner);
+    console.log('Wallet address:', wallet.address);
+
+    const tx = await contract.approve(approvedAddress, tokenId);
+    const receipt = await tx.wait();
+
+    res.json({
+      message: 'NFT approved successfully',
+      transactionHash: tx.hash,
+      receipt,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/depositFanNFT', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { nftAddress, tokenId } = req.body;
+
+    if (!nftAddress || tokenId === undefined)
+      return res.status(400).json({ error: 'nftAddress and tokenId are required' });
+
+    const tx = await fanClubsContract.depositFanNFT(fanClubId, nftAddress, tokenId);
+    await tx.wait();
+
+    res.json({ message: 'NFT deposited successfully', txHash: tx.hash });
+  } catch (error) {
+    console.error('[DEPOSIT FAN NFT ERROR]', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/withdrawFanNFT', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { nftAddress, tokenId } = req.body;
+
+    if (!nftAddress || tokenId === undefined)
+      return res.status(400).json({ error: 'nftAddress and tokenId are required' });
+
+    const tx = await fanClubsContract.withdrawFanNFT(fanClubId, nftAddress, tokenId);
+    await tx.wait();
+
+    res.json({ message: 'NFT withdrawn successfully', txHash: tx.hash });
+  } catch (error) {
+    console.error('[WITHDRAW FAN NFT ERROR]', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/rewardFanNFT', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { nftAddress, recipient, tokenId } = req.body;
+
+    if (!nftAddress || !recipient || tokenId === undefined)
+      return res.status(400).json({ error: 'nftAddress, recipient, and tokenId are required' });
+
+    const tx = await fanClubsContract.rewardFanNFT(fanClubId, nftAddress, recipient, tokenId);
+    await tx.wait();
+
+    res.json({ message: 'NFT rewarded successfully', txHash: tx.hash });
+  } catch (error) {
+    console.error('[REWARD FAN NFT ERROR]', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/fanclub/:fanClubId/getFanNFT', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { nftAddress, tokenId } = req.query;
+
+    if (!nftAddress || tokenId === undefined)
+      return res.status(400).json({ error: 'nftAddress and tokenId are required' });
+
+    const result = await fanClubsContract.getFanNFT(fanClubId, nftAddress, tokenId);
+    res.json({ ownedByFanClub: result });
+  } catch (error) {
+    console.error('[GET FAN NFT ERROR]', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Serve the frontend for all non-API routes
 app.get('*', (req, res) => {
   // Skip API routes
