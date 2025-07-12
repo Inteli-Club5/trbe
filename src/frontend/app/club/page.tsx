@@ -210,8 +210,8 @@ export default function ClubPage() {
               variant={activeView === "club" ? "default" : "ghost"}
               className={`flex-1 ${
                 activeView === "club"
-                  ? "bg-[#28CA00] text-black hover:bg-[#20A000]"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                  ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
               onClick={() => setActiveView("club")}
             >
@@ -222,8 +222,8 @@ export default function ClubPage() {
               variant={activeView === "fangroup" ? "default" : "ghost"}
               className={`flex-1 ${
                 activeView === "fangroup"
-                  ? "bg-[#28CA00] text-black hover:bg-[#20A000]"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                  ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
               onClick={() => setActiveView("fangroup")}
             >
@@ -238,12 +238,12 @@ export default function ClubPage() {
         <div className="space-y-6">
           {/* Club Header */}
           <div className="relative">
-            <div className="h-32 bg-gradient-to-r from-blue-900 to-blue-700"></div>
+            <div className="h-32 bg-gradient-to-r from-black to-gray-700 dark:from-white dark:to-gray-300"></div>
             <div className="absolute inset-0 bg-black/30"></div>
             <div className="absolute bottom-4 left-4 right-4">
               <div className="flex items-end gap-4">
                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-2xl font-bold text-blue-600">CFC</span>
+                  <span className="text-2xl font-bold text-black dark:text-white">CFC</span>
                 </div>
                 <div className="flex-1">
                   <h1 className="text-2xl font-bold text-white">{clubInfo.shortName}</h1>
@@ -259,7 +259,7 @@ export default function ClubPage() {
                     </div>
                   </div>
                 </div>
-                <Button className="bg-[#28CA00] hover:bg-[#20A000] text-black">
+                <Button className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">
                   <Heart className="h-4 w-4 mr-2" />
                   Following
                 </Button>
@@ -272,7 +272,7 @@ export default function ClubPage() {
             <div className="grid grid-cols-3 gap-4">
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                 <CardContent className="p-4 text-center">
-                  <Trophy className="h-6 w-6 text-[#28CA00] mx-auto mb-2" />
+                  <Trophy className="h-6 w-6 text-black dark:text-white mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900 dark:text-white">34</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Titles</div>
                 </CardContent>
@@ -280,7 +280,7 @@ export default function ClubPage() {
 
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                 <CardContent className="p-4 text-center">
-                  <Users className="h-6 w-6 text-[#28CA00] mx-auto mb-2" />
+                  <Users className="h-6 w-6 text-black dark:text-white mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900 dark:text-white">35K</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">On TRIBE</div>
                 </CardContent>
@@ -288,7 +288,7 @@ export default function ClubPage() {
 
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                 <CardContent className="p-4 text-center">
-                  <Star className="h-6 w-6 text-[#28CA00] mx-auto mb-2" />
+                  <Star className="h-6 w-6 text-black dark:text-white mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900 dark:text-white">#2</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Ranking</div>
                 </CardContent>
@@ -300,25 +300,25 @@ export default function ClubPage() {
               <TabsList className="grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800">
                 <TabsTrigger
                   value="games"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   Games
                 </TabsTrigger>
                 <TabsTrigger
                   value="fangroups"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   Fan Groups
                 </TabsTrigger>
                 <TabsTrigger
                   value="news"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   News
                 </TabsTrigger>
                 <TabsTrigger
                   value="ranking"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   Top Fans
                 </TabsTrigger>
@@ -328,7 +328,7 @@ export default function ClubPage() {
                 <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-[#28CA00]" />
+                      <Calendar className="h-5 w-5 text-black dark:text-white" />
                       Upcoming Games
                     </CardTitle>
                   </CardHeader>
@@ -369,14 +369,14 @@ export default function ClubPage() {
                 {fanGroups.map((fanGroup) => (
                   <Card
                     key={fanGroup.name}
-                    className={`bg-white dark:bg-gray-900 ${fanGroup.isUserMember ? "border-[#28CA00]" : "border-gray-200 dark:border-gray-800"} shadow-sm`}
+                    className={`bg-white dark:bg-gray-900 ${fanGroup.isUserMember ? "border-black dark:border-white" : "border-gray-200 dark:border-gray-800"} shadow-sm`}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="font-semibold text-gray-900 dark:text-white">{fanGroup.name}</h3>
-                            {fanGroup.isUserMember && <Badge className="bg-[#28CA00] text-black text-xs">Member</Badge>}
+                            {fanGroup.isUserMember && <Badge className="bg-black dark:bg-white text-white dark:text-black text-xs">Member</Badge>}
                           </div>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{fanGroup.description}</p>
                           <div className="flex items-center gap-4 text-sm">
@@ -391,7 +391,7 @@ export default function ClubPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg font-bold text-[#28CA00]">
+                          <div className="text-lg font-bold text-black dark:text-white">
                             {(fanGroup.totalPoints / 1000000).toFixed(1)}M
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">total points</div>
@@ -402,7 +402,7 @@ export default function ClubPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="border-[#28CA00] text-[#28CA00] hover:bg-[#28CA00] hover:text-black bg-transparent"
+                            className="border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black bg-transparent"
                           >
                             View Fan Group
                           </Button>
@@ -428,7 +428,7 @@ export default function ClubPage() {
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{news.summary}</p>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-gray-500 dark:text-gray-400">{news.time}</span>
-                            <Button size="sm" variant="ghost" className="text-[#28CA00] hover:bg-[#28CA00]/10">
+                            <Button size="sm" variant="ghost" className="text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10">
                               <ExternalLink className="h-3 w-3 mr-1" />
                               Read more
                             </Button>
@@ -456,7 +456,7 @@ export default function ClubPage() {
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 text-center">
-                            <span className="text-lg font-bold text-[#28CA00]">#{fan.position}</span>
+                            <span className="text-lg font-bold text-black dark:text-white">#{fan.position}</span>
                           </div>
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={fan.avatar || "/placeholder.svg"} />
@@ -473,7 +473,7 @@ export default function ClubPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-[#28CA00]">{fan.points.toLocaleString()}</div>
+                          <div className="font-bold text-black dark:text-white">{fan.points.toLocaleString()}</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">points</div>
                         </div>
                       </div>
@@ -492,12 +492,12 @@ export default function ClubPage() {
           {/* User's Fan Group Header (if member) */}
           {userFanGroup && (
             <div className="relative">
-              <div className="h-32 bg-gradient-to-r from-[#28CA00] to-green-700"></div>
+              <div className="h-32 bg-gradient-to-r from-black to-gray-700 dark:from-white dark:to-gray-300"></div>
               <div className="absolute inset-0 bg-black/30"></div>
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="flex items-end gap-4">
                   <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-[#28CA00]">BP</span>
+                    <span className="text-2xl font-bold text-black dark:text-white">BP</span>
                   </div>
                   <div className="flex-1">
                     <h1 className="text-2xl font-bold text-white">{userFanGroup.name}</h1>
@@ -513,7 +513,7 @@ export default function ClubPage() {
                       </div>
                     </div>
                   </div>
-                  <Button className="bg-white hover:bg-gray-100 text-gray-900">
+                  <Button className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">
                     <Activity className="h-4 w-4 mr-2" />
                     Active Member
                   </Button>
@@ -527,7 +527,7 @@ export default function ClubPage() {
             <div className="grid grid-cols-2 gap-4">
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                 <CardContent className="p-4 text-center">
-                  <Users className="h-6 w-6 text-[#28CA00] mx-auto mb-2" />
+                  <Users className="h-6 w-6 text-black dark:text-white mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900 dark:text-white">{fanGroups.length}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Active Groups</div>
                 </CardContent>
@@ -535,7 +535,7 @@ export default function ClubPage() {
 
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                 <CardContent className="p-4 text-center">
-                  <TrendingUp className="h-6 w-6 text-[#28CA00] mx-auto mb-2" />
+                  <TrendingUp className="h-6 w-6 text-black dark:text-white mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900 dark:text-white">
                     +{fanGroups.reduce((total, fg) => total + fg.weeklyGrowth, 0)}
                   </div>
@@ -549,19 +549,19 @@ export default function ClubPage() {
               <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
               <TabsTrigger
                   value="events"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   Events
                 </TabsTrigger>
                 <TabsTrigger
                   value="all"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   All Groups
                 </TabsTrigger>
                 <TabsTrigger
                   value="rankings"
-                  className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black text-xs"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   Rankings
                 </TabsTrigger>
@@ -571,14 +571,14 @@ export default function ClubPage() {
                 {fanGroups.map((fanGroup) => (
                   <Card
                     key={fanGroup.id}
-                    className={`bg-white dark:bg-gray-900 ${fanGroup.isUserMember ? "border-[#28CA00]" : "border-gray-200 dark:border-gray-800"} shadow-sm`}
+                    className={`bg-white dark:bg-gray-900 ${fanGroup.isUserMember ? "border-black dark:border-white" : "border-gray-200 dark:border-gray-800"} shadow-sm`}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{fanGroup.name}</h3>
-                            {fanGroup.isUserMember && <Badge className="bg-[#28CA00] text-black text-xs">Your Group</Badge>}
+                            {fanGroup.isUserMember && <Badge className="bg-black dark:bg-white text-white dark:text-black text-xs">Your Group</Badge>}
                             <Badge variant="outline" className="text-xs">#{fanGroup.ranking}</Badge>
                           </div>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{fanGroup.description}</p>
@@ -590,7 +590,7 @@ export default function ClubPage() {
                               <div className="text-xs text-gray-500 dark:text-gray-400">Members</div>
                             </div>
                             <div className="text-center">
-                              <div className="text-lg font-bold text-[#28CA00]">+{fanGroup.weeklyGrowth}</div>
+                              <div className="text-lg font-bold text-green-600 dark:text-green-400">+{fanGroup.weeklyGrowth}</div>
                               <div className="text-xs text-gray-500 dark:text-gray-400">This Week</div>
                             </div>
                             <div className="text-center">
@@ -631,13 +631,13 @@ export default function ClubPage() {
                         </div>
 
                         <div className="text-right ml-4">
-                          <div className="text-xl font-bold text-[#28CA00]">
+                          <div className="text-xl font-bold text-black dark:text-white">
                             {(fanGroup.totalPoints / 1000000).toFixed(1)}M
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">total points</div>
                           
                           {fanGroup.isUserMember ? (
-                            <Button size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
+                            <Button size="sm" className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">
                               <Activity className="h-3 w-3 mr-1" />
                               Manage
                             </Button>
@@ -645,7 +645,7 @@ export default function ClubPage() {
                             <Button 
                               size="sm" 
                               variant="outline" 
-                              className="border-[#28CA00] text-[#28CA00] hover:bg-[#28CA00] hover:text-black"
+                              className="border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
                             >
                               Join Group
                             </Button>
@@ -661,7 +661,7 @@ export default function ClubPage() {
                 <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-[#28CA00]" />
+                      <Calendar className="h-5 w-5 text-black dark:text-white" />
                       Upcoming Fan Group Events
                     </CardTitle>
                   </CardHeader>
@@ -675,7 +675,7 @@ export default function ClubPage() {
                               className={`text-xs ${
                                 event.type === "Social" ? "bg-blue-600" :
                                 event.type === "Travel" ? "bg-purple-600" :
-                                "bg-green-600"
+                                "bg-black dark:bg-white text-white dark:text-black"
                               }`}
                             >
                               {event.type}
@@ -688,7 +688,7 @@ export default function ClubPage() {
                             <span>{event.attendees} attending</span>
                           </div>
                         </div>
-                        <Button size="sm" variant="outline" className="border-[#28CA00] text-[#28CA00] hover:bg-[#28CA00] hover:text-black">
+                        <Button size="sm" variant="outline" className="border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black">
                           Join Event
                         </Button>
                       </div>
@@ -701,7 +701,7 @@ export default function ClubPage() {
                 <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                      <Award className="h-5 w-5 text-[#28CA00]" />
+                      <Award className="h-5 w-5 text-black dark:text-white" />
                       Fan Group Rankings
                     </CardTitle>
                     <CardDescription className="text-gray-600 dark:text-gray-400">
@@ -715,7 +715,7 @@ export default function ClubPage() {
                         <div
                           key={fanGroup.id}
                           className={`flex items-center justify-between p-3 rounded-lg ${
-                            fanGroup.isUserMember ? "bg-[#28CA00]/10 border border-[#28CA00]" : "bg-gray-50 dark:bg-gray-800"
+                            fanGroup.isUserMember ? "bg-black/10 border border-black dark:border-white" : "bg-gray-50 dark:bg-gray-800"
                           }`}
                         >
                           <div className="flex items-center gap-3">
@@ -724,7 +724,7 @@ export default function ClubPage() {
                                 fanGroup.ranking === 1 ? "text-yellow-500" :
                                 fanGroup.ranking === 2 ? "text-gray-400" :
                                 fanGroup.ranking === 3 ? "text-amber-600" :
-                                "text-[#28CA00]"
+                                "text-black dark:text-white"
                               }`}>
                                 #{fanGroup.ranking}
                               </span>
@@ -733,7 +733,7 @@ export default function ClubPage() {
                               <div className="flex items-center gap-2">
                                 <h4 className="font-semibold text-gray-900 dark:text-white">{fanGroup.name}</h4>
                                 {fanGroup.isUserMember && (
-                                  <Badge className="bg-[#28CA00] text-black text-xs">Your Group</Badge>
+                                  <Badge className="bg-black dark:bg-white text-white dark:text-black text-xs">Your Group</Badge>
                                 )}
                               </div>
                               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
@@ -743,7 +743,7 @@ export default function ClubPage() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="font-bold text-[#28CA00]">
+                            <div className="font-bold text-black dark:text-white">
                               {(fanGroup.totalPoints / 1000000).toFixed(1)}M
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-400">total points</div>

@@ -153,7 +153,7 @@ export default function TasksPage() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
-        return "bg-green-600"
+        return "bg-black dark:bg-white"
       case "medium":
         return "bg-orange-500"
       case "hard":
@@ -168,9 +168,9 @@ export default function TasksPage() {
       case "available":
         return "border-gray-200 dark:border-gray-800"
       case "in_progress":
-        return "border-[#28CA00]"
+        return "border-black dark:border-white"
       case "completed":
-        return "border-green-600 bg-green-50 dark:bg-green-900/20"
+        return "border-black dark:border-white bg-black/5 dark:bg-white/20"
       default:
         return "border-gray-200 dark:border-gray-800"
     }
@@ -179,9 +179,9 @@ export default function TasksPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="h-5 w-5 text-green-500" />
+        return <CheckCircle className="h-5 w-5 text-black dark:text-white" />
       case "in_progress":
-        return <Clock className="h-5 w-5 text-[#28CA00]" />
+        return <Clock className="h-5 w-5 text-black dark:text-white" />
       default:
         return null
     }
@@ -220,7 +220,7 @@ export default function TasksPage() {
                 size="sm"
                 className={`${
                   filter === category.id
-                    ? "bg-[#28CA00] hover:bg-[#20A000] text-black"
+                    ? "bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black"
                     : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
                 onClick={() => setFilter(category.id)}
@@ -247,16 +247,16 @@ export default function TasksPage() {
                 <div className="flex items-start gap-4">
                   <div className={`p-3 rounded-full ${
                     task.status === "completed" 
-                      ? "bg-green-100 dark:bg-green-900/30" 
+                      ? "bg-black/10 dark:bg-white/30" 
                       : task.status === "in_progress"
-                      ? "bg-[#28CA00]/10 dark:bg-[#28CA00]/20"
+                      ? "bg-black/10 dark:bg-white/20"
                       : "bg-gray-100 dark:bg-gray-800"
                   }`}>
                     <IconComponent className={`h-6 w-6 ${
                       task.status === "completed"
-                        ? "text-green-600 dark:text-green-400"
+                        ? "text-black dark:text-white"
                         : task.status === "in_progress"
-                        ? "text-[#28CA00]"
+                        ? "text-black dark:text-white"
                         : "text-gray-400 dark:text-gray-500"
                     }`} />
                   </div>
@@ -283,7 +283,7 @@ export default function TasksPage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-bold text-[#28CA00]">+{task.tokens}</div>
+                        <div className="text-lg font-bold text-green-600 dark:text-green-400">+{task.tokens}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">tokens</div>
                       </div>
                     </div>
@@ -301,11 +301,11 @@ export default function TasksPage() {
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs">
                           <span className="text-gray-600 dark:text-gray-400">Progress</span>
-                          <span className="text-[#28CA00]">{task.progress}/{task.maxProgress}</span>
+                          <span className="text-black dark:text-white">{task.progress}/{task.maxProgress}</span>
                         </div>
                         <Progress value={progressPercentage} className="h-2 bg-gray-200 dark:bg-gray-800">
                           <div
-                            className="h-full bg-[#28CA00] rounded-full transition-all"
+                            className="h-full bg-black dark:bg-white rounded-full transition-all"
                             style={{ width: `${progressPercentage}%` }}
                           />
                         </Progress>
@@ -315,7 +315,7 @@ export default function TasksPage() {
                     {task.status === "available" && (
                       <Button
                         size="sm"
-                        className="bg-[#28CA00] hover:bg-[#20A000] text-black"
+                        className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black"
                       >
                         Start Task
                       </Button>
@@ -325,14 +325,14 @@ export default function TasksPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-[#28CA00] text-[#28CA00] hover:bg-[#28CA00] hover:text-black"
+                        className="border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
                       >
                         Continue
                       </Button>
                     )}
 
                     {task.status === "completed" && (
-                      <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                      <div className="flex items-center gap-2 text-black dark:text-white">
                         <CheckCircle className="h-4 w-4" />
                         <span className="text-sm font-medium">Completed</span>
                       </div>

@@ -95,7 +95,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div className="flex items-center gap-3 mb-3">
               <Avatar className="h-12 w-12">
                 <AvatarImage src="/placeholder.svg?height=48&width=48" />
-                <AvatarFallback className="bg-[#28CA00] text-black">JS</AvatarFallback>
+                <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black">JS</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 dark:text-white">{userInfo.name}</h3>
@@ -107,15 +107,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
-                <div className="text-lg font-bold text-[#28CA00]">{userInfo.level}</div>
+                <div className="text-lg font-bold text-black dark:text-white">{userInfo.level}</div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">Level</div>
               </div>
               <div>
-                <div className="text-lg font-bold text-[#28CA00]">{userInfo.tokens}</div>
+                <div className="text-lg font-bold text-black dark:text-white">{userInfo.tokens}</div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">Tokens</div>
               </div>
               <div>
-                <div className="text-lg font-bold text-[#28CA00]">{userInfo.reputation}</div>
+                <div className="text-lg font-bold text-black dark:text-white">{userInfo.reputation}</div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">Reputation</div>
               </div>
             </div>
@@ -163,13 +163,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Footer */}
           <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-            <Button
-              variant="outline"
-              className="w-full border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 justify-start bg-transparent"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+            
 
             <div className="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
               <Image 

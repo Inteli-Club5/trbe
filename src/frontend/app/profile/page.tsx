@@ -80,7 +80,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4 mb-4">
               <Avatar className="h-20 w-20">
                 <AvatarImage src="/placeholder.svg?height=80&width=80" />
-                <AvatarFallback className="bg-[#28CA00] text-black text-xl">JS</AvatarFallback>
+                <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-xl">JS</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">John Smith</h2>
@@ -97,20 +97,20 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Level {userStats.level}</span>
-                <span className="text-sm text-[#28CA00]">75% to next level</span>
+                <span className="text-sm text-black dark:text-white">75% to next level</span>
               </div>
               <Progress value={75} className="h-2 bg-gray-200 dark:bg-gray-800">
-                <div className="h-full bg-[#28CA00] rounded-full" style={{ width: "75%" }} />
+                <div className="h-full bg-black dark:bg-white rounded-full" style={{ width: "75%" }} />
               </Progress>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-[#28CA00]">{userStats.totalTokens.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-black dark:text-white">{userStats.totalTokens.toLocaleString()}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Total Tokens</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-[#28CA00]">#{userStats.currentRanking}</div>
+                <div className="text-2xl font-bold text-black dark:text-white">#{userStats.currentRanking}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Overall Ranking</div>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
-              <MapPin className="h-8 w-8 text-[#28CA00] mx-auto mb-2" />
+              <MapPin className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.gamesAttended}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Games Attended</div>
             </CardContent>
@@ -129,7 +129,7 @@ export default function ProfilePage() {
 
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
-              <CheckCircle className="h-8 w-8 text-[#28CA00] mx-auto mb-2" />
+              <CheckCircle className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.activitiesCompleted}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Activities</div>
             </CardContent>
@@ -139,39 +139,41 @@ export default function ProfilePage() {
         {/* Tabs */}
         <Tabs defaultValue="badges" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
-            <TabsTrigger value="badges" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="badges" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Badges
             </TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="history" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               History
             </TabsTrigger>
-            <TabsTrigger value="stats" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="stats" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Statistics
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="badges" className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-gray-900 dark:text-white font-semibold">Recent Badges</h3>
-              <Link href="/badges">
-                <Button variant="outline" size="sm" className="border-[#28CA00] text-[#28CA00] bg-transparent hover:bg-[#28CA00] hover:text-black">
-                  View All Badges
-                </Button>
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {badges.map((badge, index) => (
-                <Card key={index} className={`bg-white dark:bg-gray-900 border ${getRarityColor(badge.rarity)} shadow-sm`}>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-3xl mb-2">{badge.icon}</div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{badge.name}</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{badge.description}</p>
-                    <Badge variant="outline" className={`mt-2 text-xs ${getRarityColor(badge.rarity)}`}>
-                      {badge.rarity}
-                    </Badge>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="mb-4">
+              <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Recent Badges</h3>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {badges.map((badge, index) => (
+                  <Card key={index} className={`bg-white dark:bg-gray-900 border ${getRarityColor(badge.rarity)} shadow-sm`}>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-3xl mb-2">{badge.icon}</div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{badge.name}</h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{badge.description}</p>
+                      <Badge variant="outline" className={`mt-2 text-xs ${getRarityColor(badge.rarity)}`}>
+                        {badge.rarity}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <div className="flex justify-center">
+                <Link href="/badges">
+                  <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+                    View All Badges
+                  </Button>
+                </Link>
+              </div>
             </div>
           </TabsContent>
 
@@ -181,8 +183,8 @@ export default function ProfilePage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-[#28CA00]/10 dark:bg-[#28CA00]/20 rounded-full">
-                        <CheckCircle className="h-4 w-4 text-[#28CA00]" />
+                      <div className="p-2 bg-black/10 dark:bg-white/20 rounded-full">
+                        <CheckCircle className="h-4 w-4 text-black dark:text-white" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.description}</p>
@@ -190,7 +192,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-semibold text-[#28CA00]">+{activity.tokens}</div>
+                      <div className="text-sm font-semibold text-green-600 dark:text-green-400">+{activity.tokens}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">tokens</div>
                     </div>
                   </div>
@@ -203,26 +205,26 @@ export default function ProfilePage() {
             <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-[#28CA00]" />
+                  <TrendingUp className="h-5 w-5 text-black dark:text-white" />
                   Activity Statistics
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-[#28CA00]">28</div>
+                    <div className="text-2xl font-bold text-black dark:text-white">28</div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Games Attended</div>
                   </div>
                   <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-[#28CA00]">156</div>
+                    <div className="text-2xl font-bold text-black dark:text-white">156</div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Activities Completed</div>
                   </div>
                   <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-[#28CA00]">12</div>
+                    <div className="text-2xl font-bold text-black dark:text-white">12</div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Badges Earned</div>
                   </div>
                   <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-[#28CA00]">156</div>
+                    <div className="text-2xl font-bold text-black dark:text-white">156</div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Days Active</div>
                   </div>
                 </div>

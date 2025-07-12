@@ -111,7 +111,7 @@ export default function WalletPage() {
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case "earned":
-        return <ArrowUpRight className="h-4 w-4 text-green-500" />
+        return <ArrowUpRight className="h-4 w-4 text-black dark:text-white" />
       case "spent":
         return <ArrowDownLeft className="h-4 w-4 text-red-500" />
       case "pending":
@@ -124,7 +124,7 @@ export default function WalletPage() {
   const getTransactionColor = (type: string) => {
     switch (type) {
       case "earned":
-        return "text-green-500"
+        return "text-black dark:text-white"
       case "spent":
         return "text-red-500"
       case "pending":
@@ -153,14 +153,11 @@ export default function WalletPage() {
 
       <div className="p-4 space-y-6">
         {/* Wallet Balance */}
-        <Card className="bg-gradient-to-r from-[#28CA00]/20 to-[#28CA00]/10 dark:from-[#28CA00]/30 dark:to-[#28CA00]/20 border-[#28CA00]">
-          <CardContent className="p-6">
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Wallet className="h-8 w-8 text-[#28CA00]" />
-                <span className="text-lg font-semibold text-gray-900 dark:text-white">Available Balance</span>
-              </div>
-              <div className="text-4xl font-bold text-[#28CA00]">{walletBalance.toLocaleString()}</div>
+        <Card className="bg-gradient-to-r from-black/20 to-black/10 dark:from-white/30 dark:to-white/20 border-black dark:border-white">
+          <CardContent className="p-6 text-center">
+            <Wallet className="h-8 w-8 text-black dark:text-white" />
+            <div className="mt-2">
+              <div className="text-4xl font-bold text-black dark:text-white">{walletBalance.toLocaleString()}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">TRIBE Tokens</div>
 
               {lockedTokens > 0 && (
@@ -180,8 +177,8 @@ export default function WalletPage() {
         <div className="grid grid-cols-2 gap-4">
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-4 text-center">
-              <TrendingUp className="h-6 w-6 text-green-500 mx-auto mb-2" />
-              <div className="text-xl font-bold text-green-500">+1,250</div>
+              <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+              <div className="text-xl font-bold text-green-600 dark:text-green-400">+1,250</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">This month</div>
             </CardContent>
           </Card>
@@ -198,10 +195,10 @@ export default function WalletPage() {
         {/* Tabs */}
         <Tabs defaultValue="transactions" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800">
-            <TabsTrigger value="transactions" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="transactions" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Transactions
             </TabsTrigger>
-            <TabsTrigger value="rewards" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="rewards" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Rewards
             </TabsTrigger>
           </TabsList>
@@ -213,7 +210,7 @@ export default function WalletPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-full ${
-                        transaction.type === "earned" ? "bg-green-100 dark:bg-green-900/30" :
+                        transaction.type === "earned" ? "bg-black/10 dark:bg-white/30" :
                         transaction.type === "spent" ? "bg-red-100 dark:bg-red-900/30" :
                         "bg-yellow-100 dark:bg-yellow-900/30"
                       }`}>
@@ -250,8 +247,8 @@ export default function WalletPage() {
                         <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{reward.description}</p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-[#28CA00]">{reward.price.toLocaleString()}</span>
-                        <Button size="sm" className="bg-[#28CA00] hover:bg-[#20A000] text-black">
+                        <span className="text-lg font-bold text-black dark:text-white">{reward.price.toLocaleString()}</span>
+                        <Button size="sm" className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">
                           Redeem
                         </Button>
                       </div>

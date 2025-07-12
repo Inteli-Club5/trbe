@@ -145,13 +145,13 @@ export default function RankingPage() {
   }
 
   const getChangeIcon = (change: number) => {
-    if (change > 0) return <TrendingUp className="h-4 w-4 text-green-500" />
+    if (change > 0) return <TrendingUp className="h-4 w-4 text-black dark:text-white" />
     if (change < 0) return <TrendingDown className="h-4 w-4 text-red-500" />
     return <Minus className="h-4 w-4 text-gray-400" />
   }
 
   const getChangeColor = (change: number) => {
-    if (change > 0) return "text-green-500"
+    if (change > 0) return "text-black dark:text-white"
     if (change < 0) return "text-red-500"
     return "text-gray-400"
   }
@@ -210,13 +210,13 @@ export default function RankingPage() {
         </div>
 
         {/* Current User Position */}
-        <Card className="bg-[#28CA00]/10 dark:bg-[#28CA00]/20 border-[#28CA00]">
+        <Card className="bg-black/10 dark:bg-white/20 border-black dark:border-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="h-12 w-12">
                   <AvatarImage src={currentUser.avatar} />
-                  <AvatarFallback className="bg-[#28CA00] text-black">
+                  <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black">
                     {currentUser.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
@@ -226,7 +226,7 @@ export default function RankingPage() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-[#28CA00]">#{currentUser.position}</div>
+                <div className="text-2xl font-bold text-black dark:text-white">#{currentUser.position}</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">{currentUser.points.toLocaleString()} pts</div>
                 <div className={`text-xs ${getChangeColor(currentUser.change)}`}>
                   {currentUser.change > 0 ? "+" : ""}{currentUser.change}
@@ -239,13 +239,13 @@ export default function RankingPage() {
         {/* Tabs */}
         <Tabs defaultValue="top" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
-            <TabsTrigger value="top" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="top" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Top 3
             </TabsTrigger>
-            <TabsTrigger value="nearby" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="nearby" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Nearby
             </TabsTrigger>
-            <TabsTrigger value="groups" className="data-[state=active]:bg-[#28CA00] data-[state=active]:text-black">
+            <TabsTrigger value="groups" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Groups
             </TabsTrigger>
           </TabsList>
@@ -276,7 +276,7 @@ export default function RankingPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-[#28CA00]">{user.points.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-black dark:text-white">{user.points.toLocaleString()}</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
                       <div className={`text-xs ${getChangeColor(user.change)}`}>
                         {user.change > 0 ? "+" : ""}{user.change}
@@ -294,7 +294,7 @@ export default function RankingPage() {
                 key={user.id} 
                 className={`bg-white dark:bg-gray-900 border shadow-sm ${
                   user.id === "current" 
-                    ? "border-[#28CA00] bg-[#28CA00]/5 dark:bg-[#28CA00]/10" 
+                    ? "border-black dark:border-white bg-black/5 dark:bg-white/10" 
                     : "border-gray-200 dark:border-gray-800"
                 }`}
               >
@@ -316,7 +316,7 @@ export default function RankingPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-[#28CA00]">{user.points.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-black dark:text-white">{user.points.toLocaleString()}</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
                       <div className={`text-xs ${getChangeColor(user.change)}`}>
                         {user.change > 0 ? "+" : ""}{user.change}
@@ -336,8 +336,8 @@ export default function RankingPage() {
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
                         {getPositionIcon(group.position)}
-                        <div className="p-2 bg-[#28CA00]/10 dark:bg-[#28CA00]/20 rounded-full">
-                          <Users className="h-5 w-5 text-[#28CA00]" />
+                        <div className="p-2 bg-black/10 dark:bg-white/20 rounded-full">
+                          <Users className="h-5 w-5 text-black dark:text-white" />
                         </div>
                       </div>
                       <div>
@@ -346,7 +346,7 @@ export default function RankingPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-[#28CA00]">{group.totalPoints.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-black dark:text-white">{group.totalPoints.toLocaleString()}</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">total points</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">Avg: {group.avgPoints} pts/member</div>
                     </div>

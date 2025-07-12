@@ -32,66 +32,66 @@ export default function CheckInPage() {
 
   if (isCheckedIn) {
     return (
-      <div className="bg-black text-white">
-        <header className="bg-black border-b border-gray-800 p-4">
+      <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
+        <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <Button variant="ghost" size="icon" className="text-white">
+              <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                 <ArrowLeft className="h-6 w-6" />
               </Button>
             </Link>
-            <h1 className="text-xl font-semibold">Check-in Completed</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Check-in Completed</h1>
             <div></div>
           </div>
         </header>
 
         <div className="p-4 space-y-6">
           <div className="text-center py-8">
-            <div className="w-20 h-20 bg-[#28CA00] rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="h-10 w-10 text-black" />
+            <div className="w-20 h-20 bg-black dark:bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="h-10 w-10 text-white dark:text-black" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Check-in Confirmed!</h2>
-            <p className="text-gray-400">You earned tokens for your attendance</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Check-in Confirmed!</h2>
+            <p className="text-gray-600 dark:text-gray-400">You earned tokens for your attendance</p>
           </div>
 
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-6 text-center">
-              <div className="text-4xl font-bold text-[#28CA00] mb-2">+200</div>
-              <div className="text-white font-semibold mb-1">Tokens Earned</div>
-              <div className="text-sm text-gray-400">Check-in at {gameInfo.stadium}</div>
+              <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">+200</div>
+              <div className="text-gray-900 dark:text-white font-semibold mb-1">Tokens Earned</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Check-in at {gameInfo.stadium}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white">Additional Bonuses</CardTitle>
+              <CardTitle className="text-gray-900 dark:text-white">Additional Bonuses</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">First time at stadium</span>
-                <span className="text-[#28CA00] font-semibold">+50</span>
+                <span className="text-gray-600 dark:text-gray-400">First time at stadium</span>
+                <span className="text-green-600 dark:text-green-400 font-semibold">+50</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">Photo shared</span>
-                <span className="text-[#28CA00] font-semibold">+25</span>
+                <span className="text-gray-600 dark:text-gray-400">Photo shared</span>
+                <span className="text-green-600 dark:text-green-400 font-semibold">+25</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">Score prediction</span>
-                <span className="text-[#28CA00] font-semibold">+25</span>
+                <span className="text-gray-600 dark:text-gray-400">Score prediction</span>
+                <span className="text-green-600 dark:text-green-400 font-semibold">+25</span>
               </div>
-              <hr className="border-gray-700" />
+              <hr className="border-gray-200 dark:border-gray-700" />
               <div className="flex justify-between items-center font-semibold">
-                <span className="text-white">Total</span>
-                <span className="text-[#28CA00]">+300 tokens</span>
+                <span className="text-gray-900 dark:text-white">Total</span>
+                <span className="text-green-600 dark:text-green-400">+300 tokens</span>
               </div>
             </CardContent>
           </Card>
 
           <div className="space-y-3">
             <Link href="/">
-              <Button className="w-full bg-[#28CA00] hover:bg-[#20A000] text-black">Back to Home</Button>
+              <Button className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">Back to Home</Button>
             </Link>
-            <Button variant="outline" className="w-full border-gray-700 text-white bg-transparent">
+            <Button variant="outline" className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
               <Share2 className="h-4 w-4 mr-2" />
               Share Achievement
             </Button>
@@ -102,28 +102,28 @@ export default function CheckInPage() {
   }
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
       {/* Header */}
-      <header className="bg-black border-b border-gray-800 p-4">
+      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4">
         <div className="flex items-center justify-between">
           <Link href="/">
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-6 w-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-semibold">Check-in</h1>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Check-in</h1>
           <div></div>
         </div>
       </header>
 
       <div className="p-4 space-y-6">
         {/* Game Info */}
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-white text-center">
+            <CardTitle className="text-gray-900 dark:text-white text-center">
               {gameInfo.homeTeam} vs {gameInfo.awayTeam}
             </CardTitle>
-            <CardDescription className="text-center text-gray-400">
+            <CardDescription className="text-center text-gray-600 dark:text-gray-400">
               {gameInfo.date} • {gameInfo.time} • {gameInfo.stadium}
             </CardDescription>
           </CardHeader>
@@ -134,36 +134,36 @@ export default function CheckInPage() {
 
         {/* Check-in Type Selection */}
         {!checkInType && (
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white">How are you watching?</CardTitle>
-              <CardDescription className="text-gray-400">Choose your check-in type</CardDescription>
+              <CardTitle className="text-gray-900 dark:text-white">How are you watching?</CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">Choose your check-in type</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
                 variant="outline"
-                className="w-full h-16 border-gray-700 hover:border-[#28CA00] hover:bg-[#28CA00]/10 bg-transparent"
+                className="w-full h-16 border-gray-200 dark:border-gray-700 hover:border-black dark:hover:border-white hover:bg-black/5 dark:hover:bg-white/10 bg-transparent"
                 onClick={() => setCheckInType("stadium")}
               >
                 <div className="flex items-center gap-3">
-                  <MapPin className="h-6 w-6 text-[#28CA00]" />
+                  <MapPin className="h-6 w-6 text-black dark:text-white" />
                   <div className="text-left">
-                    <div className="font-semibold text-white">At Stadium</div>
-                    <div className="text-sm text-gray-400">Physical check-in (+200 tokens)</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">At Stadium</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Physical check-in (+200 tokens)</div>
                   </div>
                 </div>
               </Button>
 
               <Button
                 variant="outline"
-                className="w-full h-16 border-gray-700 hover:border-[#28CA00] hover:bg-[#28CA00]/10 bg-transparent"
+                className="w-full h-16 border-gray-200 dark:border-gray-700 hover:border-black dark:hover:border-white hover:bg-black/5 dark:hover:bg-white/10 bg-transparent"
                 onClick={() => setCheckInType("home")}
               >
                 <div className="flex items-center gap-3">
-                  <Home className="h-6 w-6 text-[#28CA00]" />
+                  <Home className="h-6 w-6 text-black dark:text-white" />
                   <div className="text-left">
-                    <div className="font-semibold text-white">At Home</div>
-                    <div className="text-sm text-gray-400">Virtual check-in (+100 tokens)</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">At Home</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Virtual check-in (+100 tokens)</div>
                   </div>
                 </div>
               </Button>
@@ -174,22 +174,22 @@ export default function CheckInPage() {
         {/* Stadium Check-in */}
         {checkInType === "stadium" && (
           <>
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-[#28CA00]" />
+                <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-black dark:text-white" />
                   Location Confirmed
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-800 rounded-lg p-4 mb-4">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#28CA00] rounded-full flex items-center justify-center mx-auto mb-3">
-                      <MapPin className="h-8 w-8 text-black" />
+                    <div className="w-16 h-16 bg-black dark:bg-white rounded-full flex items-center justify-center mx-auto mb-3">
+                      <MapPin className="h-8 w-8 text-white dark:text-black" />
                     </div>
-                    <h3 className="font-semibold text-white">Stamford Bridge</h3>
-                    <p className="text-sm text-gray-400">London, UK</p>
-                    <Badge className="mt-2 bg-green-600 text-white">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Stamford Bridge</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">London, UK</p>
+                    <Badge className="mt-2 bg-black dark:bg-white text-white dark:text-black">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Location Verified
                     </Badge>
@@ -198,16 +198,16 @@ export default function CheckInPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-white">Share the Moment</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-white">Share the Moment</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="photo" className="text-white">
+                  <Label htmlFor="photo" className="text-gray-900 dark:text-white">
                     Game Photo (Optional)
                   </Label>
-                  <div className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center">
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
                     {photo ? (
                       <img
                         src={photo || "/placeholder.svg"}
@@ -217,15 +217,15 @@ export default function CheckInPage() {
                     ) : (
                       <div>
                         <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-400">Tap to add a photo</p>
-                        <p className="text-xs text-gray-500 mt-1">+25 extra tokens</p>
+                        <p className="text-gray-600 dark:text-gray-400">Tap to add a photo</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">+25 extra tokens</p>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="comment" className="text-white">
+                  <Label htmlFor="comment" className="text-gray-900 dark:text-white">
                     Comment (Optional)
                   </Label>
                   <Textarea
@@ -233,7 +233,7 @@ export default function CheckInPage() {
                     placeholder="How is the game? Share your experience..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                    className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     rows={3}
                   />
                 </div>
@@ -245,20 +245,20 @@ export default function CheckInPage() {
         {/* Home Check-in */}
         {checkInType === "home" && (
           <>
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Smartphone className="h-5 w-5 text-[#28CA00]" />
+                <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                  <Smartphone className="h-5 w-5 text-black dark:text-white" />
                   Virtual Check-in
                 </CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-gray-600 dark:text-gray-400">
                   Prove you're watching by sharing on social media
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gray-800 rounded-lg p-4">
-                  <h4 className="font-semibold text-white mb-2">How it works:</h4>
-                  <ul className="text-sm text-gray-400 space-y-1">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-2">How it works:</h4>
+                  <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                     <li>• Make a post about the game on Twitter</li>
                     <li>• Use hashtag #TRBE and tag your club</li>
                     <li>• Paste the post link below</li>
@@ -266,18 +266,18 @@ export default function CheckInPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="socialPost" className="text-white">
+                  <Label htmlFor="socialPost" className="text-gray-900 dark:text-white">
                     Post Link
                   </Label>
                   <Input
                     id="socialPost"
                     placeholder="https://twitter.com/your-post"
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                    className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="homeComment" className="text-white">
+                  <Label htmlFor="homeComment" className="text-gray-900 dark:text-white">
                     Game comment
                   </Label>
                   <Textarea
@@ -285,7 +285,7 @@ export default function CheckInPage() {
                     placeholder="How is the game? What's your opinion?"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                    className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     rows={3}
                   />
                 </div>
@@ -296,41 +296,41 @@ export default function CheckInPage() {
 
         {/* Prediction */}
         {checkInType && (
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-[#28CA00]" />
+              <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-black dark:text-white" />
                 Score Prediction
               </CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardDescription className="text-gray-600 dark:text-gray-400">
                 Predict the score and earn extra tokens (+25 tokens)
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center gap-4">
                 <div className="text-center">
-                  <Label className="text-white text-sm">{gameInfo.homeTeam}</Label>
+                  <Label className="text-gray-900 dark:text-white text-sm">{gameInfo.homeTeam}</Label>
                   <Input
                     type="number"
                     min="0"
                     max="10"
                     value={prediction.home}
                     onChange={(e) => setPrediction({ ...prediction, home: e.target.value })}
-                    className="w-16 h-16 text-center text-2xl font-bold bg-gray-800 border-gray-700 text-white mt-2"
+                    className="w-16 h-16 text-center text-2xl font-bold bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white mt-2"
                   />
                 </div>
 
                 <div className="text-2xl font-bold text-gray-400">X</div>
 
                 <div className="text-center">
-                  <Label className="text-white text-sm">{gameInfo.awayTeam}</Label>
+                  <Label className="text-gray-900 dark:text-white text-sm">{gameInfo.awayTeam}</Label>
                   <Input
                     type="number"
                     min="0"
                     max="10"
                     value={prediction.away}
                     onChange={(e) => setPrediction({ ...prediction, away: e.target.value })}
-                    className="w-16 h-16 text-center text-2xl font-bold bg-gray-800 border-gray-700 text-white mt-2"
+                    className="w-16 h-16 text-center text-2xl font-bold bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white mt-2"
                   />
                 </div>
               </div>
@@ -343,7 +343,7 @@ export default function CheckInPage() {
           <div className="space-y-3">
             <Button
               onClick={handleCheckIn}
-              className="w-full bg-[#28CA00] hover:bg-[#20A000] text-black font-semibold h-12"
+              className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black font-semibold h-12"
             >
               <CheckCircle className="h-5 w-5 mr-2" />
               Confirm Check-in
@@ -352,7 +352,7 @@ export default function CheckInPage() {
             <Button
               variant="outline"
               onClick={() => setCheckInType(null)}
-              className="w-full border-gray-700 text-gray-400 hover:text-white"
+              className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
             >
               Back
             </Button>
@@ -360,28 +360,28 @@ export default function CheckInPage() {
         )}
 
         {/* Rewards Info */}
-        <Card className="bg-[#28CA00]/10 border-[#28CA00]">
+        <Card className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
           <CardContent className="p-4">
-            <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-[#28CA00]" />
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+              <Trophy className="h-4 w-4 text-black dark:text-white" />
               Available Rewards
             </h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-300">Basic check-in:</span>
-                <span className="text-[#28CA00]">+{checkInType === "stadium" ? "200" : "100"} tokens</span>
+                <span className="text-gray-600 dark:text-gray-400">Basic check-in:</span>
+                <span className="text-green-600 dark:text-green-400">+{checkInType === "stadium" ? "200" : "100"} tokens</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Photo shared:</span>
-                <span className="text-[#28CA00]">+25 tokens</span>
+                <span className="text-gray-600 dark:text-gray-400">Photo shared:</span>
+                <span className="text-green-600 dark:text-green-400">+25 tokens</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Score prediction:</span>
-                <span className="text-[#28CA00]">+25 tokens</span>
+                <span className="text-gray-600 dark:text-gray-400">Score prediction:</span>
+                <span className="text-green-600 dark:text-green-400">+25 tokens</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Streak bonus:</span>
-                <span className="text-[#28CA00]">+50 tokens</span>
+                <span className="text-gray-600 dark:text-gray-400">Streak bonus:</span>
+                <span className="text-green-600 dark:text-green-400">+50 tokens</span>
               </div>
             </div>
           </CardContent>
