@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { BottomNavigation } from '@/components/bottom-navigation'
 import { ThemeProvider } from '@/components/theme-provider'
-import { AppKit } from "../context/appkit";
+import { AppKit } from "../context/appkit"
+import { LayoutWrapper } from '@/components/layout-wrapper'
 
 export const metadata: Metadata = {
   title: 'TRBE - Fan Engagement Platform',
@@ -28,12 +28,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-white dark:bg-black transition-colors" suppressHydrationWarning={true}>
         <AppKit>
-        <ThemeProvider>
-          <div className="pb-28">
+          <ThemeProvider>
+            <LayoutWrapper>
               {children}
-          </div>
-          <BottomNavigation />
-        </ThemeProvider>
+            </LayoutWrapper>
+          </ThemeProvider>
         </AppKit>
       </body>
     </html>
