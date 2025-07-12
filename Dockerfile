@@ -64,6 +64,7 @@ COPY src/backend/package*.json ./src/backend/
 # Install only production dependencies
 WORKDIR /app/src/backend
 RUN npm install --only=production
+RUN npm install next@latest
 
 # Copy Prisma client from backend builder
 COPY --from=backend-builder /app/src/backend/node_modules/.prisma ./node_modules/.prisma/
@@ -71,10 +72,12 @@ COPY --from=backend-builder /app/src/backend/node_modules/.prisma ./node_modules
 # Copy backend source code
 COPY src/backend/ ./
 
+# Copy frontend source code for Next.js
+COPY src/frontend/ ./frontend/
+
 # Copy frontend build from frontend builder
 COPY --from=frontend-builder /app/src/frontend/.next ./public/.next
 COPY --from=frontend-builder /app/src/frontend/public ./public/public
-COPY --from=frontend-builder /app/src/frontend/node_modules ./public/node_modules
 COPY --from=frontend-builder /app/src/frontend/package.json ./public/package.json
 
 # Debug: List the contents to verify
@@ -96,4 +99,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
-CMD ["npm", "start"] 
+CMD ["node", "custom-server.js"] 

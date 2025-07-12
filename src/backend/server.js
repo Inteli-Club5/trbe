@@ -73,6 +73,11 @@ app.get('/api/debug/files', (req, res) => {
 app.use('/_next', express.static(path.join(__dirname, 'public/.next')));
 app.use('/public', express.static(path.join(__dirname, 'public/public')));
 
+// Serve Next.js static files
+app.use('/_next/static', express.static(path.join(__dirname, 'public/.next/static')));
+app.use('/_next/chunks', express.static(path.join(__dirname, 'public/.next/chunks')));
+app.use('/_next/webpack', express.static(path.join(__dirname, 'public/.next/webpack')));
+
 const PORT = process.env.PORT || 3000;
 
 const RPC_URL = process.env.RPC_URL;
@@ -396,120 +401,45 @@ app.get('*', (req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
-  // Serve a simple HTML page that loads the Next.js app
+  // Try to serve the Next.js app files
+  const possiblePaths = [
+    path.join(__dirname, 'public/.next/server/app/page.html'),
+    path.join(__dirname, 'public/.next/server/pages/index.html'),
+    path.join(__dirname, 'public/.next/static/index.html'),
+    path.join(__dirname, 'public/.next/index.html')
+  ];
+  
+  for (const filePath of possiblePaths) {
+    if (fs.existsSync(filePath)) {
+      console.log('Serving Next.js app from:', filePath);
+      return res.sendFile(filePath);
+    }
+  }
+  
+  // If no Next.js files found, show debug info
+  console.log('No Next.js files found');
   res.status(200).send(`
     <!DOCTYPE html>
-    <html lang="en">
+    <html>
     <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>TRIBE - Fan Engagement Platform</title>
-      <meta name="description" content="The ultimate fan engagement platform with gamification, rewards, and community features">
-      <script src="https://cdn.tailwindcss.com"></script>
+      <title>TRIBE - Frontend Not Found</title>
       <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .error { background: #fee; border: 1px solid #fcc; padding: 20px; border-radius: 5px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 3px; }
       </style>
     </head>
-    <body class="bg-white dark:bg-black text-gray-900 dark:text-white">
-      <div id="root">
-        <div class="loading">
-          <div class="text-center">
-            <h1 class="text-2xl font-bold mb-4">TRIBE</h1>
-            <p class="text-gray-600 dark:text-gray-400">Loading Fan Engagement Platform...</p>
-            <div class="mt-4">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
-            </div>
-          </div>
-        </div>
+    <body>
+      <h1>TRIBE - Frontend Issue</h1>
+      <div class="error">
+        <h2>Next.js frontend not found</h2>
+        <p>The Next.js build files are not being generated or copied correctly.</p>
       </div>
-      
-      <script>
-        // Simple React-like app for demonstration
-        function createElement(type, props, ...children) {
-          return { type, props: { ...props, children } };
-        }
-        
-        function render(element, container) {
-          if (typeof element === 'string') {
-            container.appendChild(document.createTextNode(element));
-            return;
-          }
-          
-          const dom = document.createElement(element.type);
-          
-          if (element.props) {
-            Object.keys(element.props).forEach(name => {
-              if (name !== 'children') {
-                if (name.startsWith('on')) {
-                  dom.addEventListener(name.toLowerCase().substring(2), element.props[name]);
-                } else {
-                  dom.setAttribute(name, element.props[name]);
-                }
-              }
-            });
-          }
-          
-          if (element.props.children) {
-            element.props.children.forEach(child => render(child, dom));
-          }
-          
-          container.appendChild(dom);
-        }
-        
-        // Simple app component
-        function App() {
-          return createElement('div', { className: 'min-h-screen bg-white dark:bg-black' },
-            createElement('header', { className: 'bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4' },
-              createElement('div', { className: 'flex items-center justify-between' },
-                createElement('h1', { className: 'text-xl font-bold' }, 'TRIBE'),
-                createElement('button', { 
-                  className: 'px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded',
-                  onClick: () => alert('Theme toggle clicked!')
-                }, 'Toggle Theme')
-              )
-            ),
-            createElement('main', { className: 'p-4' },
-              createElement('div', { className: 'max-w-md mx-auto space-y-6' },
-                createElement('div', { className: 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6' },
-                  createElement('h2', { className: 'text-lg font-semibold mb-4' }, 'Welcome to TRIBE'),
-                  createElement('p', { className: 'text-gray-600 dark:text-gray-400 mb-4' }, 
-                    'The ultimate fan engagement platform with gamification, rewards, and community features.'
-                  ),
-                  createElement('div', { className: 'space-y-3' },
-                    createElement('div', { className: 'flex items-center gap-3' },
-                      createElement('div', { className: 'w-3 h-3 bg-green-500 rounded-full' }),
-                      createElement('span', null, 'Fan Club Management')
-                    ),
-                    createElement('div', { className: 'flex items-center gap-3' },
-                      createElement('div', { className: 'w-3 h-3 bg-blue-500 rounded-full' }),
-                      createElement('span', null, 'Reputation System')
-                    ),
-                    createElement('div', { className: 'flex items-center gap-3' },
-                      createElement('div', { className: 'w-3 h-3 bg-purple-500 rounded-full' }),
-                      createElement('span', null, 'Blockchain Integration')
-                    )
-                  )
-                ),
-                createElement('div', { className: 'text-center' },
-                  createElement('p', { className: 'text-sm text-gray-500' }, 
-                    'API endpoints available at /api/*'
-                  ),
-                  createElement('a', { 
-                    href: '/api/health',
-                    className: 'text-blue-600 hover:underline'
-                  }, 'Check API Health')
-                )
-              )
-            )
-          );
-        }
-        
-        // Render the app
-        const root = document.getElementById('root');
-        root.innerHTML = '';
-        render(App(), root);
-      </script>
+      <div class="debug">
+        <h3>Debug Info:</h3>
+        <p><a href="/api/debug/files">Check file structure</a></p>
+        <p>API is working: <a href="/api/health">Health Check</a></p>
+      </div>
     </body>
     </html>
   `);
