@@ -34,201 +34,32 @@ import {
   Flame,
 } from "lucide-react"
 import Link from "next/link"
+import { useFootballCompetitions, useFootballTeamsByCompetition } from "@/hooks/use-football-api"
 
 export default function ClubsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("fans")
   const [sortOrder, setSortOrder] = useState("desc")
+  const [selectedCompetition, setSelectedCompetition] = useState("PL") // Premier League by default
 
-  // Sample clubs data
-  const clubs = [
-    {
-      id: "chelsea",
-      name: "Chelsea FC",
-      nickname: "The Blues",
-      description: "One of England's most successful clubs, Chelsea FC has won multiple Premier League titles and European trophies.",
-      league: "Premier League",
-      location: "London, England",
-      founded: "1905",
-      stadium: "Stamford Bridge",
-      capacity: 40341,
-      fans: 154200,
-      trophies: 25,
-      category: "elite",
-      level: "exemplary",
-      tags: ["Premier League", "London", "Elite", "European Champions"],
-      recentActivity: "2 hours ago",
-      upcomingMatches: 3,
-      achievements: [
-        { name: "Premier League Champions 2021/22", icon: Trophy },
-        { name: "Champions League Winners 2021", icon: Crown },
-        { name: "FA Cup Winners 2022", icon: Medal }
-      ],
-      stats: {
-        totalMatches: 456,
-        totalFans: 154200,
-        averageAttendance: 95.2,
-        activeSupporters: 124500,
-        seasonPoints: 67,
-        leaguePosition: 4
-      }
-    },
-    {
-      id: "manchester-united",
-      name: "Manchester United",
-      nickname: "The Red Devils",
-      description: "One of the world's most famous football clubs with a rich history and global fanbase.",
-      league: "Premier League",
-      location: "Manchester, England",
-      founded: "1878",
-      stadium: "Old Trafford",
-      capacity: 74140,
-      fans: 189500,
-      trophies: 42,
-      category: "elite",
-      level: "exemplary",
-      tags: ["Premier League", "Manchester", "Elite", "Global Brand"],
-      recentActivity: "1 hour ago",
-      upcomingMatches: 2,
-      achievements: [
-        { name: "Premier League Champions 2012/13", icon: Trophy },
-        { name: "Champions League Winners 2008", icon: Crown },
-        { name: "Most Successful English Club", icon: Award }
-      ],
-      stats: {
-        totalMatches: 523,
-        totalFans: 189500,
-        averageAttendance: 98.7,
-        activeSupporters: 156800,
-        seasonPoints: 72,
-        leaguePosition: 3
-      }
-    },
-    {
-      id: "liverpool",
-      name: "Liverpool FC",
-      nickname: "The Reds",
-      description: "Liverpool FC, one of England's most successful clubs with a passionate fanbase and rich history.",
-      league: "Premier League",
-      location: "Liverpool, England",
-      founded: "1892",
-      stadium: "Anfield",
-      capacity: 53394,
-      fans: 167800,
-      trophies: 38,
-      category: "elite",
-      level: "exemplary",
-      tags: ["Premier League", "Liverpool", "Elite", "European Heritage"],
-      recentActivity: "30 minutes ago",
-      upcomingMatches: 1,
-      achievements: [
-        { name: "Premier League Champions 2019/20", icon: Trophy },
-        { name: "Champions League Winners 2019", icon: Crown },
-        { name: "You'll Never Walk Alone", icon: Heart }
-      ],
-      stats: {
-        totalMatches: 498,
-        totalFans: 167800,
-        averageAttendance: 97.3,
-        activeSupporters: 142600,
-        seasonPoints: 69,
-        leaguePosition: 2
-      }
-    },
-    {
-      id: "arsenal",
-      name: "Arsenal FC",
-      nickname: "The Gunners",
-      description: "Arsenal FC, known for their attractive football and rich history in English football.",
-      league: "Premier League",
-      location: "London, England",
-      founded: "1886",
-      stadium: "Emirates Stadium",
-      capacity: 60704,
-      fans: 134600,
-      trophies: 31,
-      category: "elite",
-      level: "commendable",
-      tags: ["Premier League", "London", "Elite", "Attacking Football"],
-      recentActivity: "45 minutes ago",
-      upcomingMatches: 2,
-      achievements: [
-        { name: "Premier League Champions 2003/04", icon: Trophy },
-        { name: "Invincibles Season", icon: Shield },
-        { name: "FA Cup Specialists", icon: Medal }
-      ],
-      stats: {
-        totalMatches: 445,
-        totalFans: 134600,
-        averageAttendance: 96.8,
-        activeSupporters: 108900,
-        seasonPoints: 75,
-        leaguePosition: 1
-      }
-    },
-    {
-      id: "manchester-city",
-      name: "Manchester City",
-      nickname: "The Citizens",
-      description: "Manchester City, recent Premier League dominators with a modern approach to football.",
-      league: "Premier League",
-      location: "Manchester, England",
-      founded: "1880",
-      stadium: "Etihad Stadium",
-      capacity: 53400,
-      fans: 118400,
-      trophies: 18,
-      category: "elite",
-      level: "commendable",
-      tags: ["Premier League", "Manchester", "Elite", "Modern Era"],
-      recentActivity: "1 hour ago",
-      upcomingMatches: 1,
-      achievements: [
-        { name: "Premier League Champions 2022/23", icon: Trophy },
-        { name: "Champions League Winners 2023", icon: Crown },
-        { name: "Treble Winners", icon: Star }
-      ],
-      stats: {
-        totalMatches: 412,
-        totalFans: 118400,
-        averageAttendance: 94.5,
-        activeSupporters: 95600,
-        seasonPoints: 65,
-        leaguePosition: 5
-      }
-    },
-    {
-      id: "tottenham",
-      name: "Tottenham Hotspur",
-      nickname: "The Lilywhites",
-      description: "Tottenham Hotspur, a historic club with a passionate fanbase and modern stadium.",
-      league: "Premier League",
-      location: "London, England",
-      founded: "1882",
-      stadium: "Tottenham Hotspur Stadium",
-      capacity: 62850,
-      fans: 98700,
-      trophies: 15,
-      category: "premium",
-      level: "respectable",
-      tags: ["Premier League", "London", "Premium", "Modern Stadium"],
-      recentActivity: "2 hours ago",
-      upcomingMatches: 0,
-      achievements: [
-        { name: "Premier League Runners-up 2016/17", icon: Medal },
-        { name: "Champions League Finalists 2019", icon: Trophy }
-      ],
-      stats: {
-        totalMatches: 387,
-        totalFans: 98700,
-        averageAttendance: 91.2,
-        activeSupporters: 78400,
-        seasonPoints: 58,
-        leaguePosition: 6
-      }
+  // Fetch real football data
+  const { data: competitions, loading: competitionsLoading, error: competitionsError } = useFootballCompetitions()
+  const { data: teams, loading: teamsLoading, error: teamsError } = useFootballTeamsByCompetition(selectedCompetition)
+
+  // Filter and sort teams based on search and sort criteria
+  const filteredTeams = teams?.teams?.filter((team: any) => 
+    team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    team.area?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || []
+
+  const sortedTeams = [...filteredTeams].sort((a: any, b: any) => {
+    if (sortOrder === "asc") {
+      return a.name.localeCompare(b.name)
+    } else {
+      return b.name.localeCompare(a.name)
     }
-  ]
+  })
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -268,39 +99,6 @@ export default function ClubsPage() {
         return "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
     }
   }
-
-  const filteredClubs = clubs
-    .filter(club => 
-      club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      club.nickname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      club.league.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      club.location.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      let aValue, bValue
-      switch (sortBy) {
-        case "fans":
-          aValue = a.fans
-          bValue = b.fans
-          break
-        case "founded":
-          aValue = parseInt(a.founded)
-          bValue = parseInt(b.founded)
-          break
-        case "trophies":
-          aValue = a.trophies
-          bValue = b.trophies
-          break
-        case "capacity":
-          aValue = a.capacity
-          bValue = b.capacity
-          break
-        default:
-          aValue = a.fans
-          bValue = b.fans
-      }
-      return sortOrder === "desc" ? bValue - aValue : aValue - bValue
-    })
 
   return (
     <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
@@ -360,36 +158,36 @@ export default function ClubsPage() {
 
         {/* Clubs Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredClubs.map((club) => {
-            const LevelIcon = getLevelIcon(club.level)
+          {sortedTeams.map((team: any) => {
+            const LevelIcon = getLevelIcon(team.level)
             return (
-              <Card key={club.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+              <Card key={team.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-lg text-gray-900 dark:text-white mb-1">{club.name}</CardTitle>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{club.nickname}</p>
+                      <CardTitle className="text-lg text-gray-900 dark:text-white mb-1">{team.name}</CardTitle>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{team.nickname}</p>
                       <div className="flex items-center gap-2 mb-2">
                         <Flag className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600 dark:text-gray-400">{club.league}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{team.league}</span>
                       </div>
                     </div>
-                    <Badge className={`${getLevelColor(club.level)} flex items-center gap-1`}>
+                    <Badge className={`${getLevelColor(team.level)} flex items-center gap-1`}>
                       <LevelIcon className="h-3 w-3" />
-                      {club.level}
+                      {team.level}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{club.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{team.description}</p>
                   
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <div className="text-lg font-bold text-black dark:text-white">{club.fans.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-black dark:text-white">{team.fans.toLocaleString()}</div>
                       <div className="text-xs text-gray-600 dark:text-gray-400">Fans</div>
                     </div>
                     <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                      <div className="text-lg font-bold text-black dark:text-white">{club.trophies}</div>
+                      <div className="text-lg font-bold text-black dark:text-white">{team.trophies}</div>
                       <div className="text-xs text-gray-600 dark:text-gray-400">Trophies</div>
                     </div>
                   </div>
@@ -398,22 +196,22 @@ export default function ClubsPage() {
                     <div className="flex items-center gap-1">
                       <Building className="h-4 w-4 text-gray-400" />
                       <span className="text-xs text-gray-600 dark:text-gray-400">
-                        {club.stadium}
+                        {team.stadium}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4 text-gray-400" />
                       <span className="text-xs text-gray-600 dark:text-gray-400">
-                        {club.capacity.toLocaleString()}
+                        {team.capacity.toLocaleString()}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex gap-2 mb-4">
-                    <Badge className={`${getCategoryColor(club.category)} text-xs`}>
-                      {club.category}
+                    <Badge className={`${getCategoryColor(team.category)} text-xs`}>
+                      {team.category}
                     </Badge>
-                    {club.tags.slice(0, 2).map((tag, index) => (
+                    {team.tags.slice(0, 2).map((tag: string, index: number) => (
                       <Badge key={index} variant="outline" className="text-xs border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
                         {tag}
                       </Badge>
@@ -421,7 +219,7 @@ export default function ClubsPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Link href={`/clubs/${club.id}`} className="flex-1">
+                    <Link href={`/clubs/${team.id}`} className="flex-1">
                       <Button variant="outline" size="sm" className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
@@ -437,7 +235,7 @@ export default function ClubsPage() {
           })}
         </div>
 
-        {filteredClubs.length === 0 && (
+        {sortedTeams.length === 0 && (
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-8 text-center">
               <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />

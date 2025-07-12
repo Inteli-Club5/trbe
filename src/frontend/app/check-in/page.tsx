@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, MapPin, Camera, Share2, Trophy, CheckCircle, Home, Smartphone } from "lucide-react"
 import Link from "next/link"
+import { useFootballTeamUpcomingMatches } from "@/hooks/use-football-api"
 
 export default function CheckInPage() {
   const [checkInType, setCheckInType] = useState<"stadium" | "home" | null>(null)
@@ -17,13 +18,33 @@ export default function CheckInPage() {
   const [comment, setComment] = useState("")
   const [isCheckedIn, setIsCheckedIn] = useState(false)
 
-  const gameInfo = {
-    homeTeam: "Chelsea FC",
-    awayTeam: "Arsenal",
-    date: "Today",
-    time: "4:00 PM",
-    stadium: "Stamford Bridge",
-    championship: "Premier League",
+  // Fetch upcoming matches for Chelsea FC (ID: 61) - you can make this dynamic based on user's favorite team
+  const { data: upcomingMatches, loading: matchesLoading, error: matchesError } = useFootballTeamUpcomingMatches("61", 5)
+
+  // Get the next match for check-in
+  const nextMatch = upcomingMatches?.matches?.[0]
+
+  const formatMatchDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    
+    if (date.toDateString() === today.toDateString()) {
+      return "Today"
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return "Tomorrow"
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    }
+  }
+
+  const formatMatchTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    })
   }
 
   const handleCheckIn = () => {
@@ -58,7 +79,9 @@ export default function CheckInPage() {
             <CardContent className="p-6 text-center">
               <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">+200</div>
               <div className="text-gray-900 dark:text-white font-semibold mb-1">Tokens Earned</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Check-in at {gameInfo.stadium}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Check-in at {nextMatch?.venue || 'Match Venue'}
+              </div>
             </CardContent>
           </Card>
 
@@ -117,18 +140,32 @@ export default function CheckInPage() {
       </header>
 
       <div className="p-4 space-y-6">
-        {/* Game Info */}
+        {/* Game Info - Now with real data */}
         <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
           <CardHeader>
             <CardTitle className="text-gray-900 dark:text-white text-center">
-              {gameInfo.homeTeam} vs {gameInfo.awayTeam}
+              {matchesLoading ? (
+                "Loading match data..."
+              ) : matchesError ? (
+                "Failed to load match data"
+              ) : nextMatch ? (
+                `${nextMatch.homeTeam.name} vs ${nextMatch.awayTeam.name}`
+              ) : (
+                "No upcoming matches"
+              )}
             </CardTitle>
             <CardDescription className="text-center text-gray-600 dark:text-gray-400">
-              {gameInfo.date} • {gameInfo.time} • {gameInfo.stadium}
+              {nextMatch ? (
+                `${formatMatchDate(nextMatch.utcDate)} • ${formatMatchTime(nextMatch.utcDate)} • ${nextMatch.venue || 'TBD'}`
+              ) : (
+                "Check back later for new fixtures"
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Badge className="w-full justify-center bg-blue-600 text-white">{gameInfo.championship}</Badge>
+            <Badge className="w-full justify-center bg-blue-600 text-white">
+              {nextMatch?.competition?.name || 'Premier League'}
+            </Badge>
           </CardContent>
         </Card>
 
@@ -309,7 +346,7 @@ export default function CheckInPage() {
             <CardContent>
               <div className="flex items-center justify-center gap-4">
                 <div className="text-center">
-                  <Label className="text-gray-900 dark:text-white text-sm">{gameInfo.homeTeam}</Label>
+                  <Label className="text-gray-900 dark:text-white text-sm">{nextMatch?.homeTeam.name || "Home Team"}</Label>
                   <Input
                     type="number"
                     min="0"
@@ -323,7 +360,7 @@ export default function CheckInPage() {
                 <div className="text-2xl font-bold text-gray-400">X</div>
 
                 <div className="text-center">
-                  <Label className="text-gray-900 dark:text-white text-sm">{gameInfo.awayTeam}</Label>
+                  <Label className="text-gray-900 dark:text-white text-sm">{nextMatch?.awayTeam.name || "Away Team"}</Label>
                   <Input
                     type="number"
                     min="0"

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AppKit } from "../context/appkit"
+import { AuthProvider } from "../context/auth-context"
 import { LayoutWrapper } from '@/components/layout-wrapper'
 import { Toaster } from '@/components/ui/toaster'
 
@@ -29,12 +30,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-white dark:bg-black transition-colors" suppressHydrationWarning={true}>
         <AppKit>
-          <ThemeProvider>
-            <LayoutWrapper>
-              {children}
-            </LayoutWrapper>
-            <Toaster />
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+              <Toaster />
+            </ThemeProvider>
+          </AuthProvider>
         </AppKit>
       </body>
     </html>

@@ -30,6 +30,7 @@ const checkInsRoutes = require('./routes/check-ins');
 const gamesRoutes = require('./routes/games');
 const notificationsRoutes = require('./routes/notifications');
 const transactionsRoutes = require('./routes/transactions');
+const footballRoutes = require('./routes/football');
 
 // Use routes
 app.use('/api', healthRoutes);
@@ -44,6 +45,7 @@ app.use('/api', checkInsRoutes);
 app.use('/api/games', gamesRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/transactions', transactionsRoutes);
+app.use('/api/football', footballRoutes);
 
 // Debug endpoint to check file structure
 app.get('/api/debug/files', (req, res) => {
@@ -108,7 +110,7 @@ app.use('/_next/static', express.static(path.join(__dirname, 'public/.next/stati
 app.use('/_next/chunks', express.static(path.join(__dirname, 'public/.next/chunks')));
 app.use('/_next/webpack', express.static(path.join(__dirname, 'public/.next/webpack')));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const RPC_URL = process.env.RPC_URL;
 const CHAIN_ID = Number(process.env.CHAIN_ID);

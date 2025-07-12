@@ -15,6 +15,7 @@ import Image from "next/image"
 import ConnectButton from "../../../hooks/connection-button"
 import { useAppKit } from "@reown/appkit/react"
 import { useAppKitAccount } from "@reown/appkit/react"
+import { useAuth } from "@/context/auth-context"
 
 function SignupForm() {
   const searchParams = useSearchParams();
@@ -77,33 +78,33 @@ function SignupForm() {
     open({ view: "Connect", namespace: "eip155" }) // abre modal para conectar wallets Ethereum
   }
 
+  const { signup } = useAuth()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    try {
-      const res = await fetch("http://localhost:5001/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          walletAddress: address,
-          oauthProvider,
-          oauthId,
-          acceptTerms,
-          acceptPrivacy,
-          acceptDataUsage,
-        }),
-      })
+    if (!acceptTerms || !acceptPrivacy || !acceptDataUsage) {
+      alert("Please accept all terms and conditions")
+      return
+    }
 
-      const result = await res.json()
-      if (res.ok) {
-        alert("Conta criada com sucesso!")
-      } else {
-        alert("Erro ao criar conta: " + (result.message || "Erro desconhecido"))
-      }
-    } catch (err) {
-      console.error(err)
-      alert("Erro inesperado ao criar conta")
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match")
+      return
+    }
+
+    try {
+      await signup({
+        ...formData,
+        walletAddress: address,
+        oauthProvider,
+        oauthId,
+        acceptTerms,
+        acceptPrivacy,
+        acceptDataUsage,
+      })
+    } catch (error) {
+      // Error is handled by the auth context
     }
   }
 

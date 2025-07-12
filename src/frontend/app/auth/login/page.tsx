@@ -6,10 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff, Twitter } from "lucide-react"
+import { Eye, EyeOff, Twitter, Loader2 } from "lucide-react"
 import ConnectButton from "../../../hooks/connection-button"
 import Link from "next/link"
 import { useTheme } from "@/components/theme-provider"
+import { useAuth } from "@/context/auth-context"
 import Image from "next/image"
 
 export default function LoginPage() {
@@ -17,7 +18,23 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { theme } = useTheme()
+  const { login } = useAuth()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || !password) return
+
+    setIsLoading(true)
+    try {
+      await login(email, password)
+    } catch (error) {
+      // Error is handled by the auth context
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center p-4 pb-28">
@@ -35,66 +52,82 @@ export default function LoginPage() {
           <CardTitle className="text-gray-900 dark:text-white">Welcome back</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">Sign in to your account to continue</CardDescription>
         </CardHeader>
+        
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-900 dark:text-white">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-gray-900 dark:text-white">
-              Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-gray-600 dark:hover:text-white"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="remember"
-                checked={rememberMe}
-                onCheckedChange={(checked) => setRememberMe(checked === true)}
-                className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white"
-              />
-              <Label htmlFor="remember" className="text-sm text-gray-600 dark:text-gray-400">
-                Remember me
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-900 dark:text-white">
+                Email
               </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                required
+              />
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Forgot password
-            </span>
-          </div>
 
-          <Link href="/homepage">
-            <Button className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black font-semibold">Sign In</Button>
-          </Link>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-gray-900 dark:text-white">
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 pr-10"
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                  className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white"
+                />
+                <Label htmlFor="remember" className="text-sm text-gray-600 dark:text-gray-400">
+                  Remember me
+                </Label>
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:underline">
+                Forgot password
+              </span>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+          </form>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -113,7 +146,7 @@ export default function LoginPage() {
             <ConnectButton></ConnectButton>
           </center>
 
-          <div className="text-center">
+          <div className="text-center text-sm">
             <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
             <Link href="/auth/signup" className="text-black dark:text-white hover:underline">
               Sign Up
