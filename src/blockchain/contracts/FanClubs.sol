@@ -33,6 +33,7 @@ contract FanClubs {
         bool isListed;
     }
 
+    string[] private fanClubIds;
     mapping(string => address) private fanToken;
     mapping(string => MarketplaceItem[]) private marketplaceListings;
     mapping(string => mapping(address => mapping(uint256 => bool))) private isNFTListed;
@@ -47,6 +48,10 @@ contract FanClubs {
 
     // Fan club functions
 
+    function getAllFanClubIds() external view returns (string[] memory) {
+        return fanClubIds;
+    }
+
     function createFanClub(string memory fanClubId, uint256 _price) external {
         require(!fanClubExists[fanClubId], "Fan club already exists");
         require(_price > 0, "Price must be greater than zero");
@@ -58,6 +63,7 @@ contract FanClubs {
         newClub.isMember[msg.sender] = true;
 
         fanClubExists[fanClubId] = true;
+        fanClubIds.push(fanClubId);
     }
 
     function join(string memory fanClubId) external payable {

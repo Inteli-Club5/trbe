@@ -199,6 +199,17 @@ app.get('/getReputation/:userAddress', async (req, res) => {
   }
 });
 
+app.get('/fanclubs', async (req, res) => {
+  try {
+    const fanClubIds = await fanClubsContract.getAllFanClubIds();
+    res.json({ fanClubIds });
+  } catch (error) {
+    console.error('Failed to fetch fan club IDs:', error);
+    res.status(500).json({ error: 'Failed to fetch fan club IDs' });
+  }
+});
+
+
 app.post('/fanclub/create', async (req, res) => {
   try {
     const { fanClubId, price } = req.body;
@@ -552,6 +563,82 @@ app.post('/fanclub/:fanClubId/rewardFanNFT', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+app.post('/marketplace/create', async (req, res) => {
+  try {
+    const {fanClubId, tokenAddress} = req.body;
+
+    const tx = await fanClubsContract.createMarketplace(fanClubId, tokenAddress);
+    await tx.wait();
+
+    res.json({ message: 'Marketplace created successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create marketplace' });
+  }
+});
+
+app.post('/marketplace/list', async (req, res) => {
+  try {
+    const { fanClubId, nftAddress, tokenId, price} = req.body;
+
+    const parsedPrice = ethers.utils.parseUnits(price.toString(), 18)
+
+    const tx = await fanClubsContract.listItem(fanClubId, nftAddress, tokenId, parsedPrice);
+    await tx.wait();
+
+    res.json({ message: 'NFT listed successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to list NFT' });
+  }
+});
+
+app.post('/marketplace/delist', async (req, res) => {
+  try {
+    const { fanClubId, nftAddress, tokenId} = req.body;
+
+    const tx = await fanClubsContract.delistItem(fanClubId, nftAddress, tokenId);
+    await tx.wait();
+
+    res.json({ message: 'NFT delisted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delist NFT' });
+  }
+});
+
+app.post('/marketplace/buy', async (req, res) => {
+  try {
+    const { fanClubId, tokenAddress, nftAddress, tokenId} = req.body;
+
+    const erc20 = new ethers.Contract(tokenAddress, erc20Abi, wallet);
+    await erc20.approve(tokenAddress, price);
+
+    const tx = await fanClubsContract.buy(fanClubId, nftAddress, tokenId);
+    await tx.wait();
+
+    res.json({ message: 'NFT purchased successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to buy NFT' });
+  }
+});
+
+app.get('/marketplace/items/:fanClubId', async (req, res) => {
+  try {
+    const fanClubId = req.params.fanClubId;
+    const items = await fanClubsContract.getItems(fanClubId);
+
+    const filtered = items.filter(item => item.isListed);
+
+    res.json({ items: filtered });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch marketplace items' });
+  }
+});
+
 
 app.get('/fanclub/:fanClubId/getFanNFT', async (req, res) => {
   try {
