@@ -74,6 +74,7 @@ COPY src/backend/ ./
 # Copy frontend build from frontend builder
 COPY --from=frontend-builder /app/src/frontend/.next ./public/.next
 COPY --from=frontend-builder /app/src/frontend/public ./public/public
+COPY --from=frontend-builder /app/src/frontend/next.config.mjs ./public/next.config.mjs
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs

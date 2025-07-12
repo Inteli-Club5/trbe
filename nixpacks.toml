@@ -4,13 +4,15 @@ nixPkgs = ["nodejs_18", "postgresql_15", "git"]
 [phases.install]
 cmds = [
   "cd src/backend && npm install",
-  "cd src/backend && npm install -g @prisma/client"
+  "cd src/backend && npm install -g @prisma/client",
+  "cd src/frontend && npm install --legacy-peer-deps"
 ]
 
 [phases.build]
 cmds = [
   "cd src/backend && npm run db:generate",
-  "cd src/backend && npx prisma generate"
+  "cd src/backend && npx prisma generate",
+  "cd src/frontend && npm run build"
 ]
 
 [start]

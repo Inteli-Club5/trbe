@@ -342,8 +342,18 @@ app.get('*', (req, res) => {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
-  // Serve the frontend index.html
-  res.sendFile(path.join(__dirname, 'public/.next/server/pages/index.html'));
+  // Serve the frontend index.html from the correct Next.js build location
+  const indexPath = path.join(__dirname, 'public/.next/server/app/page.html');
+  const fallbackPath = path.join(__dirname, 'public/.next/static/index.html');
+  
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else if (fs.existsSync(fallbackPath)) {
+    res.sendFile(fallbackPath);
+  } else {
+    // Fallback to serving the static files
+    res.sendFile(path.join(__dirname, 'public/.next/index.html'));
+  }
 });
 
 app.listen(PORT, () => {
