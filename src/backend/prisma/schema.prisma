@@ -288,6 +288,11 @@ model User {
   location          String?
   timezone          String?
   language          String   @default("en")
+  twitterId         String?  @unique
+  walletAddress     String?  @unique
+  termsAccepted     Boolean  @default(false)
+  dataProcessingAccepted Boolean @default(false)
+  privacyPolicyAccepted Boolean @default(false)
   
   // Status and roles
   status            UserStatus @default(ACTIVE)
@@ -900,6 +905,16 @@ model UserAchievement {
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@map("user_achievements")
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  token     Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tokens")
 }
 
 model ClubAchievement {

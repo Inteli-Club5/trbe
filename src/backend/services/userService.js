@@ -9,7 +9,7 @@ class UserService {
         data: {
           email: userData.email,
           username: userData.username,
-          password: userData.password, // Note: Should be hashed before saving
+          password: userData.password, // Lembre-se de hashear!
           firstName: userData.firstName,
           lastName: userData.lastName,
           displayName: userData.displayName,
@@ -23,6 +23,12 @@ class UserService {
           language: userData.language || 'en',
           socialLinks: userData.socialLinks,
           privacySettings: userData.privacySettings,
+          walletAddress: userData.walletAddress,
+          oauthProvider: userData.oauthProvider,
+          oauthId: userData.oauthId,
+          acceptTerms: userData.acceptTerms,
+          acceptPrivacy: userData.acceptPrivacy,
+          acceptDataUsage: userData.acceptDataUsage,
         },
         include: {
           clubFollow: {
@@ -38,11 +44,23 @@ class UserService {
           socialStats: true
         }
       });
+  
+      // Cria a relação com o clube favorito
+      if (userData.clubId) {
+        await prisma.clubFollow.create({
+          data: {
+            userId: user.id,
+            clubId: userData.clubId
+          }
+        });
+      }
+  
       return user;
     } catch (error) {
       throw new Error(`Failed to create user: ${error.message}`);
     }
   }
+  
 
   // Get user by ID
   async getUserById(id) {

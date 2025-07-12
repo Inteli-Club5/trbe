@@ -2,18 +2,25 @@ const express = require('express');
 const router = express.Router();
 const userService = require('../services/userService');
 const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
 
 // Validation middleware
 const validateUser = [
   body('email').isEmail().normalizeEmail(),
   body('username').isLength({ min: 3, max: 30 }).matches(/^[a-zA-Z0-9_]+$/),
+  body('password').isLength({ min: 6 }),
   body('firstName').isLength({ min: 1, max: 50 }),
   body('lastName').isLength({ min: 1, max: 50 }),
-  body('displayName').isLength({ min: 1, max: 100 }),
-  body('phoneNumber').optional().isMobilePhone(),
-  body('dateOfBirth').optional().isISO8601(),
-  body('gender').optional().isIn(['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY'])
+  body('displayName').optional().isLength({ min: 1, max: 100 }),
+  body('walletAddress').optional().isString(),
+  body('oauthProvider').optional().isString(), // tipo 'twitter'
+  body('oauthId').optional().isString(),
+  body('clubId').isString(), // ID do clube favorito
+  body('acceptTerms').equals('true'),
+  body('acceptPrivacy').equals('true'),
+  body('acceptDataUsage').equals('true'),
 ];
+
 
 const validateUserUpdate = [
   body('firstName').optional().isLength({ min: 1, max: 50 }),
@@ -98,8 +105,33 @@ router.get('/:id', async (req, res) => {
 // POST /api/users - Create new user
 router.post('/', validateUser, handleValidationErrors, async (req, res) => {
   try {
-    const user = await userService.createUser(req.body);
-    
+    const {
+      password,
+      walletAddress,
+      oauthProvider,
+      oauthId,
+      acceptTerms,
+      acceptPrivacy,
+      acceptDataUsage,
+      clubId
+    } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const userData = {
+      ...req.body,
+      password: hashedPassword,
+      walletAddress,
+      oauthProvider,
+      oauthId,
+      acceptTerms,
+      acceptPrivacy,
+      acceptDataUsage,
+      clubId,
+    };
+
+    const user = await userService.createUser(userData);
+
     res.status(201).json({
       success: true,
       message: 'User created successfully',
@@ -114,6 +146,7 @@ router.post('/', validateUser, handleValidationErrors, async (req, res) => {
     });
   }
 });
+
 
 // PUT /api/users/:id - Update user
 router.put('/:id', validateUserUpdate, handleValidationErrors, async (req, res) => {

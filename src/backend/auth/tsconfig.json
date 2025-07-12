@@ -8,6 +8,7 @@
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true
     },
-    "include": ["src/**/*", "src/types"]
+"include": ["src/**/*", "src/types/**/*.d.ts"]
+
   }
   
