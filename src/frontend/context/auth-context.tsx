@@ -60,7 +60,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem('auth_token')
       if (token) {
         const userData = await apiClient.getCurrentUser()
-        setUser(userData.data)
+        if (userData.success) {
+          setUser(userData.data)
+        } else {
+          localStorage.removeItem('auth_token')
+        }
       }
     } catch (error) {
       console.error('Auth check failed:', error)
@@ -151,7 +155,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUser = async () => {
     try {
       const userData = await apiClient.getCurrentUser()
-      setUser(userData.data)
+      if (userData.success) {
+        setUser(userData.data)
+      } else {
+        setUser(null)
+        localStorage.removeItem('auth_token')
+      }
     } catch (error) {
       console.error('Failed to refresh user:', error)
       // If refresh fails, user might be logged out

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 class ApiClient {
   private baseURL: string;
@@ -63,23 +63,29 @@ class ApiClient {
 
   // Authentication
   async login(email: string, password: string) {
-    const response = await this.request<{ token: string; user: any }>('/auth/login', {
+    const response = await this.request<{ success: boolean; data: { user: any; token: string } }>('/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
     
-    this.setToken(response.token);
-    return response;
+    this.setToken(response.data.token);
+    return {
+      user: response.data.user,
+      token: response.data.token
+    };
   }
 
   async signup(userData: any) {
-    const response = await this.request<{ token: string; user: any }>('/auth/signup', {
+    const response = await this.request<{ success: boolean; data: { user: any; token: string } }>('/signup', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
     
-    this.setToken(response.token);
-    return response;
+    this.setToken(response.data.token);
+    return {
+      user: response.data.user,
+      token: response.data.token
+    };
   }
 
   async logout() {
@@ -91,7 +97,8 @@ class ApiClient {
   }
 
   async getCurrentUser() {
-    return this.request<any>('/auth/me');
+    const response = await this.request<{ success: boolean; data: any }>('/auth/me');
+    return response;
   }
 
   // Users

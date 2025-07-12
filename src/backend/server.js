@@ -110,7 +110,7 @@ app.use('/_next/static', express.static(path.join(__dirname, 'public/.next/stati
 app.use('/_next/chunks', express.static(path.join(__dirname, 'public/.next/chunks')));
 app.use('/_next/webpack', express.static(path.join(__dirname, 'public/.next/webpack')));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const RPC_URL = process.env.RPC_URL;
 const CHAIN_ID = Number(process.env.CHAIN_ID);

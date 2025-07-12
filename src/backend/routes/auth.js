@@ -20,7 +20,97 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Register new user
+// Register new user (alias for /signup)
+router.post('/signup', [
+  body('email').isEmail().normalizeEmail(),
+  body('username').isLength({ min: 3, max: 30 }).matches(/^[a-zA-Z0-9_]+$/),
+  body('password').isLength({ min: 6 }),
+  body('firstName').notEmpty().trim(),
+  body('lastName').notEmpty().trim(),
+  handleValidationErrors
+], async (req, res) => {
+  try {
+    const { email, username, password, firstName, lastName, displayName, dateOfBirth, gender, phoneNumber, location, walletAddress } = req.body;
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email },
+          { username },
+          ...(walletAddress ? [{ walletAddress }] : [])
+        ]
+      }
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User with this email, username, or wallet address already exists'
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email,
+        username,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        displayName: displayName || `${firstName} ${lastName}`,
+        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+        gender,
+        phoneNumber,
+        location,
+        walletAddress
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        avatar: true,
+        status: true,
+        role: true,
+        level: true,
+        experience: true,
+        tokens: true,
+        reputationScore: true,
+        createdAt: true
+      }
+    });
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: {
+        user,
+        token
+      }
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Register new user (original route)
 router.post('/register', [
   body('email').isEmail().normalizeEmail(),
   body('username').isLength({ min: 3, max: 30 }).matches(/^[a-zA-Z0-9_]+$/),
@@ -491,6 +581,72 @@ router.post('/avatar', async (req, res) => {
     });
   } catch (error) {
     console.error('Avatar upload error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get current user profile
+router.get('/me', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        avatar: true,
+        status: true,
+        role: true,
+        level: true,
+        experience: true,
+        tokens: true,
+        reputationScore: true,
+        dateOfBirth: true,
+        gender: true,
+        phoneNumber: true,
+        location: true,
+        walletAddress: true,
+        emailNotifications: true,
+        darkMode: true,
+        autoCheckIn: true,
+        privacySettings: true,
+        socialLinks: true,
+        createdAt: true,
+        updatedAt: true,
+        lastLoginAt: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    console.error('Get current user error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
