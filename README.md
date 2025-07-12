@@ -16,6 +16,8 @@
 
 trbe is a revolutionary Web3 platform that transforms fan engagement by creating a transparent, gamified ecosystem where social interactions translate into verifiable on-chain reputation and rewards. Built on the Chiliz Chain, trbe empowers fan clubs to recognize and reward their most engaged members through blockchain technology.
 
+[**Documentation**](https://inteli-club5.github.io/trbe/docs/introduction)
+
 [**Demo Video**]()
 
 [**Pitch Deck**]()
