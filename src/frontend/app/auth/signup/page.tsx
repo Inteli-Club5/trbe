@@ -46,6 +46,7 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
     clubId: "",
+    profilePhoto: "",
   })
 
   const [acceptTerms, setAcceptTerms] = useState(false)
@@ -169,15 +170,14 @@ export default function SignupPage() {
                 )}
               </Button>
 
-            {/* Botão de conexão com Twitter */}
-            <button
-              onClick={handleTwitterAuth}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#1DA1F2] hover:bg-[#1A91DA] text-white font-semibold transition-colors"
-            >
-              <Twitter className="h-5 w-5" />
-              Connect With Twitter
-            </button>
-          </div>
+              {/* Twitter connection status */}
+              {oauthProvider === "twitter" && oauthId && (
+                <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#1DA1F2] text-white font-semibold">
+                  <Twitter className="h-5 w-5" />
+                  <span>Twitter connected (ID: {oauthId})</span>
+                </div>
+              )}
+            </div>
 
             {/* Campos de formulário */}
             <div className="space-y-2">
@@ -308,7 +308,7 @@ export default function SignupPage() {
                 <Checkbox
                   id="terms"
                   checked={acceptTerms}
-                  onCheckedChange={setAcceptTerms}
+                  onCheckedChange={(checked) => setAcceptTerms(checked === true)}
                   className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
                 />
                 <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -323,7 +323,7 @@ export default function SignupPage() {
                 <Checkbox
                   id="privacy"
                   checked={acceptPrivacy}
-                  onCheckedChange={setAcceptPrivacy}
+                  onCheckedChange={(checked) => setAcceptPrivacy(checked === true)}
                   className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
                 />
                 <Label htmlFor="privacy" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -338,7 +338,7 @@ export default function SignupPage() {
                 <Checkbox
                   id="dataUsage"
                   checked={acceptDataUsage}
-                  onCheckedChange={setAcceptDataUsage}
+                  onCheckedChange={(checked) => setAcceptDataUsage(checked === true)}
                   className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
                 />
                 <Label htmlFor="dataUsage" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -349,25 +349,13 @@ export default function SignupPage() {
                 </Label>
               </div>
             </div>
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="dataUsage"
-                checked={acceptDataUsage}
-                onCheckedChange={setAcceptDataUsage}
-                className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
-              />
-              <Label htmlFor="dataUsage" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                I agree to the data usage policy
-              </Label>
-            </div>
-          </div>
 
             <Button
               type="submit"
               disabled={!acceptTerms || !acceptPrivacy || !acceptDataUsage || !isConnected}
               className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black font-semibold mt-4"
             >
-              Create Account
+              {!isConnected ? "Connect wallet to continue" : "Create Account"}
             </Button>
           </form>
 
@@ -383,10 +371,10 @@ export default function SignupPage() {
           <Button
             variant="outline"
             className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 bg-transparent mt-4"
-            onClick={() => window.open("http://localhost:5001", "_blank", "width=500,height=600")}
+            onClick={() => window.open("http://localhost:5001/auth/twitter/start", "_blank", "width=500,height=600")}
           >
             <Twitter className="h-4 w-4 mr-2" />
-            Twitter
+            {oauthProvider === "twitter" && oauthId ? "Connected with Twitter" : "Connect with Twitter"}
           </Button>
 
           <div className="text-center mt-4">
