@@ -98,7 +98,7 @@ export default function TasksPage() {
     {
       id: "premium-purchase",
       title: "Make Premium Purchase",
-      description: "Purchase items worth £100 or more",
+      description: "Purchase items worth 100 tokens or more",
       category: "purchase",
       difficulty: "hard",
       tokens: 400,

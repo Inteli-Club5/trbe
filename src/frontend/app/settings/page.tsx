@@ -13,7 +13,6 @@ import {
   Shield,
   Palette,
   Globe,
-  HelpCircle,
   LogOut,
   User,
   Lock,

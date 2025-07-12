@@ -378,7 +378,7 @@ export default function ClubPage() {
 
             {/* Club Tabs */}
             <Tabs defaultValue="games" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-gray-100 dark:bg-gray-800">
+              <TabsList className="grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800">
                 <TabsTrigger
                   value="games"
                   className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
@@ -396,6 +396,12 @@ export default function ClubPage() {
                   className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
                 >
                   News
+                </TabsTrigger>
+                <TabsTrigger
+                  value="store"
+                  className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black text-xs"
+                >
+                  Store
                 </TabsTrigger>
                 <TabsTrigger
                   value="ranking"
@@ -475,7 +481,7 @@ export default function ClubPage() {
                           <div className="text-lg font-bold text-black dark:text-white">
                             {(fanGroup.totalPoints / 1000000).toFixed(1)}M
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">total points</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">total tokens</div>
                         </div>
                       </div>
 
@@ -511,6 +517,28 @@ export default function ClubPage() {
                 ))}
               </TabsContent>
 
+              <TabsContent value="store" className="space-y-4">
+                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                      <Gift className="h-5 w-5 text-black dark:text-white" />
+                      Socios.com Store
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">
+                      Buy official fan tokens, merchandise, and more on Socios.com.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Link href="https://socios.com/shop" target="_blank" rel="noopener noreferrer">
+                      <Button className="w-full bg-green-600 hover:bg-green-700 text-white text-base font-semibold flex items-center justify-center gap-2" size="lg">
+                        <ExternalLink className="h-4 w-4 mr-1" />
+                        Visit Socios.com Store
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
               <TabsContent value="ranking" className="space-y-4">
                 <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                   <CardHeader>
@@ -544,8 +572,8 @@ export default function ClubPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-black dark:text-white">{fan.points.toLocaleString()}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">points</div>
+                                              <div className="font-bold text-black dark:text-white">{fan.points.toLocaleString()}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">tokens</div>
                         </div>
                       </div>
                     ))}
@@ -901,7 +929,7 @@ export default function ClubPage() {
                               </div>
                               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                                 <span>{fanGroup.members.toLocaleString()} members</span>
-                                <span>Avg: {Math.round(fanGroup.totalPoints / fanGroup.members)} pts/member</span>
+                                <span>Avg: {Math.round(fanGroup.totalPoints / fanGroup.members)} tokens/member</span>
                               </div>
                             </div>
                           </div>
@@ -909,7 +937,7 @@ export default function ClubPage() {
                             <div className="font-bold text-black dark:text-white">
                               {(fanGroup.totalPoints / 1000000).toFixed(1)}M
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">total points</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">total tokens</div>
                           </div>
                         </div>
                       ))}

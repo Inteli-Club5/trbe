@@ -1,11 +1,13 @@
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useAppKit } from "@reown/appkit/react";
+import { WalletErrorBoundary } from "@/components/wallet-error-boundary";
 
 export default function ConnectButton() {
   const { address, isConnected} = useAppKitAccount();
   const appKit = useAppKit();
 
   return (
+  <WalletErrorBoundary>
     <button
       onClick={() => {
         if (!isConnected) appKit.open();
@@ -41,5 +43,6 @@ export default function ConnectButton() {
         "Connect Wallet"
       )}
     </button>
+    </WalletErrorBoundary>
   );
 }

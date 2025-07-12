@@ -14,7 +14,7 @@ import { useTheme } from "@/components/theme-provider"
 
 export default function HomePage() {
   const [notifications] = useState(3)
-  const [userTokens] = useState(2450)
+  const [userTokens] = useState(15420)
   const [userLevel] = useState(12)
   const [userRanking] = useState(156)
   const [levelProgress] = useState(75)

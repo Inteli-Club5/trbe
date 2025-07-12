@@ -4,6 +4,18 @@ import { createAppKit } from "@reown/appkit/react";
 import { Ethers5Adapter } from "@reown/appkit-adapter-ethers5";
 import { defineChain } from 'viem';
 
+// Suppress Coinbase Wallet SDK errors in development
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  const originalConsoleError = console.error;
+  console.error = (...args) => {
+    const message = args[0];
+    if (typeof message === 'string' && message.includes('Cross-Origin-Opener-Policy')) {
+      return; // Suppress this specific error
+    }
+    originalConsoleError.apply(console, args);
+  };
+}
+
 const projectId = "57c477a65b9453509e76c6ea34782ba6"; // ✅ Substitua pelo real
 
 const SOCIOS_WALLET_ID = "56843177b5e89d4bcb19a27dab7c49e0f33d8d3a6c8c4c7e5274f605e92befd6"; // ✅ Verifique se está correto
@@ -40,16 +52,24 @@ const metadata = {
   icons: ["https://trbe.io/favicon.ico"],
 };
 
-createAppKit({
-  adapters: [new Ethers5Adapter()],
-  metadata,
-  networks: [chilizChain],
-  projectId,
-  featuredWalletIds: [SOCIOS_WALLET_ID],
-  features: {
-    analytics: true,
-  },
-});
+// Initialize AppKit with error handling
+try {
+  createAppKit({
+    adapters: [new Ethers5Adapter()],
+    metadata,
+    networks: [chilizChain],
+    projectId,
+    featuredWalletIds: [SOCIOS_WALLET_ID],
+    features: {
+      analytics: true,
+    },
+  });
+} catch (error) {
+  // Log error but don't break the app
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('AppKit initialization error:', error);
+  }
+}
 
 export function AppKit({ children }: { children: React.ReactNode }) {
   return <>{children}</>;

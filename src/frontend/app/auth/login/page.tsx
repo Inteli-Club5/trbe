@@ -9,18 +9,29 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff, Twitter } from "lucide-react"
 import ConnectButton from "../../../hooks/ConnectButton"
 import Link from "next/link"
+import { useTheme } from "@/components/theme-provider"
+import Image from "next/image"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
+  const { theme } = useTheme()
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center p-4 pb-28">
       <Card className="w-full max-w-md bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
         <CardHeader className="text-center">
-          <div className="text-4xl font-bold text-black dark:text-white mb-2">TRBE</div>
+          <div className="flex justify-center mb-2">
+            <Image
+              src={theme === "dark" ? "/logo.svg" : "/logo-black.svg"}
+              alt="TRBE Logo"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+            />
+          </div>
           <CardTitle className="text-gray-900 dark:text-white">Welcome back</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">Sign in to your account to continue</CardDescription>
         </CardHeader>
@@ -69,16 +80,16 @@ export default function LoginPage() {
               <Checkbox
                 id="remember"
                 checked={rememberMe}
-                onCheckedChange={setRememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
                 className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white"
               />
               <Label htmlFor="remember" className="text-sm text-gray-600 dark:text-gray-400">
                 Remember me
               </Label>
             </div>
-            <Link href="/auth/forgot-password" className="text-sm text-black dark:text-white hover:underline">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               Forgot password
-            </Link>
+            </span>
           </div>
 
           <Link href="/homepage">

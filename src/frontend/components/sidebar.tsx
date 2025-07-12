@@ -11,7 +11,6 @@ import {
   Coins,
   Shield,
   Settings,
-  HelpCircle,
   LogOut,
   X,
   Flag,
@@ -37,7 +36,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     club: "Chelsea FC",
     fanGroup: "Blue Pride",
     level: 12,
-    tokens: 2450,
+    tokens: 15420,
     reputation: 850,
   }
 
@@ -49,14 +48,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: Shield, label: "Reputation", href: "/reputation", badge: null },
     { icon: Users, label: "Rankings", href: "/ranking", badge: null },
     { icon: Coins, label: "Wallet", href: "/wallet", badge: null },
-    { icon: Flag, label: "My Club", href: "/club", badge: null },
+    { icon: Flag, label: "My Club", href: "/clubs", badge: null },
     { icon: Calendar, label: "Events", href: "/events", badge: "2" },
   ]
 
   const quickActions = [
-    { icon: Star, label: "My Club", href: "/club" },
+    { icon: Star, label: "My Club", href: "/clubs" },
     { icon: TrendingUp, label: "Statistics", href: "/stats" },
-    { icon: HelpCircle, label: "Help", href: "/help" },
     { icon: Settings, label: "Settings", href: "/settings" },
   ]
 

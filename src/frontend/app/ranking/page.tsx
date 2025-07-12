@@ -227,7 +227,7 @@ export default function RankingPage() {
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-black dark:text-white">#{currentUser.position}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">{currentUser.points.toLocaleString()} pts</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{currentUser.points.toLocaleString()} tokens</div>
                 <div className={`text-xs ${getChangeColor(currentUser.change)}`}>
                   {currentUser.change > 0 ? "+" : ""}{currentUser.change}
                 </div>
@@ -277,7 +277,7 @@ export default function RankingPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-black dark:text-white">{user.points.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">tokens</div>
                       <div className={`text-xs ${getChangeColor(user.change)}`}>
                         {user.change > 0 ? "+" : ""}{user.change}
                       </div>
@@ -317,7 +317,7 @@ export default function RankingPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-black dark:text-white">{user.points.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">tokens</div>
                       <div className={`text-xs ${getChangeColor(user.change)}`}>
                         {user.change > 0 ? "+" : ""}{user.change}
                       </div>
@@ -347,8 +347,8 @@ export default function RankingPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-black dark:text-white">{group.totalPoints.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">total points</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Avg: {group.avgPoints} pts/member</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">total tokens</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Avg: {group.avgPoints} tokens/member</div>
                     </div>
                   </div>
                 </CardContent>
