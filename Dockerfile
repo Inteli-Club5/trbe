@@ -76,6 +76,9 @@ COPY --from=frontend-builder /app/src/frontend/.next ./public/.next
 COPY --from=frontend-builder /app/src/frontend/public ./public/public
 COPY --from=frontend-builder /app/src/frontend/next.config.mjs ./public/next.config.mjs
 
+# Debug: List the contents to verify
+RUN ls -la ./public/ && ls -la ./public/.next/ || echo "No .next directory found"
+
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001
