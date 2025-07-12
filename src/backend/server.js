@@ -235,6 +235,71 @@ app.post('/fanclub/:fanClubId/withdraw', async (req, res) => {
   }
 });
 
+app.post('/fanclub/:fanClubId/depositFanTokens', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { tokenAddress, amount } = req.body;
+
+    if (!tokenAddress || !amount) {
+      return res.status(400).json({ error: 'tokenAddress and amount are required' });
+    }
+
+    const tx = await fanClubsContract.depositFanTokens(fanClubId, tokenAddress, amount);
+    await tx.wait();
+
+    res.json({ message: 'Fan tokens deposited successfully', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/fanclub/:fanClubId/fanTokenBalance/:tokenAddress', async (req, res) => {
+  try {
+    const { fanClubId, tokenAddress } = req.params;
+
+    const balance = await fanClubsContract.getFanTokenBalance(fanClubId, tokenAddress);
+    res.json({ balance: balance.toString() });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/rewardFanToken', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { tokenAddress, recipient, amount } = req.body;
+
+    if (!tokenAddress || !recipient || !amount) {
+      return res.status(400).json({ error: 'tokenAddress, recipient, and amount are required' });
+    }
+
+    const tx = await fanClubsContract.rewardFanToken(fanClubId, tokenAddress, recipient, amount);
+    await tx.wait();
+
+    res.json({ message: 'Fan token rewarded successfully', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
+  try {
+    const { fanClubId } = req.params;
+    const { tokenAddress, amount } = req.body;
+
+    if (!tokenAddress || !amount) {
+      return res.status(400).json({ error: 'tokenAddress and amount are required' });
+    }
+
+    const tx = await fanClubsContract.withdrawFanTokens(fanClubId, tokenAddress, amount);
+    await tx.wait();
+
+    res.json({ message: 'Fan tokens withdrawn successfully', txHash: tx.hash });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('Trybe Backend API is running!');
 });

@@ -3,6 +3,7 @@ const { ethers } = require("hardhat");
 
 describe("FanClubs Contract", function () {
     let fanClubs;
+    let mockToken;
     let owner;
     let addr1;
     let addr2;
@@ -11,9 +12,20 @@ describe("FanClubs Contract", function () {
 
     beforeEach(async function () {
         [owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners();
+        
         const FanClubsFactory = await ethers.getContractFactory("FanClubs");
         fanClubs = await FanClubsFactory.deploy();
         await fanClubs.waitForDeployment();
+
+        const MockTokenFactory = await ethers.getContractFactory("MockERC20");
+        mockToken = await MockTokenFactory.deploy("Mock Token", "MTK");
+        await mockToken.waitForDeployment();
+    });
+
+    describe("Constructor", function () {
+        it("Should deploy successfully", async function () {
+            expect(await fanClubs.getDeployedCode()).to.not.equal("0x");
+        });
     });
 
     describe("createFanClub", function () {
@@ -47,6 +59,14 @@ describe("FanClubs Contract", function () {
             await expect(
                 fanClubs.connect(owner).createFanClub("ZeroPriceClub", 0)
             ).to.be.revertedWith("Price must be greater than zero");
+        });
+
+        it("Should allow different users to create different clubs", async function () {
+            await fanClubs.connect(owner).createFanClub("Club1", price);
+            await fanClubs.connect(addr1).createFanClub("Club2", price);
+            
+            expect(await fanClubs.getOwner("Club1")).to.equal(owner.address);
+            expect(await fanClubs.getOwner("Club2")).to.equal(addr1.address);
         });
     });
 
@@ -97,6 +117,14 @@ describe("FanClubs Contract", function () {
                 fanClubs.connect(addr1).join(clubId, { value: ethers.parseEther("1") })
             ).to.be.revertedWith("Incorrect payment");
         });
+
+        it("Should accumulate balance correctly with multiple joins", async function () {
+            await fanClubs.connect(addr1).join(clubId, { value: price });
+            await fanClubs.connect(addr2).join(clubId, { value: price });
+            
+            const clubBalance = await fanClubs.connect(owner).getBalance(clubId);
+            expect(clubBalance).to.equal(price * BigInt(2));
+        });
     });
 
     describe("leave", function () {
@@ -145,6 +173,15 @@ describe("FanClubs Contract", function () {
             const currentOwner = await fanClubs.getOwner(clubId);
             expect(currentOwner).to.equal(owner.address);
         });
+
+        it("Should maintain correct member order after leaving", async function () {
+            const membersBefore = await fanClubs.getMembers(clubId);
+            await fanClubs.connect(addr2).leave(clubId);
+            const membersAfter = await fanClubs.getMembers(clubId);
+            
+            expect(membersAfter).to.not.include(addr2.address);
+            expect(membersAfter.length).to.equal(membersBefore.length - 1);
+        });
     });
 
     describe("updatePrice", function () {
@@ -178,6 +215,15 @@ describe("FanClubs Contract", function () {
             await expect(
                 fanClubs.connect(owner).updatePrice("NonExistent", newPrice)
             ).to.be.revertedWith("Fan club does not exist");
+        });
+
+        it("Should allow price updates multiple times", async function () {
+            await fanClubs.connect(owner).updatePrice(clubId, newPrice);
+            const finalPrice = ethers.parseEther("0.05");
+            await fanClubs.connect(owner).updatePrice(clubId, finalPrice);
+            
+            const updatedPrice = await fanClubs.getJoinPrice(clubId);
+            expect(updatedPrice).to.equal(finalPrice);
         });
     });
 
@@ -230,6 +276,169 @@ describe("FanClubs Contract", function () {
             await expect(
                 fanClubs.connect(owner).withdraw("NonExistent", ethers.parseEther("0.1"))
             ).to.be.revertedWith("Fan club does not exist");
+        });
+
+        it("Should allow multiple withdrawals", async function () {
+            const firstWithdrawal = ethers.parseEther("0.1");
+            const secondWithdrawal = ethers.parseEther("0.2");
+            
+            await fanClubs.connect(owner).withdraw(clubId, firstWithdrawal);
+            await fanClubs.connect(owner).withdraw(clubId, secondWithdrawal);
+            
+            const finalBalance = await fanClubs.connect(owner).getBalance(clubId);
+            expect(finalBalance).to.equal(ethers.parseEther("0.1"));
+        });
+    });
+
+    describe("Fan Token Functions", function () {
+        const clubId = "TokenClub";
+        const price = ethers.parseEther("0.1");
+        const tokenAmount = ethers.parseEther("100");
+
+        beforeEach(async function () {
+            await fanClubs.connect(owner).createFanClub(clubId, price);
+
+            await mockToken.mint(owner.address, tokenAmount);
+            await mockToken.mint(addr1.address, tokenAmount);
+            await mockToken.mint(addr2.address, tokenAmount);
+            
+            await mockToken.connect(owner).approve(fanClubs.target, tokenAmount);
+            await mockToken.connect(addr1).approve(fanClubs.target, tokenAmount);
+            await mockToken.connect(addr2).approve(fanClubs.target, tokenAmount);
+        });
+
+        describe("depositFanTokens", function () {
+            it("Should allow users to deposit tokens successfully", async function () {
+                const depositAmount = ethers.parseEther("10");
+                
+                await fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, depositAmount);
+                
+                const tokenBalance = await fanClubs.connect(owner).getFanTokenBalance(clubId, mockToken.target);
+                expect(tokenBalance).to.equal(depositAmount);
+            });
+
+            it("Should revert if amount is zero", async function () {
+                await expect(
+                    fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, 0)
+                ).to.be.revertedWith("Amount must be greater than 0");
+            });
+
+            it("Should revert if token transfer fails", async function () {
+                const excessiveAmount = ethers.parseEther("1000");
+
+                await expect(
+                    fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, excessiveAmount)
+                ).to.be.reverted;
+            });
+
+            it("Should accumulate token balance correctly", async function () {
+                const deposit1 = ethers.parseEther("10");
+                const deposit2 = ethers.parseEther("20");
+                
+                await fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, deposit1);
+                await fanClubs.connect(addr2).depositFanTokens(clubId, mockToken.target, deposit2);
+                
+                const totalBalance = await fanClubs.connect(owner).getFanTokenBalance(clubId, mockToken.target);
+                expect(totalBalance).to.equal(deposit1 + deposit2);
+            });
+        });
+
+        describe("withdrawFanTokens", function () {
+            beforeEach(async function () {
+                await fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, tokenAmount);
+            });
+
+            it("Should allow owner to withdraw tokens successfully", async function () {
+                const withdrawAmount = ethers.parseEther("50");
+                const initialOwnerBalance = await mockToken.balanceOf(owner.address);
+                
+                await fanClubs.connect(owner).withdrawFanTokens(clubId, mockToken.target, withdrawAmount);
+                
+                const finalOwnerBalance = await mockToken.balanceOf(owner.address);
+                const contractBalance = await fanClubs.connect(owner).getFanTokenBalance(clubId, mockToken.target);
+                
+                expect(finalOwnerBalance).to.equal(initialOwnerBalance + withdrawAmount);
+                expect(contractBalance).to.equal(tokenAmount - withdrawAmount);
+            });
+
+            it("Should revert if non-owner tries to withdraw", async function () {
+                await expect(
+                    fanClubs.connect(addr1).withdrawFanTokens(clubId, mockToken.target, ethers.parseEther("10"))
+                ).to.be.revertedWith("Only fan club owner");
+            });
+
+            it("Should revert if withdrawing more than available balance", async function () {
+                const excessiveAmount = tokenAmount + ethers.parseEther("1");
+                await expect(
+                    fanClubs.connect(owner).withdrawFanTokens(clubId, mockToken.target, excessiveAmount)
+                ).to.be.reverted;
+            });
+
+            it("Should revert if club does not exist", async function () {
+                await expect(
+                    fanClubs.connect(owner).withdrawFanTokens("NonExistent", mockToken.target, ethers.parseEther("10"))
+                ).to.be.revertedWith("Fan club does not exist");
+            });
+        });
+
+        describe("rewardFanToken", function () {
+            beforeEach(async function () {
+                await fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, tokenAmount);
+            });
+
+            it("Should allow owner to reward tokens successfully", async function () {
+                const rewardAmount = ethers.parseEther("10");
+                const initialRecipientBalance = await mockToken.balanceOf(addr2.address);
+                
+                await fanClubs.connect(owner).rewardFanToken(clubId, mockToken.target, addr2.address, rewardAmount);
+                
+                const finalRecipientBalance = await mockToken.balanceOf(addr2.address);
+                const contractBalance = await fanClubs.connect(owner).getFanTokenBalance(clubId, mockToken.target);
+                
+                expect(finalRecipientBalance).to.equal(initialRecipientBalance + rewardAmount);
+                expect(contractBalance).to.equal(tokenAmount - rewardAmount);
+            });
+
+            it("Should revert if non-owner tries to reward", async function () {
+                await expect(
+                    fanClubs.connect(addr1).rewardFanToken(clubId, mockToken.target, addr2.address, ethers.parseEther("10"))
+                ).to.be.revertedWith("Only fan club owner");
+            });
+
+            it("Should revert if amount is zero", async function () {
+                await expect(
+                    fanClubs.connect(owner).rewardFanToken(clubId, mockToken.target, addr2.address, 0)
+                ).to.be.revertedWith("Amount must be greater than 0");
+            });
+
+            it("Should revert if insufficient token balance", async function () {
+                const excessiveAmount = tokenAmount + ethers.parseEther("1");
+                await expect(
+                    fanClubs.connect(owner).rewardFanToken(clubId, mockToken.target, addr2.address, excessiveAmount)
+                ).to.be.reverted;
+            });
+        });
+
+        describe("getFanTokenBalance", function () {
+            beforeEach(async function () {
+                await fanClubs.connect(addr1).depositFanTokens(clubId, mockToken.target, tokenAmount);
+            });
+
+            it("Should return correct token balance for owner", async function () {
+                const balance = await fanClubs.connect(owner).getFanTokenBalance(clubId, mockToken.target);
+                expect(balance).to.equal(tokenAmount);
+            });
+
+            it("Should revert if non-owner tries to check balance", async function () {
+                await expect(
+                    fanClubs.connect(addr1).getFanTokenBalance(clubId, mockToken.target)
+                ).to.be.revertedWith("Only fan club owner");
+            });
+
+            it("Should return zero for non-existent token", async function () {
+                const balance = await fanClubs.connect(owner).getFanTokenBalance(clubId, addr3.address);
+                expect(balance).to.equal(0);
+            });
         });
     });
 
@@ -307,6 +516,53 @@ describe("FanClubs Contract", function () {
             await expect(
                 fanClubs.connect(owner).getBalance("NonExistent")
             ).to.be.revertedWith("Fan club does not exist");
+        });
+    });
+
+    describe("Edge Cases and Security", function () {
+        it("Should handle empty string club IDs", async function () {
+            await fanClubs.connect(owner).createFanClub("", ethers.parseEther("1"));
+            expect(await fanClubs.getOwner("")).to.equal(owner.address);
+        });
+
+        it("Should handle very large prices", async function () {
+            const largePrice = ethers.parseEther("1000000");
+            await fanClubs.connect(owner).createFanClub("ExpensiveClub", largePrice);
+            expect(await fanClubs.getJoinPrice("ExpensiveClub")).to.equal(largePrice);
+        });
+
+        it("Should handle multiple clubs with same owner", async function () {
+            await fanClubs.connect(owner).createFanClub("Club1", ethers.parseEther("1"));
+            await fanClubs.connect(owner).createFanClub("Club2", ethers.parseEther("2"));
+            
+            expect(await fanClubs.getOwner("Club1")).to.equal(owner.address);
+            expect(await fanClubs.getOwner("Club2")).to.equal(owner.address);
+        });
+
+        it("Should maintain data integrity after multiple operations", async function () {
+            const clubId = "IntegrityTest";
+            const price = ethers.parseEther("0.1");
+            
+            await fanClubs.connect(owner).createFanClub(clubId, price);
+            
+            await fanClubs.connect(addr1).join(clubId, { value: price });
+            await fanClubs.connect(addr2).join(clubId, { value: price });
+            
+            await fanClubs.connect(addr1).leave(clubId);
+            await fanClubs.connect(addr1).join(clubId, { value: price });
+            
+            await fanClubs.connect(owner).updatePrice(clubId, ethers.parseEther("0.2"));
+            
+            expect(await fanClubs.getOwner(clubId)).to.equal(owner.address);
+            expect(await fanClubs.getJoinPrice(clubId)).to.equal(ethers.parseEther("0.2"));
+            expect(await fanClubs.checkMember(clubId, addr1.address)).to.be.true;
+            expect(await fanClubs.checkMember(clubId, addr2.address)).to.be.true;
+            
+            const members = await fanClubs.getMembers(clubId);
+            expect(members.length).to.equal(3);
+            expect(members).to.include(owner.address);
+            expect(members).to.include(addr1.address);
+            expect(members).to.include(addr2.address);
         });
     });
 });
