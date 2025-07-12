@@ -22,6 +22,13 @@ if (!RPC_URL || !CHAIN_ID || !CONTRACT_ADDRESS_SCORE_USER || !PRIVATE_KEY || !CO
 
 const ABI_PATH_SCORE_USER = path.join(__dirname, 'abis', 'ScoreUser.json');
 const ABI_PATH_FAN_CLUBS = path.join(__dirname, 'abis', 'FanClubs.json');
+const erc20Abi = [
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function transferFrom(address from, address to, uint256 amount) external returns (bool)",
+  "function transfer(address to, uint256 amount) external returns (bool)",
+  "function balanceOf(address owner) external view returns (uint256)",
+  "function decimals() external view returns (uint8)"
+];
 
 let ScoreUserABI, FanClubsABI;
 try {
@@ -244,12 +251,19 @@ app.post('/fanclub/:fanClubId/depositFanTokens', async (req, res) => {
       return res.status(400).json({ error: 'tokenAddress and amount are required' });
     }
 
-    const tx = await fanClubsContract.depositFanTokens(fanClubId, tokenAddress, amount);
+    const amountParsed = ethers.parseUnits(amount.toString(), 18);
+    const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, wallet);
+
+    const approveTx = await tokenContract.approve(CONTRACT_ADDRESS_FAN_CLUBS, amountParsed);
+    await approveTx.wait();
+
+    const tx = await fanClubsContract.depositFanTokens(fanClubId, tokenAddress, amountParsed);
     await tx.wait();
 
     res.json({ message: 'Fan tokens deposited successfully', txHash: tx.hash });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message || error.toString() });
   }
 });
 
@@ -258,9 +272,14 @@ app.get('/fanclub/:fanClubId/fanTokenBalance/:tokenAddress', async (req, res) =>
     const { fanClubId, tokenAddress } = req.params;
 
     const balance = await fanClubsContract.getFanTokenBalance(fanClubId, tokenAddress);
-    res.json({ balance: balance.toString() });
+    const decimals = 18; 
+
+    const balanceFormatted = ethers.formatUnits(balance, decimals);
+
+    res.json({ balance: balanceFormatted.toString() });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message || error.toString() });
   }
 });
 
@@ -273,12 +292,14 @@ app.post('/fanclub/:fanClubId/rewardFanToken', async (req, res) => {
       return res.status(400).json({ error: 'tokenAddress, recipient, and amount are required' });
     }
 
-    const tx = await fanClubsContract.rewardFanToken(fanClubId, tokenAddress, recipient, amount);
+    const amountParsed = ethers.parseUnits(amount.toString(), 18);
+    const tx = await fanClubsContract.rewardFanToken(fanClubId, tokenAddress, recipient, amountParsed);
     await tx.wait();
 
     res.json({ message: 'Fan token rewarded successfully', txHash: tx.hash });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message || error.toString() });
   }
 });
 
@@ -291,12 +312,14 @@ app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
       return res.status(400).json({ error: 'tokenAddress and amount are required' });
     }
 
-    const tx = await fanClubsContract.withdrawFanTokens(fanClubId, tokenAddress, amount);
+    const amountParsed = ethers.parseUnits(amount.toString(), 18);
+    const tx = await fanClubsContract.withdrawFanTokens(fanClubId, tokenAddress, amountParsed);
     await tx.wait();
 
     res.json({ message: 'Fan tokens withdrawn successfully', txHash: tx.hash });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message || error.toString() });
   }
 });
 

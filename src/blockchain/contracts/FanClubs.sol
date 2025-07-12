@@ -122,7 +122,7 @@ contract FanClubs {
 
     function withdrawFanTokens(string memory fanClubId, address tokenAddress, uint256 amount) external onlyClubOwner(fanClubId) {
         require(fanClubExists[fanClubId], "Fan club does not exist");
-        require(fanTokenBalances[fanClubId][tokenAddress] > amount, "Insufficient token balance");
+        require(fanTokenBalances[fanClubId][tokenAddress] >= amount, "Insufficient token balance");
 
         fanTokenBalances[fanClubId][tokenAddress] -= amount;
         bool success = IERC20(tokenAddress).transfer(msg.sender, amount);
@@ -131,7 +131,7 @@ contract FanClubs {
 
     function rewardFanToken(string memory fanClubId, address tokenAddress, address recipient, uint256 amount) external onlyClubOwner(fanClubId) {
         require(amount > 0, "Amount must be greater than 0");
-        require(fanTokenBalances[fanClubId][tokenAddress] > amount, "Insufficient token balance");
+        require(fanTokenBalances[fanClubId][tokenAddress] >= amount, "Insufficient token balance");
 
         fanTokenBalances[fanClubId][tokenAddress] -= amount;
         bool success = IERC20(tokenAddress).transfer(recipient, amount);
