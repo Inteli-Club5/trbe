@@ -293,6 +293,8 @@ model User {
   termsAccepted     Boolean  @default(false)
   dataProcessingAccepted Boolean @default(false)
   privacyPolicyAccepted Boolean @default(false)
+  oauthProvider  String?
+  oauthId        String?
   
   // Status and roles
   status            UserStatus @default(ACTIVE)

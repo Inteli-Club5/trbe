@@ -114,13 +114,24 @@ export async function handleCallback(req: Request, res: Response) {
 
       console.log('Saving token for user:', userId);
       await saveToken(userId, token);
+
+      req.session.twitterUserId = userId;
       
       // Limpar session após sucesso
       delete req.session.codeVerifier;
       delete req.session.state;
       
-      console.log('Redirecting to frontend...');
-      res.redirect(`http://localhost:3000/signup?oauthProvider=twitter&oauthId=${userId}`);
+      res.send(`
+        <html>
+          <body>
+            <script>
+              window.opener.postMessage({ type: 'twitter-auth-success', userId: '${userId}' }, '*');
+              window.close();
+            </script>
+            <p>Autorização concluída. Pode fechar esta janela.</p>
+          </body>
+        </html>
+      `);
 
     } catch (err) {
       console.error('=== TOKEN EXCHANGE ERROR ===');

@@ -34,6 +34,14 @@ app.use((req, res, next) => {
 
 app.get('/auth/twitter/start', startAuth);
 app.get('/auth/twitter/callback', handleCallback);
+app.get('/api/oauth/twitter/status', (req, res) => {
+  if (req.session.twitterUserId) {
+    res.json({ authorized: true, userId: req.session.twitterUserId });
+  } else {
+    res.json({ authorized: false });
+  }
+});
+
 
 const port = 5001;
 app.listen(port, () => {

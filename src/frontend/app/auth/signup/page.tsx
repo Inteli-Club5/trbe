@@ -53,6 +53,27 @@ export default function SignupPage() {
   const [acceptPrivacy, setAcceptPrivacy] = useState(false)
   const [acceptDataUsage, setAcceptDataUsage] = useState(false)
 
+  const handleTwitterAuth = () => {
+    const popup = window.open(
+      "http://localhost:5001/auth/twitter/start",
+      "TwitterAuth",
+      "width=600,height=700"
+    )
+  
+    const listener = (event: MessageEvent) => {
+      if (event.origin !== "http://localhost:5001") return
+      if (event.data.type === "twitter-auth-success") {
+        setOauthProvider("twitter")
+        setOauthId(event.data.userId)
+        popup?.close()
+        window.removeEventListener("message", listener)
+      }
+    }
+  
+    window.addEventListener("message", listener)
+  }
+  
+
   const handleOpenWalletModal = () => {
     open({ view: "Connect", namespace: "eip155" }) // abre modal para conectar wallets Ethereum
   }
@@ -144,6 +165,8 @@ export default function SignupPage() {
               </Button>
             </div>
 
+            <br></br>
+
             <div className="space-y-4">
               {/* Botão para abrir modal de conexão da carteira */}
               <Button onClick={handleOpenWalletModal} className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-gray-800 text-white font-semibold hover:bg-gray-700">
@@ -170,13 +193,23 @@ export default function SignupPage() {
                 )}
               </Button>
 
-              {/* Twitter connection status */}
-              {oauthProvider === "twitter" && oauthId && (
+              {oauthId ? (
                 <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#1DA1F2] text-white font-semibold">
                   <Twitter className="h-5 w-5" />
                   <span>Twitter connected (ID: {oauthId})</span>
                 </div>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={handleTwitterAuth}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#1DA1F2] text-white font-semibold hover:bg-[#1991DA]"
+                >
+                  <Twitter className="h-5 w-5" />
+                  <span>Connect Twitter</span>
+                </Button>
               )}
+
+
             </div>
 
             {/* Campos de formulário */}
