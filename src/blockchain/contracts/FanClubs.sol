@@ -247,6 +247,8 @@ contract FanClubs {
     function createMarketplace(string memory fanClubId, address tokenAddress) external onlyClubOwner(fanClubId) {
         require(fanClubExists[fanClubId], "Fan club does not exist");
         require(tokenAddress != address(0), "Invalid token address");
+        require(fanToken[fanClubId] == address(0), "Marketplace already exists");
+
         fanToken[fanClubId] = tokenAddress;
     }
 
