@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff, Twitter } from "lucide-react"
+import ConnectButton from "../../../hooks/ConnectButton"
 import Link from "next/link"
 
 export default function LoginPage() {
@@ -97,6 +98,9 @@ export default function LoginPage() {
             <Twitter className="h-4 w-4 mr-2" />
             Twitter
           </Button>
+          <center>
+            <ConnectButton></ConnectButton>
+          </center>
 
           <div className="text-center">
             <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
