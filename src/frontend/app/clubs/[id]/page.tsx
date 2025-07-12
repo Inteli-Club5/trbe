@@ -46,10 +46,9 @@ import {
   TrendingDown,
   Users2,
   Home,
-  Away,
-  Draw,
-  Win,
-  Loss,
+  Plane,
+  Minus,
+  X,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -208,7 +207,7 @@ export default function ClubDetailPage({ params }: { params: { id: string } }) {
       case "home":
         return Home
       case "away":
-        return Away
+        return Plane
       default:
         return Calendar
     }

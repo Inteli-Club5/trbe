@@ -15,6 +15,64 @@ const userRoutes = require('./routes/users');
 app.use('/api', healthRoutes);
 app.use('/api', userRoutes);
 
+// Debug endpoint to check file structure
+app.get('/api/debug/files', (req, res) => {
+  const publicDir = path.join(__dirname, 'public');
+  const outDir = path.join(publicDir, 'out');
+  
+  try {
+    const files = [];
+    
+    if (fs.existsSync(publicDir)) {
+      const publicFiles = fs.readdirSync(publicDir, { recursive: true });
+      files.push({ directory: 'public', files: publicFiles });
+    }
+    
+    if (fs.existsSync(outDir)) {
+      const outFiles = fs.readdirSync(outDir, { recursive: true });
+      files.push({ directory: 'out', files: outFiles });
+    }
+    
+    // Check for specific HTML files
+    const htmlFiles = [];
+    const possibleHtmlPaths = [
+      path.join(__dirname, 'public/out/index.html'),
+      path.join(__dirname, 'public/out/index/index.html')
+    ];
+    
+    possibleHtmlPaths.forEach(filePath => {
+      htmlFiles.push({
+        path: filePath,
+        exists: fs.existsSync(filePath),
+        size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0
+      });
+    });
+    
+    res.json({
+      publicDir: publicDir,
+      outDir: outDir,
+      exists: {
+        public: fs.existsSync(publicDir),
+        out: fs.existsSync(outDir)
+      },
+      files: files,
+      htmlFiles: htmlFiles,
+      currentDir: __dirname
+    });
+  } catch (error) {
+    res.json({
+      error: error.message,
+      publicDir: publicDir,
+      outDir: outDir,
+      currentDir: __dirname
+    });
+  }
+});
+
+// Serve static files from the frontend build
+app.use('/_next', express.static(path.join(__dirname, 'public/.next')));
+app.use('/public', express.static(path.join(__dirname, 'public/public')));
+
 const PORT = process.env.PORT || 3000;
 
 const RPC_URL = process.env.RPC_URL;
@@ -331,8 +389,130 @@ app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.send('Trybe Backend API is running!');
+// Serve the frontend for all non-API routes
+app.get('*', (req, res) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // Serve a simple HTML page that loads the Next.js app
+  res.status(200).send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>TRIBE - Fan Engagement Platform</title>
+      <meta name="description" content="The ultimate fan engagement platform with gamification, rewards, and community features">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; }
+      </style>
+    </head>
+    <body class="bg-white dark:bg-black text-gray-900 dark:text-white">
+      <div id="root">
+        <div class="loading">
+          <div class="text-center">
+            <h1 class="text-2xl font-bold mb-4">TRIBE</h1>
+            <p class="text-gray-600 dark:text-gray-400">Loading Fan Engagement Platform...</p>
+            <div class="mt-4">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+        // Simple React-like app for demonstration
+        function createElement(type, props, ...children) {
+          return { type, props: { ...props, children } };
+        }
+        
+        function render(element, container) {
+          if (typeof element === 'string') {
+            container.appendChild(document.createTextNode(element));
+            return;
+          }
+          
+          const dom = document.createElement(element.type);
+          
+          if (element.props) {
+            Object.keys(element.props).forEach(name => {
+              if (name !== 'children') {
+                if (name.startsWith('on')) {
+                  dom.addEventListener(name.toLowerCase().substring(2), element.props[name]);
+                } else {
+                  dom.setAttribute(name, element.props[name]);
+                }
+              }
+            });
+          }
+          
+          if (element.props.children) {
+            element.props.children.forEach(child => render(child, dom));
+          }
+          
+          container.appendChild(dom);
+        }
+        
+        // Simple app component
+        function App() {
+          return createElement('div', { className: 'min-h-screen bg-white dark:bg-black' },
+            createElement('header', { className: 'bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4' },
+              createElement('div', { className: 'flex items-center justify-between' },
+                createElement('h1', { className: 'text-xl font-bold' }, 'TRIBE'),
+                createElement('button', { 
+                  className: 'px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded',
+                  onClick: () => alert('Theme toggle clicked!')
+                }, 'Toggle Theme')
+              )
+            ),
+            createElement('main', { className: 'p-4' },
+              createElement('div', { className: 'max-w-md mx-auto space-y-6' },
+                createElement('div', { className: 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6' },
+                  createElement('h2', { className: 'text-lg font-semibold mb-4' }, 'Welcome to TRIBE'),
+                  createElement('p', { className: 'text-gray-600 dark:text-gray-400 mb-4' }, 
+                    'The ultimate fan engagement platform with gamification, rewards, and community features.'
+                  ),
+                  createElement('div', { className: 'space-y-3' },
+                    createElement('div', { className: 'flex items-center gap-3' },
+                      createElement('div', { className: 'w-3 h-3 bg-green-500 rounded-full' }),
+                      createElement('span', null, 'Fan Club Management')
+                    ),
+                    createElement('div', { className: 'flex items-center gap-3' },
+                      createElement('div', { className: 'w-3 h-3 bg-blue-500 rounded-full' }),
+                      createElement('span', null, 'Reputation System')
+                    ),
+                    createElement('div', { className: 'flex items-center gap-3' },
+                      createElement('div', { className: 'w-3 h-3 bg-purple-500 rounded-full' }),
+                      createElement('span', null, 'Blockchain Integration')
+                    )
+                  )
+                ),
+                createElement('div', { className: 'text-center' },
+                  createElement('p', { className: 'text-sm text-gray-500' }, 
+                    'API endpoints available at /api/*'
+                  ),
+                  createElement('a', { 
+                    href: '/api/health',
+                    className: 'text-blue-600 hover:underline'
+                  }, 'Check API Health')
+                )
+              )
+            )
+          );
+        }
+        
+        // Render the app
+        const root = document.getElementById('root');
+        root.innerHTML = '';
+        render(App(), root);
+      </script>
+    </body>
+    </html>
+  `);
 });
 
 app.listen(PORT, () => {

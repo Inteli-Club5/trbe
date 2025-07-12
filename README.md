@@ -2,11 +2,11 @@
 
 <sub>Figure 1 - Logo</sub>
 
-![Logo](docs/img/logo.png)
+![Logo](https://github.com/Inteli-Club5/tribe/blob/main/src/frontend/public/logo-black.svg)
 
 <sup>Source: Material produced by the authors (2025)</sup>
 
-# Tribe
+# trbe
 
 [**Website**]()
 
@@ -38,6 +38,18 @@
 
 # 1. Introduction
 
+**Trbe** is an innovative Web3 platform built to empower fan clubs and their communities by recognizing and rewarding engagement in a transparent way. Designed to integrate seamlessly with social media platforms such as Instagram, TikTok, and X (formerly Twitter), Trbe enables existing fan groups—including sports supporters, eSports communities, and cultural fandoms—to register as official organizations and unlock a new layer of value through blockchain technology.
+
+By linking social interactions to Web3 wallets, Trbe accurately measures each fan’s digital influence and transforms it into verifiable on-chain reputation. This reputation becomes the basis for a reward system powered by **Fan Tokens**—custom digital assets that represent engagement, loyalty, and status within the fan ecosystem.
+
+Fan clubs can use these tokens to:
+
+- **Reward their most active members**, offering exclusive content, VIP access, or physical/digital perks;
+- **Monetize fan-driven content**, incentivizing creators and amplifying the club's presence online;
+- **Foster a sustainable fan economy**, where influence and participation translate directly into benefits.
+
+Built on the **Chiliz Chain**, Trbe introduces a dynamic reputation and reward economy that not only celebrates fandom but also redefines how communities grow and thrive in the Web3 era.
+
 # 2. Problem
 
 # 3. Solution
@@ -58,9 +70,9 @@
 
 ****Chiliz Spicy Testnet****
 
-****FanClub Contract****: 0xFa93958314E638c4244e4FaafC6e5924FF8E6D4A
+****FanClub Contract****: 0x82fbDD75F982cd2D8BeAcf73CA1980286e64Ed8f
 <br/>
-****ScoreUser Contract****: 0xa463b08FD9ddB059c6262feDCD8f0Bd4380C4450
+****ScoreUser Contract****: 0xF4Bf9ac700b4f394181D6dFe5a40fB2f229B1fB2
 
 ## 6. Market and Business Model
 
@@ -78,6 +90,32 @@ If you have any questions or dificulties feel free to send an email to davi.silv
 
 ## 11. Team
 
-| [![Victor Garcia](docs/img/victor.jpg)](https://www.linkedin.com/in/victor-garcia-dos-santos/) | [![Kethlen Martins](docs/img/keth.jpg)](https://www.linkedin.com/in/kethlenmartins/) | [![Davi Abreu](docs/img/davi.jpg)](https://www.linkedin.com/in/davi-abreu-da-silveira/) |
-| :---------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: |
-|         [**Victor Garcia**](https://www.linkedin.com/in/victor-garcia-dos-santos/)        |         [**Kethlen Martins**](https://www.linkedin.com/in/kethlenmartins/)         |        [**Davi Abreu**](https://www.linkedin.com/in/davi-abreu-da-silveira/)       |
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/victor-garcia-dos-santos/">
+        <img src="https://plum-atomic-lemur-391.mypinata.cloud/ipfs/bafybeicfwua22pwlordmjn47grln6nhay4neylufko4w5sllhsvmudcd54" width="120" />
+        <br />
+        <strong>Victor Garcia</strong>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/kethlenmartins/">
+        <img src="https://plum-atomic-lemur-391.mypinata.cloud/ipfs/bafybeicva6ix64nzre4kt3wwqozhtuplyn6of6qvtj2cveds6r5mequh5q" width="120" />
+        <br />
+        <strong>Kethlen Martins</strong>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/davi-abreu-da-silveira/">
+        <img src="https://plum-atomic-lemur-391.mypinata.cloud/ipfs/bafybeif5th4nhfo5qggdqosvocnudlfiojfvpjc6vuz63z5r35oapsqloq" width="120" />
+        <br />
+        <strong>Davi Abreu</strong>
+      </a>
+    </td>
+  </tr>
+</table>
+
+</div>

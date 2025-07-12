@@ -1,10 +1,3 @@
-# Frontend files (not needed for backend deployment)
-src/frontend/
-src/wallet-connect/
-
-# Blockchain files (not needed for backend deployment)
-src/blockchain/
-
 # Documentation
 docs/
 *.md
