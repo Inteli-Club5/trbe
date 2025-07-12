@@ -78,6 +78,32 @@ If you have any questions or dificulties feel free to send an email to davi.silv
 
 ## 11. Team
 
-| [![Victor Garcia](docs/img/victor.jpg)](https://www.linkedin.com/in/victor-garcia-dos-santos/) | [![Kethlen Martins](docs/img/keth.jpg)](https://www.linkedin.com/in/kethlenmartins/) | [![Davi Abreu](docs/img/davi.jpg)](https://www.linkedin.com/in/davi-abreu-da-silveira/) |
-| :---------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: |
-|         [**Victor Garcia**](https://www.linkedin.com/in/victor-garcia-dos-santos/)        |         [**Kethlen Martins**](https://www.linkedin.com/in/kethlenmartins/)         |        [**Davi Abreu**](https://www.linkedin.com/in/davi-abreu-da-silveira/)       |
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/victor-garcia-dos-santos/">
+        <img src="https://plum-atomic-lemur-391.mypinata.cloud/ipfs/bafybeicfwua22pwlordmjn47grln6nhay4neylufko4w5sllhsvmudcd54" width="120" />
+        <br />
+        <strong>Victor Garcia</strong>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/kethlenmartins/">
+        <img src="https://plum-atomic-lemur-391.mypinata.cloud/ipfs/bafybeicva6ix64nzre4kt3wwqozhtuplyn6of6qvtj2cveds6r5mequh5q" width="120" />
+        <br />
+        <strong>Kethlen Martins</strong>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/davi-abreu-da-silveira/">
+        <img src="https://plum-atomic-lemur-391.mypinata.cloud/ipfs/bafybeif5th4nhfo5qggdqosvocnudlfiojfvpjc6vuz63z5r35oapsqloq" width="120" />
+        <br />
+        <strong>Davi Abreu</strong>
+      </a>
+    </td>
+  </tr>
+</table>
+
+</div>
