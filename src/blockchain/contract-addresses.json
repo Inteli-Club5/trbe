@@ -1,8 +1,8 @@
 {
   "networks": {
     "spicy": {
-      "FanClubs": "0x7735eD58ea943Ee6EF611F853d44eeF08d0151e7",
-      "ScoreUser": "0xb3eDdd3b7fd6946F9242b90a4e750c7f9a4B6d85"
+      "FanClubs": "0xA579Eaa33dd16ADBdee3845dB0eF040362148213",
+      "ScoreUser": "0x90DDfA856aA9C27a68f6581B95a8606957490458"
     },
     "hardhat": {
       "FanClubs": "",
@@ -10,7 +10,7 @@
     }
   },
   "metadata": {
-    "lastDeployment": "2025-07-12T11:57:31.282Z",
+    "lastDeployment": "2025-07-12T18:55:25.276Z",
     "deployer": "0x6B509c04e3caA2207b8f2A60A067a8ddED03b8d0",
     "version": "1.0.0"
   }

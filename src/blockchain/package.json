@@ -1,5 +1,7 @@
 {
-  "name": "hardhat-project",
+  "name": "trbe-blockchain",
+  "version": "1.0.0",
+  "description": "Smart contracts for TRBE fan engagement platform",
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
@@ -12,20 +14,43 @@
     "test:nftbadge": "hardhat test test/NftBadge.test.js",
     "run-tests": "node scripts/run-tests.js",
     "test:all": "npm run test:fanclubs && npm run test:scoreuser && npm run test:nftbadge",
+    "test:coverage": "hardhat coverage",
     "clean": "hardhat clean",
-    "compile:force": "hardhat clean && hardhat compile"
+    "compile:force": "hardhat clean && hardhat compile",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "lint:fix": "solhint 'contracts/**/*.sol' --fix",
+    "size": "hardhat size-contracts"
   },
+  "keywords": [
+    "blockchain",
+    "smart-contracts",
+    "solidity",
+    "hardhat",
+    "chiliz",
+    "fan-clubs",
+    "nft",
+    "defi"
+  ],
+  "author": "TRBE Team",
+  "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.9",
     "@nomicfoundation/hardhat-ethers": "^3.0.9",
     "@nomicfoundation/hardhat-toolbox": "^6.0.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^8.0.1",
-    "hardhat": "^2.25.0"
+    "hardhat": "^2.25.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.5",
+    "solhint": "^4.0.0"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.0",
     "dotenv": "^17.2.0",
     "ethers": "^6.15.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }
