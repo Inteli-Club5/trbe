@@ -1,25 +1,43 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Menu, Users, Trophy, Calendar, MapPin, Star, ExternalLink, Heart, Share2, Filter, Shield, TrendingUp, Award, Activity, Search, MessageCircle, Gift, MessageSquare, Instagram, Facebook, X } from "lucide-react"
+import { Menu, Users, Trophy, Calendar, MapPin, Star, ExternalLink, Heart, Share2, Filter, Shield, TrendingUp, Award, Activity, Search, MessageCircle, Gift, MessageSquare, Instagram, Facebook, X, Wallet, Coins, Loader2 } from "lucide-react"
 import { Sidebar } from "@/components/sidebar"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useBlockchain } from "@/hooks/use-blockchain"
+import { useToast } from "@/hooks/use-toast"
+import { ethers } from "ethers"
 
 export default function ClubPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [activeView, setActiveView] = useState<"club" | "fangroup">("club")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [showProductModal, setShowProductModal] = useState(false)
   const [selectedSize, setSelectedSize] = useState<string>("")
   const [selectedColor, setSelectedColor] = useState<string>("")
+  const [userBalance, setUserBalance] = useState<string>("0")
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false)
+  const [isProcessingPurchase, setIsProcessingPurchase] = useState(false)
+
+  // Blockchain integration
+  const {
+    isConnected,
+    address,
+    connectWallet,
+    formatTokenAmount,
+    transactionState,
+    isCorrectNetwork,
+    switchNetwork
+  } = useBlockchain()
 
   const clubInfo = {
     name: "Chelsea Football Club",
@@ -28,6 +46,140 @@ export default function ClubPage() {
     stadium: "Stamford Bridge",
     members: 12000000,
     colors: ["#003366", "#FFFFFF"],
+  }
+
+  // Load user's CHZ balance
+  useEffect(() => {
+    if (isConnected && address) {
+      loadUserBalance()
+      toast({
+        title: "Wallet Connected",
+        description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
+      })
+    } else {
+      setUserBalance("0")
+    }
+  }, [isConnected, address, toast])
+
+  const loadUserBalance = async () => {
+    if (!window.ethereum || !address) return
+    
+    setIsLoadingBalance(true)
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const balance = await provider.getBalance(address)
+      setUserBalance(ethers.utils.formatEther(balance))
+    } catch (error) {
+      console.error("Failed to load balance:", error)
+      setUserBalance("0")
+    } finally {
+      setIsLoadingBalance(false)
+    }
+  }
+
+  // Handle product purchase with blockchain
+  const handlePurchase = async (product: any) => {
+    if (!isConnected) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to make a purchase",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (!isCorrectNetwork) {
+      toast({
+        title: "Wrong Network",
+        description: "Please switch to Chiliz Spicy Testnet to make purchases",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (!window.ethereum) {
+      toast({
+        title: "No Wallet",
+        description: "Please install MetaMask or another wallet",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Check if user has enough balance
+    const productPrice = ethers.utils.parseEther(product.price.toString())
+    const userBalanceWei = ethers.utils.parseEther(userBalance)
+    
+    if (userBalanceWei.lt(productPrice)) {
+      toast({
+        title: "Insufficient Balance",
+        description: `You need ${product.price.toLocaleString()} CHZ but have ${formatTokenAmount(userBalance)} CHZ`,
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsProcessingPurchase(true)
+
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      
+      // For this demo, we'll simulate a marketplace purchase
+      // In a real implementation, this would call the buyMarketplaceItem function
+      // from the blockchain library with the actual marketplace contract
+      
+      // Simulate the purchase by sending CHZ to a demo club owner address
+      // This represents the marketplace transaction
+      const clubOwnerAddress = "0x6B509c04e3caA2207b8f2A60A067a8ddED03b8d0" // Demo club owner
+      
+      const tx = await signer.sendTransaction({
+        to: clubOwnerAddress,
+        value: productPrice,
+        gasLimit: 100000, // Higher gas limit for marketplace transactions
+        data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(`Purchase: ${product.name}`)) // Add purchase data
+      })
+
+      toast({
+        title: "Transaction Submitted",
+        description: "Your purchase is being processed on the blockchain...",
+      })
+
+      const receipt = await tx.wait()
+
+      toast({
+        title: "Purchase Successful! 🎉",
+        description: `${product.name} purchased for ${product.price.toLocaleString()} CHZ. Transaction: ${receipt.transactionHash.slice(0, 10)}...`,
+      })
+
+      // Refresh balance
+      await loadUserBalance()
+      setShowProductModal(false)
+      
+    } catch (error: any) {
+      console.error("Purchase error:", error)
+      
+      let errorMessage = "Purchase failed"
+      if (error.code === 4001) {
+        errorMessage = "Transaction was cancelled by user"
+      } else if (error.message?.includes("insufficient funds")) {
+        errorMessage = "Insufficient CHZ balance for purchase and gas fees"
+      } else if (error.message?.includes("user rejected")) {
+        errorMessage = "Transaction was rejected"
+      } else if (error.message?.includes("gas")) {
+        errorMessage = "Gas estimation failed. Please try again."
+      } else if (error.message?.includes("network")) {
+        errorMessage = "Network error. Please check your connection."
+      }
+      
+      toast({
+        title: "Purchase Failed",
+        description: errorMessage,
+        variant: "destructive"
+      })
+    } finally {
+      setIsProcessingPurchase(false)
+    }
   }
 
   const fanGroups = [
@@ -276,13 +428,94 @@ export default function ClubPage() {
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             {activeView === "club" ? "My Club" : "Fan Group"}
           </h1>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
+            {/* Wallet Connection & Balance */}
+            {isConnected ? (
+              <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                <Wallet className="h-4 w-4 text-green-600" />
+                <div className="text-sm">
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    {address?.slice(0, 6)}...{address?.slice(-4)}
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                    <Coins className="h-3 w-3" />
+                    {isLoadingBalance ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <span>{formatTokenAmount(userBalance)} CHZ</span>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      onClick={loadUserBalance}
+                      disabled={isLoadingBalance}
+                    >
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Button 
+                onClick={connectWallet}
+                className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+              >
+                <Wallet className="h-4 w-4 mr-2" />
+                Connect Wallet
+              </Button>
+            )}
             <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <Share2 className="h-6 w-6" />
             </Button>
           </div>
         </div>
       </header>
+
+      {/* Network Warning */}
+      {isConnected && !isCorrectNetwork && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Shield className="h-5 w-5 text-yellow-600" />
+              <div>
+                <div className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                  Wrong Network
+                </div>
+                <div className="text-xs text-yellow-700 dark:text-yellow-300">
+                  Please switch to Chiliz Spicy Testnet to use the marketplace
+                </div>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={switchNetwork}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white"
+            >
+              Switch Network
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Transaction Status */}
+      {transactionState.isPending && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+            <div className="flex-1">
+              <div className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Transaction in Progress
+              </div>
+              <div className="text-xs text-blue-700 dark:text-blue-300">
+                Please wait while your transaction is being processed...
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filter Toggle */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800">
@@ -518,6 +751,53 @@ export default function ClubPage() {
               </TabsContent>
 
               <TabsContent value="store" className="space-y-4">
+                {/* Wallet Connection Instructions */}
+                {!isConnected && (
+                  <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                    <CardHeader>
+                      <CardTitle className="text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                        <Wallet className="h-5 w-5" />
+                        Connect Your Wallet
+                      </CardTitle>
+                      <CardDescription className="text-blue-700 dark:text-blue-300">
+                        Connect your wallet to purchase items with CHZ tokens on the blockchain
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button 
+                        onClick={connectWallet}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Wallet className="h-4 w-4 mr-2" />
+                        Connect Wallet to Shop
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Network Instructions */}
+                {isConnected && !isCorrectNetwork && (
+                  <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+                    <CardHeader>
+                      <CardTitle className="text-yellow-900 dark:text-yellow-100 flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Switch Network
+                      </CardTitle>
+                      <CardDescription className="text-yellow-700 dark:text-yellow-300">
+                        You need to be on Chiliz Spicy Testnet to use the marketplace
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button 
+                        onClick={switchNetwork}
+                        className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+                      >
+                        Switch to Chiliz Spicy Testnet
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
@@ -825,20 +1105,62 @@ export default function ClubPage() {
                             <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{product.name}</h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{product.description}</p>
                             <div className="flex items-center justify-between">
-                              <span className="text-lg font-bold text-black dark:text-white">{product.price.toLocaleString()} tokens</span>
-                                                             <Button 
-                                 size="sm" 
-                                 className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 font-medium px-4 py-2 rounded-lg transition-all duration-200 border-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
-                                 onClick={(e) => {
-                                   e.stopPropagation()
-                                   setSelectedProduct(product)
-                                   setSelectedSize("")
-                                   setSelectedColor("")
-                                   setShowProductModal(true)
-                                 }}
-                               >
-                                 Buy
-                               </Button>
+                              <div>
+                                <span className="text-lg font-bold text-black dark:text-white">{product.price.toLocaleString()} CHZ</span>
+                                {isConnected && (
+                                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                                    {!isCorrectNetwork ? (
+                                      <span className="text-yellow-600">⚠ Wrong network</span>
+                                    ) : parseFloat(userBalance) >= product.price ? (
+                                      <span className="text-green-600">✓ You can afford this</span>
+                                    ) : (
+                                      <span className="text-red-600">✗ Insufficient balance</span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              <Button 
+                                size="sm" 
+                                className={`font-medium px-4 py-2 rounded-lg transition-all duration-200 border-2 border-transparent ${
+                                  isConnected && isCorrectNetwork && parseFloat(userBalance) >= product.price
+                                    ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 hover:border-gray-300 dark:hover:border-gray-600"
+                                    : "bg-gray-400 dark:bg-gray-600 text-gray-200 dark:text-gray-400 cursor-not-allowed"
+                                }`}
+                                                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (!isConnected) {
+                                      toast({
+                                        title: "Wallet Required",
+                                        description: "Please connect your wallet to purchase items",
+                                        variant: "destructive"
+                                      })
+                                      return
+                                    }
+                                    if (!isCorrectNetwork) {
+                                      toast({
+                                        title: "Wrong Network",
+                                        description: "Please switch to Chiliz Spicy Testnet to purchase items",
+                                        variant: "destructive"
+                                      })
+                                      return
+                                    }
+                                    if (parseFloat(userBalance) < product.price) {
+                                      toast({
+                                        title: "Insufficient Balance",
+                                        description: `You need ${product.price.toLocaleString()} CHZ but have ${formatTokenAmount(userBalance)} CHZ`,
+                                        variant: "destructive"
+                                      })
+                                      return
+                                    }
+                                    setSelectedProduct(product)
+                                    setSelectedSize("")
+                                    setSelectedColor("")
+                                    setShowProductModal(true)
+                                  }}
+                                  disabled={!isConnected || !isCorrectNetwork || parseFloat(userBalance) < product.price}
+                                                              >
+                                  {!isConnected ? "Connect Wallet" : !isCorrectNetwork ? "Wrong Network" : "Buy"}
+                                </Button>
                             </div>
                           </CardContent>
                         </Card>
@@ -1043,31 +1365,34 @@ export default function ClubPage() {
                              <div className="space-y-3">
                  <Button 
                    className={`w-full font-semibold py-4 rounded-xl transition-all duration-200 border-2 border-transparent shadow-lg hover:shadow-xl ${
-                     (selectedProduct.sizes && !selectedSize) || (selectedProduct.colors && !selectedColor)
+                     (selectedProduct.sizes && !selectedSize) || (selectedProduct.colors && !selectedColor) || isProcessingPurchase
                        ? "bg-gray-400 dark:bg-gray-600 text-gray-200 dark:text-gray-400 cursor-not-allowed"
                        : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 hover:border-gray-300 dark:hover:border-gray-600"
                    }`}
                    onClick={() => {
                      if ((selectedProduct.sizes && !selectedSize) || (selectedProduct.colors && !selectedColor)) {
-                       alert("Please select size and color before purchasing")
+                       toast({
+                         title: "Selection Required",
+                         description: "Please select size and color before purchasing",
+                         variant: "destructive"
+                       })
                        return
                      }
                      
-                     const selectedOptions = []
-                     if (selectedSize) selectedOptions.push(`Size: ${selectedSize}`)
-                     if (selectedColor) selectedOptions.push(`Color: ${selectedColor}`)
-                     
-                     const optionsText = selectedOptions.length > 0 ? ` (${selectedOptions.join(", ")})` : ""
-                     alert(`Purchase successful! ${selectedProduct.name}${optionsText} added to your order.`)
-                     setShowProductModal(false)
+                     handlePurchase(selectedProduct)
                    }}
-                   disabled={(selectedProduct.sizes && !selectedSize) || (selectedProduct.colors && !selectedColor)}
+                   disabled={(selectedProduct.sizes && !selectedSize) || (selectedProduct.colors && !selectedColor) || isProcessingPurchase}
                  >
-                   {selectedProduct.sizes && !selectedSize 
+                   {isProcessingPurchase ? (
+                     <div className="flex items-center gap-2">
+                       <Loader2 className="h-4 w-4 animate-spin" />
+                       Processing...
+                     </div>
+                   ) : selectedProduct.sizes && !selectedSize 
                      ? "Select Size" 
                      : selectedProduct.colors && !selectedColor 
                      ? "Select Color" 
-                     : `Purchase for ${selectedProduct.price.toLocaleString()} tokens`
+                     : `Purchase for ${selectedProduct.price.toLocaleString()} CHZ`
                    }
                  </Button>
                  

@@ -1,17 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Sidebar } from "@/components/sidebar"
-import { BlockchainStatus } from "@/components/blockchain-status"
-import { Marketplace } from "@/components/marketplace"
-import { useBlockchain } from "@/hooks/use-blockchain"
-import { useFanClubs } from "@/hooks/use-fan-clubs"
-import { useToast } from "@/hooks/use-toast"
 import {
   Menu,
   Search,
@@ -37,10 +32,6 @@ import {
   Globe,
   Medal,
   Flame,
-  Wallet,
-  X,
-  ShoppingCart,
-  AlertCircle,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -49,92 +40,6 @@ export default function ClubsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("fans")
   const [sortOrder, setSortOrder] = useState("desc")
-  const [newClubId, setNewClubId] = useState("")
-  const [newClubPrice, setNewClubPrice] = useState("0.1")
-  const [activeTab, setActiveTab] = useState("clubs")
-  const [selectedMarketplaceClub, setSelectedMarketplaceClub] = useState<string | null>(null)
-
-  const blockchain = useBlockchain()
-  const fanClubs = useFanClubs()
-  const { toast } = useToast()
-
-  // Load popular fan clubs on mount
-  useEffect(() => {
-    if (blockchain.isConnected) {
-      // Load some popular fan clubs
-      const popularClubs = ["chelsea", "manchester-united", "liverpool", "arsenal", "manchester-city"]
-      popularClubs.forEach(clubId => {
-        fanClubs.loadFanClub(clubId)
-      })
-    }
-  }, [blockchain.isConnected, fanClubs])
-
-  // Create new fan club
-  const handleCreateFanClub = async () => {
-    // Prevent multiple rapid clicks
-    if (fanClubs.isLoading || blockchain.transactionState.isPending) {
-      return
-    }
-
-    if (!newClubId.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a fan club ID",
-        variant: "destructive",
-      })
-      return
-    }
-
-    if (!newClubPrice || parseFloat(newClubPrice) <= 0) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid price",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      const success = await fanClubs.createFanClub(newClubId, newClubPrice)
-      if (success) {
-        setNewClubId("")
-        setNewClubPrice("0.1")
-        toast({
-          title: "Success",
-          description: `Fan club "${newClubId}" created successfully!`,
-        })
-      }
-    } catch (error) {
-      console.error("Error creating fan club:", error)
-      toast({
-        title: "Error",
-        description: "Failed to create fan club. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
-
-  // Join fan club
-  const handleJoinFanClub = async (clubId: string, price: string) => {
-    const success = await fanClubs.joinFanClub(clubId, price)
-    if (success) {
-      toast({
-        title: "Success",
-        description: `Successfully joined fan club "${clubId}"!`,
-      })
-    }
-  }
-
-  // Leave fan club
-  const handleLeaveFanClub = async (clubId: string) => {
-    const success = await fanClubs.leaveFanClub(clubId)
-    if (success) {
-      toast({
-        title: "Success",
-        description: `Successfully left fan club "${clubId}"!`,
-      })
-    }
-  }
 
   // Sample clubs data
   const clubs = [
@@ -325,13 +230,6 @@ export default function ClubsPage() {
     }
   ]
 
-  // Auto-select first club for marketplace when tab is active
-  useEffect(() => {
-    if (activeTab === "marketplace" && !selectedMarketplaceClub && clubs.length > 0) {
-      setSelectedMarketplaceClub(clubs[0].id);
-    }
-  }, [activeTab, selectedMarketplaceClub, clubs]);
-
   const getLevelColor = (level: string) => {
     switch (level) {
       case "exemplary":
@@ -423,71 +321,6 @@ export default function ClubsPage() {
       </header>
 
       <div className="p-4 space-y-6">
-        {/* Blockchain Status */}
-        <BlockchainStatus />
-
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800">
-            <TabsTrigger
-              value="clubs"
-              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black"
-            >
-              <Building className="h-4 w-4 mr-2" />
-              Fan Clubs
-            </TabsTrigger>
-            <TabsTrigger
-              value="marketplace"
-              className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black"
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Marketplace
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="clubs" className="space-y-6">
-            {/* Create Fan Club */}
-            {blockchain.isConnected && (
-          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plus className="h-5 w-5" />
-                Create New Fan Club
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Fan Club ID (e.g., chelsea)"
-                    value={newClubId}
-                    onChange={(e) => setNewClubId(e.target.value)}
-                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    placeholder="Join Price (CHZ)"
-                    value={newClubPrice}
-                    onChange={(e) => setNewClubPrice(e.target.value)}
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                  />
-                </div>
-                <Button 
-                  onClick={handleCreateFanClub}
-                  disabled={fanClubs.isLoading || blockchain.transactionState.isPending || !newClubId.trim() || !newClubPrice || parseFloat(newClubPrice) <= 0}
-                  className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {fanClubs.isLoading || blockchain.transactionState.isPending ? "Creating..." : "Create Club"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Search and Filters */}
         <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
           <CardContent className="p-4">
@@ -594,39 +427,9 @@ export default function ClubsPage() {
                         View Details
                       </Button>
                     </Link>
-                    {blockchain.isConnected ? (
-                      fanClubs.isMember(club.id) ? (
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleLeaveFanClub(club.id)}
-                          disabled={fanClubs.isLoading || blockchain.transactionState.isPending}
-                          className="border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
-                        >
-                          <X className="h-4 w-4 mr-2" />
-                          Leave
-                        </Button>
-                      ) : (
-                        <Button 
-                          size="sm" 
-                          onClick={() => handleJoinFanClub(club.id, "0.1")}
-                          disabled={fanClubs.isLoading || blockchain.transactionState.isPending}
-                          className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
-                        >
-                          <Heart className="h-4 w-4 mr-2" />
-                          Join
-                        </Button>
-                      )
-                    ) : (
-                      <Button 
-                        size="sm" 
-                        onClick={blockchain.connectWallet}
-                        className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
-                      >
-                        <Wallet className="h-4 w-4 mr-2" />
-                        Connect
-                      </Button>
-                    )}
+                    <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
+                      Follow
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -651,73 +454,6 @@ export default function ClubsPage() {
             </CardContent>
           </Card>
         )}
-          </TabsContent>
-
-          <TabsContent value="marketplace" className="space-y-6">
-            {blockchain.isConnected ? (
-              <div className="space-y-4">
-                {/* Marketplace Selection */}
-                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <ShoppingCart className="h-5 w-5" />
-                      Select Fan Club for Marketplace
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {clubs.map((club) => (
-                        <Card 
-                          key={club.id} 
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            selectedMarketplaceClub === club.id 
-                              ? 'ring-2 ring-black dark:ring-white bg-gray-50 dark:bg-gray-800' 
-                              : 'bg-white dark:bg-gray-900'
-                          }`}
-                          onClick={() => setSelectedMarketplaceClub(club.id)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <h3 className="font-semibold text-gray-900 dark:text-white">{club.name}</h3>
-                              <Badge className={fanClubs.isOwner(club.id) ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"}>
-                                {fanClubs.isOwner(club.id) ? "Owner" : fanClubs.isMember(club.id) ? "Member" : "Not Member"}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{club.nickname}</p>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Marketplace Component */}
-                {selectedMarketplaceClub && (
-                  <Marketplace 
-                    fanClubId={selectedMarketplaceClub} 
-                    isOwner={fanClubs.isOwner(selectedMarketplaceClub)} 
-                    isMember={fanClubs.isMember(selectedMarketplaceClub)} 
-                  />
-                )}
-              </div>
-            ) : (
-              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-                <CardContent className="p-6 text-center">
-                  <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Connect Wallet
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Connect your wallet to access the marketplace
-                  </p>
-                  <Button onClick={blockchain.connectWallet}>
-                    Connect Wallet
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   )

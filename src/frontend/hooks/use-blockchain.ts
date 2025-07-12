@@ -111,7 +111,7 @@ export function useBlockchain() {
     };
 
     initializeBlockchain();
-  }, [isConnected, address, appKit, toast]);
+  }, [isConnected, address]);
 
   // Switch to correct network
   const switchNetwork = useCallback(async () => {
