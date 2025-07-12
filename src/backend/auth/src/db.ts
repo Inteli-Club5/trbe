@@ -1,29 +1,71 @@
-import { createClient } from '@supabase/supabase-js';
+import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_KEY!;
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
+const prisma = new PrismaClient();
 
 export async function saveToken(userId: string, token: any) {
-  // Exemplo simples de armazenamento
-  const { error } = await supabase
-    .from('tokens')
-    .upsert({ user_id: userId, token })
-    .eq('user_id', userId);
+  console.log('=== SAVING TOKEN WITH PRISMA ===');
+  console.log('User ID:', userId);
+  console.log('Token type:', typeof token);
+  console.log('Token keys:', Object.keys(token));
+  
+  try {
+    console.log('Attempting to upsert token...');
+    
+    const result = await prisma.token.upsert({
+      where: {
+        userId: userId
+      },
+      update: {
+        token: token,
+        updatedAt: new Date()
+      },
+      create: {
+        userId: userId,
+        token: token
+      }
+    });
 
-  if (error) throw error;
+    console.log('Token saved successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('Error in saveToken:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error constructor:', error?.constructor?.name);
+    
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    
+    throw error;
+  }
 }
 
 export async function getToken(userId: string) {
-  const { data, error } = await supabase
-    .from('tokens')
-    .select('token')
-    .eq('user_id', userId)
-    .single();
+  console.log('=== GETTING TOKEN WITH PRISMA ===');
+  console.log('User ID:', userId);
+  
+  try {
+    const result = await prisma.token.findUnique({
+      where: {
+        userId: userId
+      },
+      select: {
+        token: true
+      }
+    });
 
-  if (error) throw error;
-  return data?.token;
+    console.log('Token retrieved successfully');
+    return result?.token;
+  } catch (error) {
+    console.error('Error in getToken:', error);
+    throw error;
+  }
+}
+
+// Função para limpar conexões (opcional)
+export async function disconnect() {
+  await prisma.$disconnect();
 }

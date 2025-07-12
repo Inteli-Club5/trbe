@@ -1,21 +1,39 @@
+/// <reference path="./types/express-session.d.ts" />
+
 import express from 'express';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import { startAuth, handleCallback } from './oauth';
+import connectSqlite3 from 'connect-sqlite3';
 
 dotenv.config();
 
 const app = express();
 
-app.use(session({
-  secret: process.env.SESSION_SECRET!,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // para dev local. Em prod, usar secure: true com HTTPS
-}));
+const SQLiteStore = connectSqlite3(session);
 
-app.get('/', startAuth);
-app.get('/oauth/callback', handleCallback);
+const sessionStore: session.Store = new SQLiteStore({
+  db: 'sessions.sqlite',
+  dir: './',
+}) as any // <-- usamos 'as any' aqui para ignorar os tipos incorretos
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // em produção, use 'secure: true' com HTTPS
+    store: sessionStore,
+  })
+)
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+app.get('/auth/twitter/start', startAuth);
+app.get('/auth/twitter/callback', handleCallback);
 
 const port = 5001;
 app.listen(port, () => {
