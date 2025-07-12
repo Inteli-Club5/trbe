@@ -9,5 +9,13 @@
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
+  },
+  "variables": {
+    "NODE_ENV": "production",
+    "PORT": "3000",
+    "RPC_URL": "https://spicy-rpc.chiliz.com",
+    "CHAIN_ID": "88882",
+    "CONTRACT_ADDRESS_SCORE_USER": "0xb3eDdd3b7fd6946F9242b90a4e750c7f9a4B6d85",
+    "CONTRACT_ADDRESS_FAN_CLUBS": "0x7735eD58ea943Ee6EF611F853d44eeF08d0151e7"
   }
 } 

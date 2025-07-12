@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
-import { Menu, MapPin, Trophy, Users, Coins, Star, Calendar, CheckCircle } from "lucide-react"
+import { Menu, MapPin, Trophy, Users, Coins, Star, Calendar, CheckCircle, Wallet } from "lucide-react"
 import Link from "next/link"
 import { Sidebar } from "@/components/sidebar"
 import Image from "next/image"
@@ -198,6 +198,30 @@ export default function HomePage() {
 
           <Link href="/ranking">
             <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
+              <CardContent className="p-4 text-center">
+                <Star className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Ranking</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/blockchain-demo">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
+              <CardContent className="p-4 text-center">
+                <Coins className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Blockchain Demo</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/wallet">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
+              <CardContent className="p-4 text-center">
+                <Wallet className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Wallet</p>
+              </CardContent>
+            </Card>
+          </Link>
               <CardContent className="p-4 text-center">
                 <Users className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-900 dark:text-white">Rankings</p>

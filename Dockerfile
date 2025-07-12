@@ -77,12 +77,12 @@ COPY src/backend/ ./
 COPY --from=frontend-builder /app/src/frontend ./frontend/
 
 # Copy frontend build from frontend builder
-COPY --from=frontend-builder /app/src/frontend/.next ./public/.next
-COPY --from=frontend-builder /app/src/frontend/public ./public/public
-COPY --from=frontend-builder /app/src/frontend/package.json ./public/package.json
+COPY --from=frontend-builder /app/src/frontend/.next ./frontend/.next
+COPY --from=frontend-builder /app/src/frontend/public ./frontend/public
+COPY --from=frontend-builder /app/src/frontend/package.json ./frontend/package.json
 
 # Debug: List the contents to verify
-RUN ls -la ./public/ && ls -la ./public/.next/ || echo "No .next directory found"
+RUN ls -la ./frontend/ && ls -la ./frontend/.next/ || echo "No .next directory found"
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs

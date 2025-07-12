@@ -1,9 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BlockchainStatus } from "@/components/blockchain-status"
+import { useBlockchain } from "@/hooks/use-blockchain"
+import { useToast } from "@/hooks/use-toast"
 import {
   ArrowLeft,
   Coins,
@@ -15,12 +18,47 @@ import {
   History,
   ShoppingBag,
   ExternalLink,
+  RefreshCw,
+  Copy,
 } from "lucide-react"
 import Link from "next/link"
 
 export default function WalletPage() {
   const [walletBalance] = useState(15420)
   const [lockedTokens] = useState(500)
+
+  const blockchain = useBlockchain()
+  const { toast } = useToast()
+
+  // Copy address to clipboard
+  const copyAddress = async () => {
+    if (blockchain.address) {
+      try {
+        await navigator.clipboard.writeText(blockchain.address)
+        toast({
+          title: "Address Copied",
+          description: "Wallet address copied to clipboard",
+        })
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to copy address",
+          variant: "destructive",
+        })
+      }
+    }
+  }
+
+  // Refresh wallet data
+  const refreshWallet = () => {
+    if (blockchain.isConnected) {
+      // This would typically refresh wallet data
+      toast({
+        title: "Refreshed",
+        description: "Wallet data refreshed",
+      })
+    }
+  }
 
   const transactions = [
     {
@@ -152,6 +190,65 @@ export default function WalletPage() {
       </header>
 
       <div className="p-4 space-y-6">
+        {/* Blockchain Status */}
+        <BlockchainStatus />
+
+        {/* Wallet Information */}
+        {blockchain.isConnected && (
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Wallet className="h-5 w-5" />
+                  Wallet Information
+                </span>
+                <div className="flex gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={copyAddress}
+                    className="border-gray-200 dark:border-gray-700"
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy Address
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={refreshWallet}
+                    className="border-gray-200 dark:border-gray-700"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Address:</span>
+                  <span className="text-sm font-mono text-gray-900 dark:text-white">
+                    {blockchain.formatUserAddress(blockchain.address || "")}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Network:</span>
+                  <span className="text-sm text-gray-900 dark:text-white">
+                    {blockchain.isCorrectNetwork ? "Chiliz Spicy Testnet" : "Wrong Network"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Status:</span>
+                  <span className={`text-sm ${blockchain.isCorrectNetwork ? "text-green-600" : "text-red-600"}`}>
+                    {blockchain.isCorrectNetwork ? "Connected" : "Wrong Network"}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Wallet Balance */}
         <Card className="bg-gradient-to-r from-black/20 to-black/10 dark:from-white/30 dark:to-white/20 border-black dark:border-white">
           <CardContent className="p-6 text-center">

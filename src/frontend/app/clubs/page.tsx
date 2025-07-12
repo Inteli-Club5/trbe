@@ -1,12 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Sidebar } from "@/components/sidebar"
+import { BlockchainStatus } from "@/components/blockchain-status"
+import { useBlockchain } from "@/hooks/use-blockchain"
+import { useFanClubs } from "@/hooks/use-fan-clubs"
+import { useToast } from "@/hooks/use-toast"
 import {
   Menu,
   Search,
@@ -40,6 +44,76 @@ export default function ClubsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("fans")
   const [sortOrder, setSortOrder] = useState("desc")
+  const [newClubId, setNewClubId] = useState("")
+  const [newClubPrice, setNewClubPrice] = useState("0.1")
+
+  const blockchain = useBlockchain()
+  const fanClubs = useFanClubs()
+  const { toast } = useToast()
+
+  // Load popular fan clubs on mount
+  useEffect(() => {
+    if (blockchain.isConnected) {
+      // Load some popular fan clubs
+      const popularClubs = ["chelsea", "manchester-united", "liverpool", "arsenal", "manchester-city"]
+      popularClubs.forEach(clubId => {
+        fanClubs.loadFanClub(clubId)
+      })
+    }
+  }, [blockchain.isConnected, fanClubs])
+
+  // Create new fan club
+  const handleCreateFanClub = async () => {
+    if (!newClubId.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a fan club ID",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!newClubPrice || parseFloat(newClubPrice) <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid price",
+        variant: "destructive",
+      })
+      return
+    }
+
+    const success = await fanClubs.createFanClub(newClubId, newClubPrice)
+    if (success) {
+      setNewClubId("")
+      setNewClubPrice("0.1")
+      toast({
+        title: "Success",
+        description: `Fan club "${newClubId}" created successfully!`,
+      })
+    }
+  }
+
+  // Join fan club
+  const handleJoinFanClub = async (clubId: string, price: string) => {
+    const success = await fanClubs.joinFanClub(clubId, price)
+    if (success) {
+      toast({
+        title: "Success",
+        description: `Successfully joined fan club "${clubId}"!`,
+      })
+    }
+  }
+
+  // Leave fan club
+  const handleLeaveFanClub = async (clubId: string) => {
+    const success = await fanClubs.leaveFanClub(clubId)
+    if (success) {
+      toast({
+        title: "Success",
+        description: `Successfully left fan club "${clubId}"!`,
+      })
+    }
+  }
 
   // Sample clubs data
   const clubs = [
@@ -321,6 +395,51 @@ export default function ClubsPage() {
       </header>
 
       <div className="p-4 space-y-6">
+        {/* Blockchain Status */}
+        <BlockchainStatus />
+
+        {/* Create Fan Club */}
+        {blockchain.isConnected && (
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                Create New Fan Club
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Fan Club ID (e.g., chelsea)"
+                    value={newClubId}
+                    onChange={(e) => setNewClubId(e.target.value)}
+                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    placeholder="Join Price (CHZ)"
+                    value={newClubPrice}
+                    onChange={(e) => setNewClubPrice(e.target.value)}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                  />
+                </div>
+                <Button 
+                  onClick={handleCreateFanClub}
+                  disabled={fanClubs.isLoading || blockchain.transactionState.isPending}
+                  className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                >
+                  {fanClubs.isLoading ? "Creating..." : "Create Club"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Search and Filters */}
         <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
           <CardContent className="p-4">
@@ -427,9 +546,39 @@ export default function ClubsPage() {
                         View Details
                       </Button>
                     </Link>
-                    <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
-                      Follow
-                    </Button>
+                    {blockchain.isConnected ? (
+                      fanClubs.isMember(club.id) ? (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleLeaveFanClub(club.id)}
+                          disabled={fanClubs.isLoading || blockchain.transactionState.isPending}
+                          className="border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Leave
+                        </Button>
+                      ) : (
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleJoinFanClub(club.id, "0.1")}
+                          disabled={fanClubs.isLoading || blockchain.transactionState.isPending}
+                          className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                        >
+                          <Heart className="h-4 w-4 mr-2" />
+                          Join
+                        </Button>
+                      )
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        onClick={blockchain.connectWallet}
+                        className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+                      >
+                        <Wallet className="h-4 w-4 mr-2" />
+                        Connect
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

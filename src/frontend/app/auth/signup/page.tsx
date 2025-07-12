@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Eye, EyeOff, Upload, Twitter } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import ConnectButton from "../../../hooks/ConnectButton"
+import ConnectButton from "../../../hooks/connection-button"
 
 export default function SignupPage() {
 

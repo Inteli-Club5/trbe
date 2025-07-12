@@ -3,6 +3,7 @@ import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AppKit } from "../context/appkit"
 import { LayoutWrapper } from '@/components/layout-wrapper'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'TRBE - Fan Engagement Platform',
@@ -32,6 +33,7 @@ export default function RootLayout({
             <LayoutWrapper>
               {children}
             </LayoutWrapper>
+            <Toaster />
           </ThemeProvider>
         </AppKit>
       </body>

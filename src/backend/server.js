@@ -3,8 +3,18 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { ethers } = require('ethers');
+const cors = require('cors');
 
 const app = express();
+
+// Enable CORS for frontend communication
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL || 'https://your-domain.railway.app'
+    : 'http://localhost:3000',
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Import routes

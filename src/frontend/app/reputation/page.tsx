@@ -1,12 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Sidebar } from "@/components/sidebar"
+import { BlockchainStatus } from "@/components/blockchain-status"
+import { useBlockchain } from "@/hooks/use-blockchain"
+import { useReputation } from "@/hooks/use-reputation"
+import { useToast } from "@/hooks/use-toast"
 import {
   Menu,
   Shield,
@@ -26,12 +30,81 @@ import {
   Zap,
   Heart,
   Target,
+  Plus,
+  Minus,
 } from "lucide-react"
 import Link from "next/link"
 
 export default function ReputationPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const reputationScore = 850
+  const [testLikes, setTestLikes] = useState(1)
+  const [testComments, setTestComments] = useState(1)
+  const [testRetweets, setTestRetweets] = useState(1)
+
+  const blockchain = useBlockchain()
+  const reputation = useReputation()
+  const { toast } = useToast()
+
+  // Load reputation on mount
+  useEffect(() => {
+    if (blockchain.isConnected && blockchain.address) {
+      reputation.loadReputation(blockchain.address)
+    }
+  }, [blockchain.isConnected, blockchain.address, reputation])
+
+  // Update reputation with test data
+  const handleUpdateReputation = async () => {
+    const success = await reputation.updateFromSocialActivity({
+      likes: testLikes,
+      comments: testComments,
+      retweets: testRetweets,
+    })
+
+    if (success) {
+      toast({
+        title: "Reputation Updated",
+        description: "Your reputation has been updated on the blockchain!",
+      })
+    }
+  }
+
+  // Quick reputation actions
+  const handleQuickAction = async (action: string, count: number = 1) => {
+    let success = false
+    
+    switch (action) {
+      case 'likes':
+        success = await reputation.addLikes(count)
+        break
+      case 'comments':
+        success = await reputation.addComments(count)
+        break
+      case 'retweets':
+        success = await reputation.addRetweets(count)
+        break
+      case 'hashtags':
+        success = await reputation.addHashtags(count)
+        break
+      case 'checkins':
+        success = await reputation.addCheckIns(count)
+        break
+      case 'games':
+        success = await reputation.addGameParticipation(count)
+        break
+      case 'reports':
+        success = await reputation.addReports(count)
+        break
+    }
+
+    if (success) {
+      toast({
+        title: "Action Recorded",
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} recorded on blockchain!`,
+      })
+    }
+  }
+
+  const reputationScore = blockchain.isConnected ? reputation.reputation : 850
   const maxScore = 1000
 
   // Rainbow Six Siege style reputation levels
@@ -232,6 +305,150 @@ export default function ReputationPage() {
       </header>
 
       <div className="p-4 space-y-6">
+        {/* Blockchain Status */}
+        <BlockchainStatus />
+
+        {/* Update Reputation */}
+        {blockchain.isConnected && (
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Update Reputation
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Likes</label>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTestLikes(Math.max(0, testLikes - 1))}
+                      disabled={reputation.isLoading}
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="text-lg font-semibold min-w-[2rem] text-center">{testLikes}</span>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTestLikes(testLikes + 1)}
+                      disabled={reputation.isLoading}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Comments</label>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTestComments(Math.max(0, testComments - 1))}
+                      disabled={reputation.isLoading}
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="text-lg font-semibold min-w-[2rem] text-center">{testComments}</span>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTestComments(testComments + 1)}
+                      disabled={reputation.isLoading}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Retweets</label>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTestRetweets(Math.max(0, testRetweets - 1))}
+                      disabled={reputation.isLoading}
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="text-lg font-semibold min-w-[2rem] text-center">{testRetweets}</span>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTestRetweets(testRetweets + 1)}
+                      disabled={reputation.isLoading}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <Button 
+                onClick={handleUpdateReputation}
+                disabled={reputation.isLoading || blockchain.transactionState.isPending}
+                className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+              >
+                {reputation.isLoading ? "Updating..." : "Update Reputation on Blockchain"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Quick Actions */}
+        {blockchain.isConnected && (
+          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <Button 
+                  size="sm" 
+                  onClick={() => handleQuickAction('likes')}
+                  disabled={reputation.isLoading || blockchain.transactionState.isPending}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  +1 Like
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={() => handleQuickAction('comments')}
+                  disabled={reputation.isLoading || blockchain.transactionState.isPending}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  +1 Comment
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={() => handleQuickAction('retweets')}
+                  disabled={reputation.isLoading || blockchain.transactionState.isPending}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  +1 Retweet
+                </Button>
+                <Button 
+                  size="sm" 
+                  onClick={() => handleQuickAction('checkins')}
+                  disabled={reputation.isLoading || blockchain.transactionState.isPending}
+                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  +1 Check-in
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Reputation Score Card */}
         <Card className={`${currentLevel.bgColor} ${currentLevel.borderColor} border-2`}>
           <CardContent className="p-6">
