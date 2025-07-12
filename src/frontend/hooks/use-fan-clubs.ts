@@ -74,20 +74,30 @@ export function useFanClubs() {
       return false;
     }
 
+    // Prevent multiple rapid calls
+    if (state.isLoading) {
+      return false;
+    }
+
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+
     try {
       const result = await blockchain.createNewFanClub(fanClubId, price);
       
       if (result?.success) {
         // Reload the fan club data after creation
         await loadFanClub(fanClubId);
+        setState(prev => ({ ...prev, isLoading: false }));
         return true;
       }
+      setState(prev => ({ ...prev, isLoading: false }));
       return false;
     } catch (error) {
       console.error("Failed to create fan club:", error);
+      setState(prev => ({ ...prev, isLoading: false, error: "Failed to create fan club" }));
       return false;
     }
-  }, [blockchain, loadFanClub, toast]);
+  }, [blockchain, loadFanClub, toast, state.isLoading]);
 
   // Join a fan club
   const joinFanClub = useCallback(async (fanClubId: FanClubId, price: string) => {

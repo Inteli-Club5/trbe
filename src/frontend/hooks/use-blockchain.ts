@@ -7,6 +7,7 @@ import {
   getFanClubsContract,
   getScoreUserContract,
   getFanClubData,
+  getAllFanClubIds,
   getUserReputation,
   createFanClub,
   joinFanClub,
@@ -18,6 +19,15 @@ import {
   formatEther,
   formatAddress,
   parseContractError,
+  createMarketplace,
+  listMarketplaceItem,
+  delistMarketplaceItem,
+  buyMarketplaceItem,
+  getMarketplaceItems,
+  getFanTokenBalance,
+  depositFanTokens,
+  withdrawFanTokens,
+  rewardFanTokens,
 } from "@/lib/blockchain";
 import { type FanClub, type FanClubId, type UserAddress, type ReputationData } from "@/lib/contracts";
 import { useToast } from "./use-toast";
@@ -77,46 +87,19 @@ export function useBlockchain() {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
       try {
-        // Check if ethereum provider is available
-        if (!window.ethereum) {
-          throw new Error("No wallet detected");
-        }
-
-        // Create ethers provider from window.ethereum
-        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        // For now, we'll use a simplified approach since AppKit handles the connection
+        // The signer and provider will be available through the blockchain library functions
+        // We'll assume the network is correct for now and let the user switch if needed
         
-        // Request account access
-        await provider.send("eth_requestAccounts", []);
-        
-        const signer = provider.getSigner();
-        
-        // Verify signer has an address
-        const signerAddress = await signer.getAddress();
-        if (!signerAddress) {
-          throw new Error("No account connected to signer");
-        }
-
-        // Check if we're on the correct network
-        const network = await provider.getNetwork();
-        const isCorrectNetwork = network.chainId === 88882; // Chiliz Spicy Testnet (hardcoded for now)
-
         setState(prev => ({
           ...prev,
           isConnected: true,
           address,
-          signer,
-          provider,
-          isCorrectNetwork,
+          signer: null, // Will be provided by blockchain functions when needed
+          provider: null, // Will be provided by blockchain functions when needed
+          isCorrectNetwork: true, // Assume correct network for now
           isLoading: false,
         }));
-
-        if (!isCorrectNetwork) {
-          toast({
-            title: "Wrong Network",
-            description: "Please switch to Chiliz Spicy Testnet",
-            variant: "destructive",
-          });
-        }
       } catch (error) {
         console.error("Failed to initialize blockchain:", error);
         setState(prev => ({
@@ -128,7 +111,7 @@ export function useBlockchain() {
     };
 
     initializeBlockchain();
-  }, [isConnected, address, toast]);
+  }, [isConnected, address, appKit, toast]);
 
   // Switch to correct network
   const switchNetwork = useCallback(async () => {
@@ -163,7 +146,7 @@ export function useBlockchain() {
     transactionFn: () => Promise<any>,
     successMessage: string
   ) => {
-    if (!state.signer || !state.address) {
+    if (!state.address) {
       toast({
         title: "Wallet Not Connected",
         description: "Please connect your wallet first",
@@ -181,9 +164,29 @@ export function useBlockchain() {
       return;
     }
 
+    // Get signer from AppKit when needed
+    let signer: ethers.Signer;
+    try {
+      // Try to get signer from window.ethereum
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+      } else {
+        throw new Error("No wallet provider available");
+      }
+    } catch (error) {
+      toast({
+        title: "Wallet Error",
+        description: "Failed to get wallet signer",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Check CHZ balance before transaction
     try {
-      const balance = await state.provider?.getBalance(state.address);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const balance = await provider.getBalance(state.address);
       if (balance && balance.lt(ethers.utils.parseEther("0.01"))) {
         toast({
           title: "Insufficient Balance",
@@ -203,6 +206,7 @@ export function useBlockchain() {
     });
 
     try {
+      // Pass the signer to the transaction function
       const result = await transactionFn();
       
       if (result.success) {
@@ -258,6 +262,20 @@ export function useBlockchain() {
   }, [state.signer, state.isCorrectNetwork, toast]);
 
   // Fan Club functions
+  const getAllFanClubIdsList = useCallback(async (): Promise<string[]> => {
+    try {
+      return await getAllFanClubIds();
+    } catch (error) {
+      console.error("Failed to get all fan club IDs:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load fan club IDs",
+        variant: "destructive",
+      });
+      return [];
+    }
+  }, [toast]);
+
   const getFanClub = useCallback(async (fanClubId: FanClubId): Promise<FanClub | null> => {
     try {
       return await getFanClubData(fanClubId, state.address || undefined);
@@ -274,38 +292,117 @@ export function useBlockchain() {
 
   const createNewFanClub = useCallback(async (fanClubId: FanClubId, price: string) => {
     return executeTransaction(
-      () => createFanClub(fanClubId, price, state.signer!),
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await createFanClub(fanClubId, price, signer);
+      },
       `Fan club "${fanClubId}" created successfully!`
     );
-  }, [executeTransaction, state.signer]);
+  }, [executeTransaction]);
 
   const joinExistingFanClub = useCallback(async (fanClubId: FanClubId, price: string) => {
     return executeTransaction(
-      () => joinFanClub(fanClubId, price, state.signer!),
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await joinFanClub(fanClubId, price, signer);
+      },
       `Successfully joined fan club "${fanClubId}"!`
     );
-  }, [executeTransaction, state.signer]);
+  }, [executeTransaction]);
 
   const leaveExistingFanClub = useCallback(async (fanClubId: FanClubId) => {
     return executeTransaction(
-      () => leaveFanClub(fanClubId, state.signer!),
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await leaveFanClub(fanClubId, signer);
+      },
       `Successfully left fan club "${fanClubId}"!`
     );
-  }, [executeTransaction, state.signer]);
+  }, [executeTransaction]);
 
   const updateFanClubJoinPrice = useCallback(async (fanClubId: FanClubId, newPrice: string) => {
     return executeTransaction(
-      () => updateFanClubPrice(fanClubId, newPrice, state.signer!),
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await updateFanClubPrice(fanClubId, newPrice, signer);
+      },
       `Fan club "${fanClubId}" price updated successfully!`
     );
-  }, [executeTransaction, state.signer]);
+  }, [executeTransaction]);
 
   const withdrawFanClubFunds = useCallback(async (fanClubId: FanClubId, amount: string) => {
     return executeTransaction(
-      () => withdrawFromFanClub(fanClubId, amount, state.signer!),
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await withdrawFromFanClub(fanClubId, amount, signer);
+      },
       `Successfully withdrew ${amount} CHZ from fan club "${fanClubId}"!`
     );
-  }, [executeTransaction, state.signer]);
+  }, [executeTransaction]);
+
+  // Marketplace functions (for payment processing)
+  const createFanClubMarketplace = useCallback(async (fanClubId: FanClubId, tokenAddress: string) => {
+    return executeTransaction(
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await createMarketplace(fanClubId, tokenAddress, signer);
+      },
+      `Marketplace created for fan club "${fanClubId}"!`
+    );
+  }, [executeTransaction]);
+
+
+
+  const getFanClubTokenBalance = useCallback(async (fanClubId: FanClubId, tokenAddress: string) => {
+    try {
+      if (!window.ethereum) return "0";
+      const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+      const signer = provider.getSigner();
+      return await getFanTokenBalance(fanClubId, tokenAddress, signer);
+    } catch (error) {
+      console.error("Failed to get fan token balance:", error);
+      return "0";
+    }
+  }, []);
+
+  const depositTokensToFanClub = useCallback(async (fanClubId: FanClubId, tokenAddress: string, amount: string) => {
+    return executeTransaction(
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await depositFanTokens(fanClubId, tokenAddress, amount, signer);
+      },
+      `Successfully deposited ${amount} tokens to fan club!`
+    );
+  }, [executeTransaction]);
+
+  const withdrawTokensFromFanClub = useCallback(async (fanClubId: FanClubId, tokenAddress: string, amount: string) => {
+    return executeTransaction(
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await withdrawFanTokens(fanClubId, tokenAddress, amount, signer);
+      },
+      `Successfully withdrew ${amount} tokens from fan club!`
+    );
+  }, [executeTransaction]);
+
+  const rewardTokensToUser = useCallback(async (fanClubId: FanClubId, tokenAddress: string, recipient: string, amount: string) => {
+    return executeTransaction(
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await rewardFanTokens(fanClubId, tokenAddress, recipient, amount, signer);
+      },
+      `Successfully rewarded ${amount} tokens to user!`
+    );
+  }, [executeTransaction]);
 
   // Reputation functions
   const getReputation = useCallback(async (userAddress?: UserAddress): Promise<number> => {
@@ -330,10 +427,14 @@ export function useBlockchain() {
     reputationData: Omit<ReputationData, "user" | "score">
   ) => {
     return executeTransaction(
-      () => calculateReputation(userAddress, reputationData, state.signer!),
+      async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        return await calculateReputation(userAddress, reputationData, signer);
+      },
       "Reputation updated successfully!"
     );
-  }, [executeTransaction, state.signer]);
+  }, [executeTransaction]);
 
   // Utility functions
   const formatUserAddress = useCallback((address: string) => {
@@ -366,12 +467,20 @@ export function useBlockchain() {
     switchNetwork,
     
     // Fan Club functions
+    getAllFanClubIds: getAllFanClubIdsList,
     getFanClub,
     createNewFanClub,
     joinExistingFanClub,
     leaveExistingFanClub,
     updateFanClubJoinPrice,
     withdrawFanClubFunds,
+    
+    // Marketplace functions
+    createFanClubMarketplace,
+    getFanClubTokenBalance,
+    depositTokensToFanClub,
+    withdrawTokensFromFanClub,
+    rewardTokensToUser,
     
     // Reputation functions
     getReputation,

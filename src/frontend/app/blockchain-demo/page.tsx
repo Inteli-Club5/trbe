@@ -66,6 +66,11 @@ export default function BlockchainDemoPage() {
 
   // Create new fan club
   const handleCreateFanClub = async () => {
+    // Prevent multiple rapid clicks
+    if (fanClubs.isLoading || blockchain.transactionState.isPending) {
+      return
+    }
+
     if (!newClubId.trim()) {
       toast({
         title: "Error",
@@ -75,13 +80,22 @@ export default function BlockchainDemoPage() {
       return
     }
 
-    const success = await fanClubs.createFanClub(newClubId, newClubPrice)
-    if (success) {
-      setNewClubId("")
-      setNewClubPrice("0.1")
+    try {
+      const success = await fanClubs.createFanClub(newClubId, newClubPrice)
+      if (success) {
+        setNewClubId("")
+        setNewClubPrice("0.1")
+        toast({
+          title: "Success",
+          description: `Fan club "${newClubId}" created successfully!`,
+        })
+      }
+    } catch (error) {
+      console.error("Error creating fan club:", error)
       toast({
-        title: "Success",
-        description: `Fan club "${newClubId}" created successfully!`,
+        title: "Error",
+        description: "Failed to create fan club. Please try again.",
+        variant: "destructive",
       })
     }
   }

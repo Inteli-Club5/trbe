@@ -10,8 +10,8 @@ const CHAIN_NAME = process.env.NEXT_PUBLIC_CHAIN_NAME || "Chiliz Spicy Testnet";
 const CURRENCY_SYMBOL = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "CHZ";
 
 // Contract addresses from environment or fallback
-const FAN_CLUBS_CONTRACT = process.env.NEXT_PUBLIC_FAN_CLUBS_CONTRACT || "0x7735eD58ea943Ee6EF611F853d44eeF08d0151e7";
-const SCORE_USER_CONTRACT = process.env.NEXT_PUBLIC_SCORE_USER_CONTRACT || "0xb3eDdd3b7fd6946F9242b90a4e750c7f9a4B6d85";
+const FAN_CLUBS_CONTRACT = process.env.NEXT_PUBLIC_FAN_CLUBS_CONTRACT || "0xAa3100b296C4ad07232E4209468409A66213eFd2";
+const SCORE_USER_CONTRACT = process.env.NEXT_PUBLIC_SCORE_USER_CONTRACT || "0x885D150e37ad7f3C9D622f00ecC8EBbBb6357a6E";
 
 // Fallback RPC providers for better reliability
 const FALLBACK_RPC_URLS = [
@@ -53,6 +53,19 @@ export function getScoreUserContract(signerOrProvider: ethers.Signer | ethers.pr
 }
 
 // Fan Club functions
+export async function getAllFanClubIds(): Promise<string[]> {
+  try {
+    const provider = getReliableProvider();
+    const contract = getFanClubsContract(provider);
+    
+    const fanClubIds = await contract.getAllFanClubIds();
+    return fanClubIds;
+  } catch (error) {
+    console.error("Error getting all fan club IDs:", error);
+    return [];
+  }
+}
+
 export async function getFanClubData(
   fanClubId: FanClubId,
   userAddress?: UserAddress
@@ -330,9 +343,200 @@ export function parseContractError(error: any): string {
     if (message.includes("price must be greater than zero")) {
       return "Price must be greater than zero";
     }
+    if (message.includes("marketplace already exists")) {
+      return "Marketplace already exists for this fan club";
+    }
+    if (message.includes("marketplace not initialized")) {
+      return "Marketplace not initialized for this fan club";
+    }
+    if (message.includes("item not listed")) {
+      return "Item is not listed in the marketplace";
+    }
+    if (message.includes("only members can buy")) {
+      return "Only fan club members can buy items";
+    }
+    if (message.includes("nft not held by fan club")) {
+      return "NFT is not owned by the fan club";
+    }
+    if (message.includes("already listed")) {
+      return "Item is already listed in the marketplace";
+    }
     
     return error.message;
   }
   
   return "An unknown error occurred";
+}
+
+// Marketplace functions
+export async function createMarketplace(
+  fanClubId: FanClubId,
+  tokenAddress: string,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    
+    const tx = await contract.createMarketplace(fanClubId, tokenAddress);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
+}
+
+export async function listMarketplaceItem(
+  fanClubId: FanClubId,
+  nftAddress: string,
+  tokenId: number,
+  price: string,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    const priceWei = ethers.utils.parseEther(price);
+    
+    const tx = await contract.listItem(fanClubId, nftAddress, tokenId, priceWei);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
+}
+
+export async function delistMarketplaceItem(
+  fanClubId: FanClubId,
+  nftAddress: string,
+  tokenId: number,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    
+    const tx = await contract.delistItem(fanClubId, nftAddress, tokenId);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
+}
+
+export async function buyMarketplaceItem(
+  fanClubId: FanClubId,
+  nftAddress: string,
+  tokenId: number,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    
+    const tx = await contract.buy(fanClubId, nftAddress, tokenId);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
+}
+
+export async function getMarketplaceItems(
+  fanClubId: FanClubId
+): Promise<Array<{
+  nftAddress: string;
+  tokenId: number;
+  price: string;
+  isListed: boolean;
+}>> {
+  try {
+    const provider = getReliableProvider();
+    const contract = getFanClubsContract(provider);
+    
+    const items = await contract.getItems(fanClubId);
+    
+    return items.map((item: any) => ({
+      nftAddress: item.nftAddress,
+      tokenId: Number(item.tokenId),
+      price: ethers.utils.formatEther(item.price),
+      isListed: item.isListed,
+    }));
+  } catch (error) {
+    console.error("Error getting marketplace items:", error);
+    return [];
+  }
+}
+
+export async function getFanTokenBalance(
+  fanClubId: FanClubId,
+  tokenAddress: string,
+  signer: ethers.Signer
+): Promise<string> {
+  try {
+    const contract = getFanClubsContract(signer);
+    const balance = await contract.getFanTokenBalance(fanClubId, tokenAddress);
+    return ethers.utils.formatEther(balance);
+  } catch (error) {
+    console.error("Error getting fan token balance:", error);
+    return "0";
+  }
+}
+
+export async function depositFanTokens(
+  fanClubId: FanClubId,
+  tokenAddress: string,
+  amount: string,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    const amountWei = ethers.utils.parseEther(amount);
+    
+    const tx = await contract.depositFanTokens(fanClubId, tokenAddress, amountWei);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
+}
+
+export async function withdrawFanTokens(
+  fanClubId: FanClubId,
+  tokenAddress: string,
+  amount: string,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    const amountWei = ethers.utils.parseEther(amount);
+    
+    const tx = await contract.withdrawFanTokens(fanClubId, tokenAddress, amountWei);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
+}
+
+export async function rewardFanTokens(
+  fanClubId: FanClubId,
+  tokenAddress: string,
+  recipient: string,
+  amount: string,
+  signer: ethers.Signer
+): Promise<{ success: boolean; hash?: string; error?: string }> {
+  try {
+    const contract = getFanClubsContract(signer);
+    const amountWei = ethers.utils.parseEther(amount);
+    
+    const tx = await contract.rewardFanToken(fanClubId, tokenAddress, recipient, amountWei);
+    const receipt = await tx.wait();
+    
+    return { success: true, hash: receipt.hash };
+  } catch (error) {
+    return { success: false, error: parseContractError(error) };
+  }
 } 

@@ -4,8 +4,8 @@ import { NETWORK_CONSTANTS } from "./constants";
  * Contract addresses for deployed smart contracts on Chiliz Spicy Testnet
  */
 export const CONTRACT_ADDRESSES = {
-  FAN_CLUBS: "0x7735eD58ea943Ee6EF611F853d44eeF08d0151e7",
-  SCORE_USER: "0xb3eDdd3b7fd6946F9242b90a4e750c7f9a4B6d85",
+  FAN_CLUBS: "0xAa3100b296C4ad07232E4209468409A66213eFd2",
+  SCORE_USER: "0x885D150e37ad7f3C9D622f00ecC8EBbBb6357a6E",
   NFT_BADGE: "", // Add when deployed
 } as const;
 
@@ -23,6 +23,13 @@ export const NETWORK_CONFIG = {
 // FanClubs Contract ABI (minimal version for frontend)
 export const FAN_CLUBS_ABI = [
   // View functions
+  {
+    inputs: [],
+    name: "getAllFanClubIds",
+    outputs: [{ name: "", type: "string[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
   {
     inputs: [{ name: "fanClubId", type: "string" }],
     name: "getMembers",
@@ -104,6 +111,69 @@ export const FAN_CLUBS_ABI = [
     name: "withdraw",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  // Marketplace functions
+  {
+    inputs: [
+      { name: "fanClubId", type: "string" },
+      { name: "tokenAddress", type: "address" },
+    ],
+    name: "createMarketplace",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "fanClubId", type: "string" },
+      { name: "nftAddress", type: "address" },
+      { name: "tokenId", type: "uint256" },
+      { name: "price", type: "uint256" },
+    ],
+    name: "listItem",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "fanClubId", type: "string" },
+      { name: "nftAddress", type: "address" },
+      { name: "tokenId", type: "uint256" },
+    ],
+    name: "delistItem",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { name: "fanClubId", type: "string" },
+      { name: "nftAddress", type: "address" },
+      { name: "tokenId", type: "uint256" },
+    ],
+    name: "buy",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ name: "fanClubId", type: "string" }],
+    name: "getItems",
+    outputs: [
+      {
+        name: "",
+        type: "tuple[]",
+        components: [
+          { name: "nftAddress", type: "address" },
+          { name: "tokenId", type: "uint256" },
+          { name: "price", type: "uint256" },
+          { name: "isListed", type: "bool" },
+        ],
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ] as const;

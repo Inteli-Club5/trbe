@@ -222,9 +222,12 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </Link>
+
+          <Link href="/clubs">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
               <CardContent className="p-4 text-center">
                 <Users className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900 dark:text-white">Rankings</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Fan Clubs</p>
               </CardContent>
             </Card>
           </Link>
