@@ -7,6 +7,14 @@ const { ethers } = require('ethers');
 const app = express();
 app.use(express.json());
 
+// Import routes
+const healthRoutes = require('./routes/health');
+const userRoutes = require('./routes/users');
+
+// Use routes
+app.use('/api', healthRoutes);
+app.use('/api', userRoutes);
+
 const PORT = process.env.PORT || 3000;
 
 const RPC_URL = process.env.RPC_URL;

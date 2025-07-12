@@ -19,7 +19,11 @@
     "db:validate": "prisma validate",
     "supabase:setup": "node setup-supabase.js",
     "supabase:connect": "npm run db:generate && npm run db:push",
-    "supabase:test": "node test-supabase-connection.js"
+    "supabase:test": "node test-supabase-connection.js",
+    "railway:deploy": "railway up",
+    "railway:logs": "railway logs",
+    "railway:status": "railway status",
+    "railway:variables": "railway variables"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
