@@ -17,7 +17,7 @@ COPY src/backend/package*.json ./src/backend/
 
 # Install all dependencies (including dev dependencies for Prisma)
 WORKDIR /app/src/backend
-RUN npm ci
+RUN npm install
 
 # Copy Prisma schema and generate client
 COPY src/backend/prisma ./prisma/
@@ -39,7 +39,7 @@ COPY src/backend/package*.json ./src/backend/
 
 # Install only production dependencies
 WORKDIR /app/src/backend
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Copy Prisma client from builder
 COPY --from=builder /app/src/backend/node_modules/.prisma ./node_modules/.prisma/
