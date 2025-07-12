@@ -127,7 +127,7 @@ export default function StatsPage() {
       {/* Header */}
       <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4">
         <div className="flex items-center justify-between">
-          <Link href="/">
+          <Link href="/homepage">
             <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-6 w-6" />
             </Button>

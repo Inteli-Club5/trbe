@@ -42,7 +42,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   }
 
   const menuItems = [
-    { icon: Home, label: "Home", href: "/", badge: null },
+    { icon: Home, label: "Home", href: "/homepage", badge: null },
     { icon: User, label: "My Profile", href: "/profile", badge: null },
     { icon: Trophy, label: "Tasks", href: "/tasks", badge: "3" },
     { icon: Star, label: "Badges", href: "/badges", badge: null },

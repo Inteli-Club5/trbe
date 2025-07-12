@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Sidebar } from "@/components/sidebar"
-import { Menu, Settings, MapPin, TrendingUp, CheckCircle } from "lucide-react"
+import { Menu, Settings, MapPin, TrendingUp, CheckCircle, Wallet, BarChart3 } from "lucide-react"
 import Link from "next/link"
 
 export default function ProfilePage() {
@@ -134,6 +134,29 @@ export default function ProfilePage() {
               <div className="text-sm text-gray-600 dark:text-gray-400">Activities</div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-4">
+          <Link href="/wallet">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
+              <CardContent className="p-4 text-center">
+                <Wallet className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">Wallet</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Manage Tokens</div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/stats">
+            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
+              <CardContent className="p-4 text-center">
+                <BarChart3 className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">Stats</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">View Analytics</div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Tabs */}

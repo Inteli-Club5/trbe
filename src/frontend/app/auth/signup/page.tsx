@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Eye, EyeOff, Upload, Twitter } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import ConnectButton from "../../../hooks/ConnectButton"
 
 export default function SignupPage() {
@@ -51,7 +52,22 @@ export default function SignupPage() {
     <div className="min-h-screen bg-white dark:bg-black p-4 py-8 pb-28">
       <Card className="w-full max-w-md mx-auto bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
         <CardHeader className="text-center">
-          <div className="text-4xl font-bold text-black dark:text-white mb-2">TRBE</div>
+          <div className="flex justify-center mb-2">
+            <Image
+              src="/logo.svg"
+              alt="TRBE Logo"
+              width={120}
+              height={40}
+              className="dark:hidden"
+            />
+            <Image
+              src="/logo-black.svg"
+              alt="TRBE Logo"
+              width={120}
+              height={40}
+              className="hidden dark:block"
+            />
+          </div>
           <CardTitle className="text-gray-900 dark:text-white">Create account</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">Join the ultimate fan platform</CardDescription>
         </CardHeader>

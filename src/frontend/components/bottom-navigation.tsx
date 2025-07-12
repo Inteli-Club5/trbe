@@ -11,10 +11,10 @@ export function BottomNavigation() {
 
   const navItems = [
     {
-      href: "/",
+      href: "/homepage",
       icon: Trophy,
       label: "Home",
-      isActive: pathname === "/",
+      isActive: pathname === "/homepage",
     },
     {
       href: "/tasks",

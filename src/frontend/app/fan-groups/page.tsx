@@ -246,10 +246,12 @@ export default function FanGroupsPage() {
             <Menu className="h-6 w-6" />
           </Button>
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Fan Groups</h1>
-          <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Group
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
+              <Plus className="h-4 w-4 mr-2" />
+              Create Group
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -295,12 +297,14 @@ export default function FanGroupsPage() {
           {filteredGroups.map((group) => {
             const LevelIcon = getLevelIcon(group.level)
             return (
-              <Card key={group.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
+              <Card key={group.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+                {/* Background Banner */}
+                <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-r from-blue-500 to-purple-600 opacity-10"></div>
+                
+                <CardHeader className="pb-3 relative z-10">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-lg text-gray-900 dark:text-white mb-1">{group.name}</CardTitle>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{group.team}</p>
                       <div className="flex items-center gap-2 mb-2">
                         <MapPin className="h-4 w-4 text-gray-400" />
                         <span className="text-sm text-gray-600 dark:text-gray-400">{group.location}</span>
@@ -312,7 +316,7 @@ export default function FanGroupsPage() {
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-0">
+                <CardContent className="pt-0 relative z-10">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{group.description}</p>
                   
                   <div className="grid grid-cols-2 gap-3 mb-4">
@@ -356,9 +360,6 @@ export default function FanGroupsPage() {
                         View Details
                       </Button>
                     </Link>
-                    <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
-                      Join
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

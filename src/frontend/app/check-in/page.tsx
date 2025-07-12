@@ -88,7 +88,7 @@ export default function CheckInPage() {
           </Card>
 
           <div className="space-y-3">
-            <Link href="/">
+            <Link href="/homepage">
               <Button className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">Back to Home</Button>
             </Link>
             <Button variant="outline" className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
@@ -106,7 +106,7 @@ export default function CheckInPage() {
       {/* Header */}
       <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4">
         <div className="flex items-center justify-between">
-          <Link href="/">
+          <Link href="/homepage">
             <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-6 w-6" />
             </Button>

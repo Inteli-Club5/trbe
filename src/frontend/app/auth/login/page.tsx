@@ -80,7 +80,7 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <Link href="/">
+          <Link href="/homepage">
             <Button className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black font-semibold">Sign In</Button>
           </Link>
 

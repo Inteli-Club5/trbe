@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, use } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
@@ -43,14 +43,17 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-export default function FanGroupDetailPage({ params }: { params: { id: string } }) {
+export default function FanGroupDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMember, setIsMember] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
 
+  // Unwrap params using React.use()
+  const { id } = use(params)
+
   // Sample fan group data (in real app, this would come from API)
   const fanGroup = {
-    id: params.id,
+    id: id,
     name: "Blue Pride",
     description: "The official Chelsea FC supporters group. We bleed blue! Founded in 2010, we are the most passionate and dedicated Chelsea supporters, bringing together fans from all over the world to celebrate our beloved club.",
     team: "Chelsea FC",
@@ -295,18 +298,12 @@ export default function FanGroupDetailPage({ params }: { params: { id: string } 
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
             <TabsTrigger value="overview" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="events" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
-              Events
-            </TabsTrigger>
             <TabsTrigger value="members" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Members
-            </TabsTrigger>
-            <TabsTrigger value="achievements" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
-              Achievements
             </TabsTrigger>
             <TabsTrigger value="info" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
               Info
@@ -402,39 +399,7 @@ export default function FanGroupDetailPage({ params }: { params: { id: string } 
             </div>
           </TabsContent>
 
-          <TabsContent value="events" className="space-y-4">
-            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-black dark:text-white" />
-                  Upcoming Events
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {fanGroup.upcomingEvents.map((event) => (
-                  <div key={event.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${getEventTypeColor(event.type)}`}>
-                        <Calendar className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900 dark:text-white">{event.name}</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {event.date} at {event.time} • {event.location}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-black dark:text-white">
-                        {event.attendees}/{event.maxAttendees}
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">attendees</div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
+
 
           <TabsContent value="members" className="space-y-4">
             <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
@@ -470,6 +435,10 @@ export default function FanGroupDetailPage({ params }: { params: { id: string } 
               </CardContent>
             </Card>
           </TabsContent>
+
+
+
+
 
           <TabsContent value="achievements" className="space-y-4">
             <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
