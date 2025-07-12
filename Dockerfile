@@ -10,6 +10,7 @@ COPY src/frontend/package*.json ./src/frontend/
 # Install frontend dependencies
 WORKDIR /app/src/frontend
 RUN npm install --legacy-peer-deps
+RUN npm install typescript @types/react @types/node
 
 # Copy frontend source code
 COPY src/frontend/ ./
@@ -64,7 +65,7 @@ COPY src/backend/package*.json ./src/backend/
 # Install only production dependencies
 WORKDIR /app/src/backend
 RUN npm install --only=production
-RUN npm install next@latest
+RUN npm install next@latest typescript @types/react @types/node
 
 # Copy Prisma client from backend builder
 COPY --from=backend-builder /app/src/backend/node_modules/.prisma ./node_modules/.prisma/
@@ -72,8 +73,8 @@ COPY --from=backend-builder /app/src/backend/node_modules/.prisma ./node_modules
 # Copy backend source code
 COPY src/backend/ ./
 
-# Copy frontend source code for Next.js
-COPY src/frontend/ ./frontend/
+# Copy frontend source code and dependencies for Next.js
+COPY --from=frontend-builder /app/src/frontend ./frontend/
 
 # Copy frontend build from frontend builder
 COPY --from=frontend-builder /app/src/frontend/.next ./public/.next
@@ -89,6 +90,11 @@ RUN adduser -S nodejs -u 1001
 
 # Change ownership of the app directory
 RUN chown -R nodejs:nodejs /app
+
+# Set environment variables
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
 USER nodejs
 
 # Expose port
