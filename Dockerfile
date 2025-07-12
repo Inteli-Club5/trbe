@@ -4,12 +4,15 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including SSL libraries
 RUN apk add --no-cache \
     git \
     python3 \
     make \
     g++ \
+    openssl \
+    openssl-dev \
+    libc6-compat \
     && rm -rf /var/cache/apk/*
 
 # Copy package files for backend
