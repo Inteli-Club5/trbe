@@ -2,7 +2,7 @@
 
 <sub>Figure 1 - Logo</sub>
 
-![Logo](https://github.com/Inteli-Club5/tribe/blob/main/src/frontend/public/logo-black.svg)
+![Logo](https://github.com/Inteli-Club5/trbe/blob/main/src/frontend/public/logo-black.svg)
 
 <sup>Source: Material produced by the authors (2025)</sup>
 

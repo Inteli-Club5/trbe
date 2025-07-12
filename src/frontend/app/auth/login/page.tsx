@@ -19,7 +19,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center p-4 pb-28">
       <Card className="w-full max-w-md bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
         <CardHeader className="text-center">
-          <div className="text-4xl font-bold text-black dark:text-white mb-2">TRIBE</div>
+          <div className="text-4xl font-bold text-black dark:text-white mb-2">TRBE</div>
           <CardTitle className="text-gray-900 dark:text-white">Welcome back</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">Sign in to your account to continue</CardDescription>
         </CardHeader>

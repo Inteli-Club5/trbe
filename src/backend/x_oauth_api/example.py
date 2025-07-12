@@ -26,7 +26,7 @@ if __name__ == "__main__":
         logger.info("Nenhum tweet encontrado para o usuário.")
 
     # Busca tweets com uma hashtag
-    hashtag = "tribehackathon"
+    hashtag = "trbehackathon"
     hashtag_tweets = x.search_tweets_by_hashtag(hashtag, max_results=5)
     if hashtag_tweets and "data" in hashtag_tweets:
         print(f"\nTweets recentes com a hashtag #{hashtag}:")

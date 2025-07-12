@@ -76,7 +76,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <div className="flex items-center gap-2">
                 <Image 
                   src={theme === "light" ? "/logo-black.svg" : "/logo.svg"} 
-                  alt="TRIBE" 
+                  alt="TRBE" 
                   width={80} 
                   height={26} 
                 />
@@ -168,7 +168,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div className="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
               <Image 
                 src={theme === "light" ? "/logo-black.svg" : "/logo.svg"} 
-                alt="TRIBE" 
+                alt="TRBE" 
                 width={60} 
                 height={20} 
                 className="mx-auto mb-1" 

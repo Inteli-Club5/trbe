@@ -12,11 +12,11 @@ beforeAll(() => {
   app = require('./server');
 });
 
-describe('Trybe Backend API', () => {
+describe('TRBE Backend API', () => {
   it('should return 200 and welcome message at root', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).toBe(200);
-    expect(res.text).toBe('Trybe Backend API is running!');
+    expect(res.text).toBe('TRBE Backend API is running!');
   });
 
   it('should return 400 for invalid user address on /getReputation/:userAddress', async () => {

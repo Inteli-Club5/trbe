@@ -1,10 +1,10 @@
 {
-  "name": "tribe-fan-platform",
+  "name": "trbe-fan-platform",
   "version": "1.0.0",
   "private": true,
-  "description": "TRIBE - The ultimate fan engagement platform with gamification, rewards, and community features",
+  "description": "TRBE - The ultimate fan engagement platform with gamification, rewards, and community features",
   "keywords": ["fan-engagement", "sports", "gamification", "blockchain", "community", "rewards"],
-  "author": "TRIBE Team",
+  "author": "TRBE Team",
   "scripts": {
     "build": "next build",
     "dev": "next dev",

@@ -282,7 +282,7 @@ export default function ClubPage() {
                 <CardContent className="p-4 text-center">
                   <Users className="h-6 w-6 text-black dark:text-white mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900 dark:text-white">35K</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">On TRIBE</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">On TRBE</div>
                 </CardContent>
               </Card>
 

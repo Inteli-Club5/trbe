@@ -127,7 +127,7 @@ export default function SettingsPage() {
         {/* App Info */}
         <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
           <CardContent className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
-            <p>TRIBE v1.0.0</p>
+            <p>TRBE v1.0.0</p>
             <p>© 2025 TRBE. All rights reserved.</p>
           </CardContent>
         </Card>

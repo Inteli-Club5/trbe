@@ -1,7 +1,7 @@
 {
-  "name": "tribe-backend",
+  "name": "trbe-backend",
   "version": "1.0.0",
-  "description": "Backend API for Tribe fan engagement platform",
+  "description": "Backend API for TRBE fan engagement platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -68,7 +68,7 @@
     "prisma",
     "postgresql"
   ],
-  "author": "Tribe Team",
+  "author": "TRBE Team",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0",

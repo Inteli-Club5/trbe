@@ -1,8 +1,8 @@
-# Tribe Fan Engagement Platform - Database Overview
+# TRBE Fan Engagement Platform - Database Overview
 
 ## 🎯 Overview
 
-This document provides a comprehensive overview of the database schema designed for the Tribe fan engagement platform. The schema is built using Prisma ORM with PostgreSQL and follows industry best practices for scalability, performance, and maintainability.
+This document provides a comprehensive overview of the database schema designed for the TRBE fan engagement platform. The schema is built using Prisma ORM with PostgreSQL and follows industry best practices for scalability, performance, and maintainability.
 
 ## 🏗️ Database Architecture
 
@@ -487,7 +487,7 @@ npm run dev
 
 ### Environment Variables
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/tribe_db"
+DATABASE_URL="postgresql://username:password@localhost:5432/trbe_db"
 JWT_SECRET="your-jwt-secret"
 NODE_ENV="development"
 ```
@@ -561,4 +561,4 @@ For questions about the database schema or implementation:
 
 **Last Updated**: December 2024
 **Version**: 1.0.0
-**Author**: Tribe Development Team 
+**Author**: TRBE Development Team 

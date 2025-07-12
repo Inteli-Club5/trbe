@@ -158,7 +158,7 @@ export default function WalletPage() {
             <Wallet className="h-8 w-8 text-black dark:text-white" />
             <div className="mt-2">
               <div className="text-4xl font-bold text-black dark:text-white">{walletBalance.toLocaleString()}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">TRIBE Tokens</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">TRBE Tokens</div>
 
               {lockedTokens > 0 && (
                 <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">

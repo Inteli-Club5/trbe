@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-console.log('🚀 Starting Trybe Blockchain Tests...\n');
+console.log('🚀 Starting TRBE Blockchain Tests...\n');
 
 // Check if dependencies are installed
 const nodeModulesPath = path.join(__dirname, '..', 'node_modules');

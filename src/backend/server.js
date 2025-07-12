@@ -422,7 +422,7 @@ app.get('*', (req, res) => {
     <!DOCTYPE html>
     <html>
     <head>
-      <title>TRIBE - Frontend Not Found</title>
+      <title>TRBE - Frontend Not Found</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         .error { background: #fee; border: 1px solid #fcc; padding: 20px; border-radius: 5px; }
@@ -430,7 +430,7 @@ app.get('*', (req, res) => {
       </style>
     </head>
     <body>
-      <h1>TRIBE - Frontend Issue</h1>
+      <h1>TRBE - Frontend Issue</h1>
       <div class="error">
         <h2>Next.js frontend not found</h2>
         <p>The Next.js build files are not being generated or copied correctly.</p>

@@ -37,7 +37,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <Image 
               src={theme === "light" ? "/logo-black.svg" : "/logo.svg"} 
-              alt="TRIBE" 
+              alt="TRBE" 
               width={100} 
               height={33} 
             />

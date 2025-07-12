@@ -1,6 +1,6 @@
 # Blockchain - Smart Contracts and Tests
 
-This directory contains the smart contracts and tests for the Trybe application.
+This directory contains the smart contracts and tests for the TRBE application.
 
 ## Network Information
 

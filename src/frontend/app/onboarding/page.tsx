@@ -92,7 +92,7 @@ export default function OnboardingPage() {
       ),
     },
     {
-      title: "How TRIBE Works",
+      title: "How TRBE Works",
       description: "Understand the token system and gamification",
       content: (
         <div className="space-y-6">
@@ -145,12 +145,12 @@ export default function OnboardingPage() {
     },
     {
       title: "Get Started",
-      description: "Begin your TRIBE journey",
+      description: "Begin your TRBE journey",
       content: (
         <div className="space-y-4">
           <div className="text-center mb-6">
             <div className="text-6xl mb-4">🎉</div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Welcome to TRIBE!</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Welcome to TRBE!</h3>
             <p className="text-gray-600 dark:text-gray-400">You earned 100 welcome tokens</p>
           </div>
 
