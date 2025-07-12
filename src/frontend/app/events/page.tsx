@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Calendar, MapPin, Users, Star, Trophy, Gift, Flag, Filter, Search } from "lucide-react"
 import Link from "next/link"
+import { formatDate } from "@/lib/utils"
 
 export default function EventsPage() {
   const [filter, setFilter] = useState("all")
@@ -17,13 +18,13 @@ export default function EventsPage() {
       id: 1,
       title: "Away Day to Manchester",
       description: "Organized trip for Chelsea vs Manchester United",
-      date: "15/12/2024",
+      date: "2024-12-15",
       time: "06:00",
       location: "Blue Pride HQ",
       organizer: "Blue Pride",
       participants: 45,
       maxParticipants: 50,
-      price: "£120",
+      price: "120 tokens",
       category: "travel",
       status: "open",
       image: "/placeholder.svg?height=100&width=100",
@@ -32,13 +33,13 @@ export default function EventsPage() {
       id: 2,
       title: "End of Year Party",
       description: "Annual celebration with shows and prize draws",
-      date: "20/12/2024",
+      date: "2024-12-20",
       time: "19:00",
       location: "Chelsea Social Club",
       organizer: "Blue Pride",
       participants: 120,
       maxParticipants: 150,
-      price: "£50",
+      price: "50 tokens",
       category: "social",
       status: "open",
       image: "/placeholder.svg?height=100&width=100",
@@ -47,7 +48,7 @@ export default function EventsPage() {
       id: 3,
       title: "Christmas Charity Drive",
       description: "Gift distribution for underprivileged children",
-      date: "22/12/2024",
+      date: "2024-12-22",
       time: "14:00",
       location: "Local Community Center",
       organizer: "Blue Army",
@@ -62,13 +63,13 @@ export default function EventsPage() {
       id: 4,
       title: "Open Training Session",
       description: "Watch the team train at Cobham Training Centre",
-      date: "18/12/2024",
+      date: "2024-12-18",
       time: "10:00",
       location: "Cobham Training Centre",
       organizer: "Official Club",
       participants: 200,
       maxParticipants: 200,
-      price: "£30",
+      price: "30 tokens",
       category: "official",
       status: "full",
       image: "/placeholder.svg?height=100&width=100",
@@ -77,7 +78,7 @@ export default function EventsPage() {
       id: 5,
       title: "Veterans Meetup",
       description: "Gathering of longtime Blue Pride members",
-      date: "10/12/2024",
+      date: "2024-12-10",
       time: "15:00",
       location: "Fan Group Headquarters",
       organizer: "Blue Pride",
@@ -225,7 +226,7 @@ export default function EventsPage() {
                       <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>{event.date} • {event.time}</span>
+                          <span>{formatDate(event.date)} • {event.time}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <MapPin className="h-4 w-4" />

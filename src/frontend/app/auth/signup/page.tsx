@@ -209,10 +209,7 @@ export default function SignupPage() {
                 className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
               />
               <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                I accept the{" "}
-                <Link href="/terms" className="text-black dark:text-white hover:underline">
-                  terms of service
-                </Link>
+                I accept the terms of service
               </Label>
             </div>
 
@@ -224,10 +221,7 @@ export default function SignupPage() {
                 className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
               />
               <Label htmlFor="privacy" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                I accept the{" "}
-                <Link href="/privacy" className="text-black dark:text-white hover:underline">
-                  privacy policy
-                </Link>
+                I accept the privacy policy
               </Label>
             </div>
 
@@ -239,10 +233,7 @@ export default function SignupPage() {
                 className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
               />
               <Label htmlFor="dataUsage" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                I agree to the{" "}
-                <Link href="/data-usage" className="text-black dark:text-white hover:underline">
-                  data usage policy
-                </Link>
+                I agree to the data usage policy
               </Label>
             </div>
           </div>

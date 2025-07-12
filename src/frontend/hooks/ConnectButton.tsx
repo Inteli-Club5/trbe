@@ -1,11 +1,12 @@
 import { useAppKit } from "@reown/appkit/react";
+import { WalletErrorBoundary } from "@/components/wallet-error-boundary";
 
 export default function ConnectButton() {
   // Use the open function from the useAppKit hook to control the modal
   const { open } = useAppKit();
 
   return (
-    <>
+    <WalletErrorBoundary>
       {/*
         This is a basic example using inline styles.
         For a real application, you'd typically use a CSS-in-JS library,
@@ -32,6 +33,6 @@ export default function ConnectButton() {
       >
         Connect Wallet
       </button>
-    </>
+    </WalletErrorBoundary>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Trophy, CheckCircle, Flag, Shield, User } from "lucide-react"
+import { Home, CheckCircle, Flag, Shield, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
 
@@ -12,7 +12,7 @@ export function BottomNavigation() {
   const navItems = [
     {
       href: "/homepage",
-      icon: Trophy,
+      icon: Home,
       label: "Home",
       isActive: pathname === "/homepage",
     },
@@ -23,10 +23,10 @@ export function BottomNavigation() {
       isActive: pathname === "/tasks",
     },
     {
-      href: "/club",
+      href: "/clubs",
       icon: Flag,
       label: "Club",
-      isActive: pathname.startsWith("/club"),
+      isActive: pathname.startsWith("/clubs"),
     },
     {
       href: "/reputation",
