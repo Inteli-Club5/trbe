@@ -222,6 +222,8 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </Link>
+          <Link href="/rankings">
+            <Card>
               <CardContent className="p-4 text-center">
                 <Users className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-900 dark:text-white">Rankings</p>
