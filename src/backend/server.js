@@ -20,10 +20,30 @@ app.use(express.json());
 // Import routes
 const healthRoutes = require('./routes/health');
 const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
+const clubsRoutes = require('./routes/clubs');
+const fanGroupsRoutes = require('./routes/fan-groups');
+const eventsRoutes = require('./routes/events');
+const tasksRoutes = require('./routes/tasks');
+const badgesRoutes = require('./routes/badges');
+const checkInsRoutes = require('./routes/check-ins');
+const gamesRoutes = require('./routes/games');
+const notificationsRoutes = require('./routes/notifications');
+const transactionsRoutes = require('./routes/transactions');
 
 // Use routes
 app.use('/api', healthRoutes);
 app.use('/api', userRoutes);
+app.use('/api', authRoutes);
+app.use('/api', clubsRoutes);
+app.use('/api', fanGroupsRoutes);
+app.use('/api', eventsRoutes);
+app.use('/api', tasksRoutes);
+app.use('/api', badgesRoutes);
+app.use('/api', checkInsRoutes);
+app.use('/api/games', gamesRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/transactions', transactionsRoutes);
 
 // Debug endpoint to check file structure
 app.get('/api/debug/files', (req, res) => {
