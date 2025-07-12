@@ -90,7 +90,9 @@ export default function SignupPage() {
           </div>
 
           <div className="space-y-4">
+            <center>
             <ConnectButton></ConnectButton>
+            </center>
             
             {/* Botão de conexão com Twitter */}
             <button
@@ -98,7 +100,7 @@ export default function SignupPage() {
               className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-md bg-[#1DA1F2] hover:bg-[#1A91DA] text-white font-semibold transition-colors"
             >
               <Twitter className="h-5 w-5" />
-              Conectar com Twitter
+              Connect With Twitter
             </button>
           </div>
 
