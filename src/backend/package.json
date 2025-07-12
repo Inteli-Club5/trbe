@@ -44,7 +44,8 @@
     "redis": "^4.6.11",
     "socket.io": "^4.7.4",
     "compression": "^1.7.4",
-    "express-slow-down": "^2.0.1"
+    "express-slow-down": "^2.0.1",
+    "ethers": "^6.8.1"
   },
   "devDependencies": {
     "prisma": "^5.7.1",

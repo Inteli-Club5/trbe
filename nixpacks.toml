@@ -3,7 +3,7 @@ nixPkgs = ["nodejs_18", "postgresql_15", "git"]
 
 [phases.install]
 cmds = [
-  "cd src/backend && npm ci --only=production",
+  "cd src/backend && npm ci",
   "cd src/backend && npm install -g @prisma/client"
 ]
 
