@@ -15,6 +15,10 @@ const userRoutes = require('./routes/users');
 app.use('/api', healthRoutes);
 app.use('/api', userRoutes);
 
+// Serve static files from the frontend build
+app.use(express.static(path.join(__dirname, 'public/.next')));
+app.use('/public', express.static(path.join(__dirname, 'public/public')));
+
 const PORT = process.env.PORT || 3000;
 
 const RPC_URL = process.env.RPC_URL;
@@ -331,8 +335,15 @@ app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.send('Trybe Backend API is running!');
+// Serve the frontend for all non-API routes
+app.get('*', (req, res) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  
+  // Serve the frontend index.html
+  res.sendFile(path.join(__dirname, 'public/.next/server/pages/index.html'));
 });
 
 app.listen(PORT, () => {
