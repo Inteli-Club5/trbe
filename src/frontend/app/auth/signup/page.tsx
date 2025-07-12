@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,8 +16,7 @@ import ConnectButton from "../../../hooks/connection-button"
 import { useAppKit } from "@reown/appkit/react"
 import { useAppKitAccount } from "@reown/appkit/react"
 
-export default function SignupPage() {
-
+function SignupForm() {
   const searchParams = useSearchParams();
   
   const [oauthProvider, setOauthProvider] = useState("");
@@ -260,7 +259,7 @@ export default function SignupPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Your password"
+                  placeholder="Create a password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 pr-10"
@@ -268,11 +267,15 @@ export default function SignupPage() {
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -293,98 +296,83 @@ export default function SignupPage() {
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  )}
                 </Button>
               </div>
             </div>
 
-            {/* Terms and Conditions */}
+            {/* Checkboxes */}
             <div className="space-y-3">
-              <div className="flex items-start space-x-2">
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   id="terms"
                   checked={acceptTerms}
-                  onCheckedChange={(checked) => setAcceptTerms(checked === true)}
-                  className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
+                  onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
                 />
-                <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400">
                   I accept the{" "}
-                  <Link href="/terms" className="text-black dark:text-white hover:underline">
-                    terms of service
+                  <Link href="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    Terms of Service
                   </Link>
                 </Label>
               </div>
-
-              <div className="flex items-start space-x-2">
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   id="privacy"
                   checked={acceptPrivacy}
-                  onCheckedChange={(checked) => setAcceptPrivacy(checked === true)}
-                  className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
+                  onCheckedChange={(checked) => setAcceptPrivacy(checked as boolean)}
                 />
-                <Label htmlFor="privacy" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <Label htmlFor="privacy" className="text-sm text-gray-600 dark:text-gray-400">
                   I accept the{" "}
-                  <Link href="/privacy" className="text-black dark:text-white hover:underline">
-                    privacy policy
+                  <Link href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    Privacy Policy
                   </Link>
                 </Label>
               </div>
-
-              <div className="flex items-start space-x-2">
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   id="dataUsage"
                   checked={acceptDataUsage}
-                  onCheckedChange={(checked) => setAcceptDataUsage(checked === true)}
-                  className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-black dark:data-[state=checked]:bg-white data-[state=checked]:border-black dark:data-[state=checked]:border-white mt-1"
+                  onCheckedChange={(checked) => setAcceptDataUsage(checked as boolean)}
                 />
-                <Label htmlFor="dataUsage" className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <Label htmlFor="dataUsage" className="text-sm text-gray-600 dark:text-gray-400">
                   I agree to the{" "}
-                  <Link href="/data-usage" className="text-black dark:text-white hover:underline">
-                    data usage policy
+                  <Link href="/data-usage" className="text-blue-600 dark:text-blue-400 hover:underline">
+                    Data Usage Policy
                   </Link>
                 </Label>
               </div>
             </div>
 
-            <Button
-              type="submit"
-              disabled={!acceptTerms || !acceptPrivacy || !acceptDataUsage || !isConnected}
-              className="w-full bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black font-semibold mt-4"
-            >
-              {!isConnected ? "Connect wallet to continue" : "Create Account"}
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              Create account
             </Button>
           </form>
 
-          <div className="relative mt-8">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-200 dark:border-gray-700" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-gray-900 px-2 text-gray-500 dark:text-gray-400">Or continue with</span>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 bg-transparent mt-4"
-            onClick={() => window.open("http://localhost:5001/auth/twitter/start", "_blank", "width=500,height=600")}
-          >
-            <Twitter className="h-4 w-4 mr-2" />
-            {oauthProvider === "twitter" && oauthId ? "Connected with Twitter" : "Connect with Twitter"}
-          </Button>
-
-          <div className="text-center mt-4">
-            <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
-            <Link href="/auth/login" className="text-black dark:text-white hover:underline">
-              Sign In
+          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+              Sign in
             </Link>
           </div>
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white dark:bg-black p-4 py-8 pb-28 flex items-center justify-center">Loading...</div>}>
+      <SignupForm />
+    </Suspense>
   )
 }
