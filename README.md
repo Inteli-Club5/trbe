@@ -58,9 +58,9 @@
 
 ****Chiliz Spicy Testnet****
 
-****FanClub Contract****: 0xFa93958314E638c4244e4FaafC6e5924FF8E6D4A
+****FanClub Contract****: 0x82fbDD75F982cd2D8BeAcf73CA1980286e64Ed8f
 <br/>
-****ScoreUser Contract****: 0xa463b08FD9ddB059c6262feDCD8f0Bd4380C4450
+****ScoreUser Contract****: 0xF4Bf9ac700b4f394181D6dFe5a40fB2f229B1fB2
 
 ## 6. Market and Business Model
 
