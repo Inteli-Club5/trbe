@@ -9,10 +9,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Ensure proper static generation
-  trailingSlash: false,
-  // Disable static export since we're serving dynamically
+  // Disable static export to allow client-side features
   output: undefined,
+  trailingSlash: false,
 }
 
 export default nextConfig

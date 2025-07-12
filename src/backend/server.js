@@ -18,7 +18,7 @@ app.use('/api', userRoutes);
 // Debug endpoint to check file structure
 app.get('/api/debug/files', (req, res) => {
   const publicDir = path.join(__dirname, 'public');
-  const nextDir = path.join(publicDir, '.next');
+  const outDir = path.join(publicDir, 'out');
   
   try {
     const files = [];
@@ -28,18 +28,16 @@ app.get('/api/debug/files', (req, res) => {
       files.push({ directory: 'public', files: publicFiles });
     }
     
-    if (fs.existsSync(nextDir)) {
-      const nextFiles = fs.readdirSync(nextDir, { recursive: true });
-      files.push({ directory: '.next', files: nextFiles });
+    if (fs.existsSync(outDir)) {
+      const outFiles = fs.readdirSync(outDir, { recursive: true });
+      files.push({ directory: 'out', files: outFiles });
     }
     
     // Check for specific HTML files
     const htmlFiles = [];
     const possibleHtmlPaths = [
-      path.join(__dirname, 'public/.next/server/app/page.html'),
-      path.join(__dirname, 'public/.next/server/pages/index.html'),
-      path.join(__dirname, 'public/.next/static/index.html'),
-      path.join(__dirname, 'public/.next/index.html')
+      path.join(__dirname, 'public/out/index.html'),
+      path.join(__dirname, 'public/out/index/index.html')
     ];
     
     possibleHtmlPaths.forEach(filePath => {
@@ -52,10 +50,10 @@ app.get('/api/debug/files', (req, res) => {
     
     res.json({
       publicDir: publicDir,
-      nextDir: nextDir,
+      outDir: outDir,
       exists: {
         public: fs.existsSync(publicDir),
-        next: fs.existsSync(nextDir)
+        out: fs.existsSync(outDir)
       },
       files: files,
       htmlFiles: htmlFiles,
@@ -65,7 +63,7 @@ app.get('/api/debug/files', (req, res) => {
     res.json({
       error: error.message,
       publicDir: publicDir,
-      nextDir: nextDir,
+      outDir: outDir,
       currentDir: __dirname
     });
   }
@@ -393,45 +391,125 @@ app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
 
 // Serve the frontend for all non-API routes
 app.get('*', (req, res) => {
-  // Skip API routes and Next.js internal routes
-  if (req.path.startsWith('/api/') || req.path.startsWith('/_next/')) {
+  // Skip API routes
+  if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
-  // Try multiple possible Next.js build output locations
-  const possiblePaths = [
-    path.join(__dirname, 'public/.next/server/app/page.html'),
-    path.join(__dirname, 'public/.next/server/pages/index.html'),
-    path.join(__dirname, 'public/.next/static/index.html'),
-    path.join(__dirname, 'public/.next/index.html'),
-    path.join(__dirname, 'public/.next/server/app/layout.html')
-  ];
-  
-  // Find the first existing HTML file
-  for (const filePath of possiblePaths) {
-    if (fs.existsSync(filePath)) {
-      console.log('Serving frontend from:', filePath);
-      return res.sendFile(filePath);
-    }
-  }
-  
-  // If no HTML file found, serve a simple response with debug info
-  console.log('No HTML file found, serving fallback');
+  // Serve a simple HTML page that loads the Next.js app
   res.status(200).send(`
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-      <title>Tribe - Fan Engagement Platform</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>TRIBE - Fan Engagement Platform</title>
+      <meta name="description" content="The ultimate fan engagement platform with gamification, rewards, and community features">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; }
+      </style>
     </head>
-    <body>
+    <body class="bg-white dark:bg-black text-gray-900 dark:text-white">
       <div id="root">
-        <h1>Tribe - Fan Engagement Platform</h1>
-        <p>Frontend is being served. If you see this message, the Next.js build might need to be checked.</p>
-        <p>API endpoints are available at <code>/api/*</code></p>
-        <p><a href="/api/debug/files">Debug: Check file structure</a></p>
+        <div class="loading">
+          <div class="text-center">
+            <h1 class="text-2xl font-bold mb-4">TRIBE</h1>
+            <p class="text-gray-600 dark:text-gray-400">Loading Fan Engagement Platform...</p>
+            <div class="mt-4">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
+            </div>
+          </div>
+        </div>
       </div>
+      
+      <script>
+        // Simple React-like app for demonstration
+        function createElement(type, props, ...children) {
+          return { type, props: { ...props, children } };
+        }
+        
+        function render(element, container) {
+          if (typeof element === 'string') {
+            container.appendChild(document.createTextNode(element));
+            return;
+          }
+          
+          const dom = document.createElement(element.type);
+          
+          if (element.props) {
+            Object.keys(element.props).forEach(name => {
+              if (name !== 'children') {
+                if (name.startsWith('on')) {
+                  dom.addEventListener(name.toLowerCase().substring(2), element.props[name]);
+                } else {
+                  dom.setAttribute(name, element.props[name]);
+                }
+              }
+            });
+          }
+          
+          if (element.props.children) {
+            element.props.children.forEach(child => render(child, dom));
+          }
+          
+          container.appendChild(dom);
+        }
+        
+        // Simple app component
+        function App() {
+          return createElement('div', { className: 'min-h-screen bg-white dark:bg-black' },
+            createElement('header', { className: 'bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4' },
+              createElement('div', { className: 'flex items-center justify-between' },
+                createElement('h1', { className: 'text-xl font-bold' }, 'TRIBE'),
+                createElement('button', { 
+                  className: 'px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded',
+                  onClick: () => alert('Theme toggle clicked!')
+                }, 'Toggle Theme')
+              )
+            ),
+            createElement('main', { className: 'p-4' },
+              createElement('div', { className: 'max-w-md mx-auto space-y-6' },
+                createElement('div', { className: 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6' },
+                  createElement('h2', { className: 'text-lg font-semibold mb-4' }, 'Welcome to TRIBE'),
+                  createElement('p', { className: 'text-gray-600 dark:text-gray-400 mb-4' }, 
+                    'The ultimate fan engagement platform with gamification, rewards, and community features.'
+                  ),
+                  createElement('div', { className: 'space-y-3' },
+                    createElement('div', { className: 'flex items-center gap-3' },
+                      createElement('div', { className: 'w-3 h-3 bg-green-500 rounded-full' }),
+                      createElement('span', null, 'Fan Club Management')
+                    ),
+                    createElement('div', { className: 'flex items-center gap-3' },
+                      createElement('div', { className: 'w-3 h-3 bg-blue-500 rounded-full' }),
+                      createElement('span', null, 'Reputation System')
+                    ),
+                    createElement('div', { className: 'flex items-center gap-3' },
+                      createElement('div', { className: 'w-3 h-3 bg-purple-500 rounded-full' }),
+                      createElement('span', null, 'Blockchain Integration')
+                    )
+                  )
+                ),
+                createElement('div', { className: 'text-center' },
+                  createElement('p', { className: 'text-sm text-gray-500' }, 
+                    'API endpoints available at /api/*'
+                  ),
+                  createElement('a', { 
+                    href: '/api/health',
+                    className: 'text-blue-600 hover:underline'
+                  }, 'Check API Health')
+                )
+              )
+            )
+          );
+        }
+        
+        // Render the app
+        const root = document.getElementById('root');
+        root.innerHTML = '';
+        render(App(), root);
+      </script>
     </body>
     </html>
   `);

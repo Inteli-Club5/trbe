@@ -74,7 +74,8 @@ COPY src/backend/ ./
 # Copy frontend build from frontend builder
 COPY --from=frontend-builder /app/src/frontend/.next ./public/.next
 COPY --from=frontend-builder /app/src/frontend/public ./public/public
-COPY --from=frontend-builder /app/src/frontend/next.config.mjs ./public/next.config.mjs
+COPY --from=frontend-builder /app/src/frontend/node_modules ./public/node_modules
+COPY --from=frontend-builder /app/src/frontend/package.json ./public/package.json
 
 # Debug: List the contents to verify
 RUN ls -la ./public/ && ls -la ./public/.next/ || echo "No .next directory found"
