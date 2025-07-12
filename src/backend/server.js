@@ -33,6 +33,23 @@ app.get('/api/debug/files', (req, res) => {
       files.push({ directory: '.next', files: nextFiles });
     }
     
+    // Check for specific HTML files
+    const htmlFiles = [];
+    const possibleHtmlPaths = [
+      path.join(__dirname, 'public/.next/server/app/page.html'),
+      path.join(__dirname, 'public/.next/server/pages/index.html'),
+      path.join(__dirname, 'public/.next/static/index.html'),
+      path.join(__dirname, 'public/.next/index.html')
+    ];
+    
+    possibleHtmlPaths.forEach(filePath => {
+      htmlFiles.push({
+        path: filePath,
+        exists: fs.existsSync(filePath),
+        size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0
+      });
+    });
+    
     res.json({
       publicDir: publicDir,
       nextDir: nextDir,
@@ -40,19 +57,22 @@ app.get('/api/debug/files', (req, res) => {
         public: fs.existsSync(publicDir),
         next: fs.existsSync(nextDir)
       },
-      files: files
+      files: files,
+      htmlFiles: htmlFiles,
+      currentDir: __dirname
     });
   } catch (error) {
     res.json({
       error: error.message,
       publicDir: publicDir,
-      nextDir: nextDir
+      nextDir: nextDir,
+      currentDir: __dirname
     });
   }
 });
 
 // Serve static files from the frontend build
-app.use(express.static(path.join(__dirname, 'public/.next')));
+app.use('/_next', express.static(path.join(__dirname, 'public/.next')));
 app.use('/public', express.static(path.join(__dirname, 'public/public')));
 
 const PORT = process.env.PORT || 3000;
@@ -373,8 +393,8 @@ app.post('/fanclub/:fanClubId/withdrawFanTokens', async (req, res) => {
 
 // Serve the frontend for all non-API routes
 app.get('*', (req, res) => {
-  // Skip API routes
-  if (req.path.startsWith('/api/')) {
+  // Skip API routes and Next.js internal routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/_next/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
@@ -384,18 +404,19 @@ app.get('*', (req, res) => {
     path.join(__dirname, 'public/.next/server/pages/index.html'),
     path.join(__dirname, 'public/.next/static/index.html'),
     path.join(__dirname, 'public/.next/index.html'),
-    path.join(__dirname, 'public/.next/server/app/layout.html'),
-    path.join(__dirname, 'public/.next/server/app/page.js')
+    path.join(__dirname, 'public/.next/server/app/layout.html')
   ];
   
-  // Find the first existing file
+  // Find the first existing HTML file
   for (const filePath of possiblePaths) {
     if (fs.existsSync(filePath)) {
+      console.log('Serving frontend from:', filePath);
       return res.sendFile(filePath);
     }
   }
   
-  // If no HTML file found, serve a simple response
+  // If no HTML file found, serve a simple response with debug info
+  console.log('No HTML file found, serving fallback');
   res.status(200).send(`
     <!DOCTYPE html>
     <html>
@@ -409,6 +430,7 @@ app.get('*', (req, res) => {
         <h1>Tribe - Fan Engagement Platform</h1>
         <p>Frontend is being served. If you see this message, the Next.js build might need to be checked.</p>
         <p>API endpoints are available at <code>/api/*</code></p>
+        <p><a href="/api/debug/files">Debug: Check file structure</a></p>
       </div>
     </body>
     </html>
