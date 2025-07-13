@@ -13,7 +13,7 @@ import Image from "next/image"
 import { useTheme } from "@/components/theme-provider"
 import { useAuth } from "@/context/auth-context"
 import { ProtectedRoute } from "@/components/protected-route"
-import { useFootballTeamMatches } from "@/hooks/use-football-api";
+import { useFootballTeamUpcomingMatches } from "@/hooks/use-football-api"
 
 export default function HomePage() {
   const [notifications, setNotifications] = useState(3)
@@ -21,13 +21,14 @@ export default function HomePage() {
   const { theme } = useTheme()
   const { user, isLoading } = useAuth()
 
-  const { data: upcomingMatches, loading: matchesLoading, error: matchesError } = useFootballTeamMatches("61");
+  // Fetch upcoming matches for Chelsea FC (ID: 61) - you can make this dynamic based on user's favorite team
+  const { data: upcomingMatches, loading: matchesLoading, error: matchesError } = useFootballTeamUpcomingMatches("61", 1)
 
   // Calculate level progress
   const levelProgress = user ? Math.min(100, (user.experience % 1000) / 10) : 0
 
   // Get the next match
-  const nextMatch = upcomingMatches?.matches?.[0];
+  const nextMatch = upcomingMatches?.matches?.[0]
 
   const formatMatchDate = (dateString: string) => {
     const date = new Date(dateString)

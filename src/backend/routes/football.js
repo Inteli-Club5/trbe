@@ -285,52 +285,8 @@ router.get('/areas/:id/teams', async (req, res) => {
 });
 
 /**
- * @route GET /api/football/teams/search
- * @desc Search for teams by name
- * @access Public
- */
-router.get('/teams/search', async (req, res) => {
-  try {
-    const { name } = req.query;
-    if (!name) {
-      return res.status(400).json({
-        success: false,
-        error: 'Name parameter is required'
-      });
-    }
-    
-    try {
-      const teams = await footballApiService.searchTeams(name);
-      res.json({
-        success: true,
-        data: teams
-      });
-    } catch (error) {
-      // Se o erro vier da API externa, repasse o status e mensagem
-      if (error.response) {
-        return res.status(error.response.status).json({
-          success: false,
-          error: error.response.data.message || error.message
-        });
-      }
-      // Erro genérico
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
-    }
-  } catch (error) {
-    console.error('Error in /teams/search route:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-/**
  * @route GET /api/football/search/teams
- * @desc Search for teams by name (legacy endpoint)
+ * @desc Search for teams by name
  * @access Public
  */
 router.get('/search/teams', async (req, res) => {

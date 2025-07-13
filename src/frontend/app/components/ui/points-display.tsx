@@ -1,5 +1,4 @@
 import { ReactNode } from "react"
-import { safeToLocaleString } from "@/lib/utils";
 
 interface PointsDisplayProps {
   points: number
@@ -27,7 +26,7 @@ export function PointsDisplay({
   
   return (
     <span className={`${colorClass} ${className}`}>
-      {sign}{safeToLocaleString(points)}
+      {sign}{points.toLocaleString()}
       {showLabel && ` ${label}`}
       {children}
     </span>

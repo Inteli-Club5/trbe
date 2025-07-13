@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BlockchainStatus } from "@/components/blockchain-status"
 import { useBlockchain } from "@/hooks/use-blockchain"
 import { useToast } from "@/hooks/use-toast"
-import { safeToLocaleString } from "@/lib/utils";
 import {
   ArrowLeft,
   Coins,
@@ -255,14 +254,14 @@ export default function WalletPage() {
           <CardContent className="p-6 text-center">
             <Wallet className="h-8 w-8 text-black dark:text-white" />
             <div className="mt-2">
-                              <div className="text-4xl font-bold text-black dark:text-white">{safeToLocaleString(walletBalance)}</div>
+              <div className="text-4xl font-bold text-black dark:text-white">{walletBalance.toLocaleString()}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">TRBE Tokens</div>
 
               {lockedTokens > 0 && (
                 <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Locked Tokens:</span>
-                    <span className="text-sm text-yellow-600 dark:text-yellow-400">{safeToLocaleString(lockedTokens)}</span>
+                    <span className="text-sm text-yellow-600 dark:text-yellow-400">{lockedTokens.toLocaleString()}</span>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Released after activity confirmation</div>
                 </div>
@@ -321,7 +320,7 @@ export default function WalletPage() {
                     </div>
                     <div className="text-right">
                       <div className={`text-sm font-semibold ${getTransactionColor(transaction.type)}`}>
-                        {transaction.amount > 0 ? "+" : ""}{safeToLocaleString(transaction.amount)}
+                        {transaction.amount > 0 ? "+" : ""}{transaction.amount.toLocaleString()}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">tokens</div>
                     </div>
@@ -345,7 +344,7 @@ export default function WalletPage() {
                         <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{reward.description}</p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-black dark:text-white">{safeToLocaleString(reward.price)}</span>
+                        <span className="text-lg font-bold text-black dark:text-white">{reward.price.toLocaleString()}</span>
                         <Button size="sm" className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 text-white dark:text-black">
                           Redeem
                         </Button>

@@ -110,56 +110,18 @@ function SignupForm() {
   }
 
   const clubs = [
-    // Football Teams with Chiliz Fan Tokens
-    "AS Roma",
-    "Paris Saint‑Germain",
-    "FC Barcelona",
-    "Galatasaray",
-    "Juventus",
-    "Manchester City",
-    "Atlético de Madrid",
-    "AC Milan",
-    "Inter Milan",
-    "Tottenham Hotspur",
+    "Chelsea FC",
     "Arsenal",
-    "Napoli",
-    "Flamengo",
-    "Valencia CF",
-    "AS Monaco",
-    "Everton",
+    "Manchester United",
+    "Manchester City",
+    "Liverpool",
+    "Tottenham",
+    "Newcastle United",
+    "Brighton",
+    "West Ham",
     "Aston Villa",
-    "Tigres",
-    "S.C. Corinthians",
-    "Clube Atlético Mineiro",
-    "Esporte Clube Bahia",
-    "Leeds United",
-    "Sao Paulo FC",
-    "Real Sociedad",
-    "Vasco da Gama",
-    "Dinamo Zagreb",
-    "CA Independiente",
-    "Apollon Limassol",
-    
-    // National Teams
-    "Argentine Football Association",
-    "Portugal National Team",
-    "Italian National Football Team",
-    
-    // Turkish Teams
-    "Trabzonspor",
-    "Samsunspor",
-    "Göztepe S.K.",
-    "İstanbul Başakşehir",
-    "Alanyaspor",
-    
-    // Formula 1 Teams
-    "Aston Martin Cognizant",
-    "Alfa Romeo Racing ORLEN",
-    
-    // Esports & Other
-    "OG (esports)",
-    "Blockasset",
-    "Team Heretics"
+    "Real Madrid",
+    "Barcelona",
   ]
 
   return (

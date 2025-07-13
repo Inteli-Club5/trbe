@@ -5,37 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Safe number formatting utility
-export function safeToLocaleString(value: number | undefined | null, options?: Intl.NumberFormatOptions): string {
-  if (value === undefined || value === null || isNaN(value)) {
-    return '0';
-  }
-  return value.toLocaleString('en-US', options);
-}
-
-// Safe number formatting with fallback
-export function formatNumber(value: number | undefined | null, fallback: string = '0'): string {
-  if (value === undefined || value === null || isNaN(value)) {
-    return fallback;
-  }
-  return safeToLocaleString(value);
-}
-
-// Safe array operations
-export function safeSlice<T>(array: T[] | undefined | null, start?: number, end?: number): T[] {
-  if (!array || !Array.isArray(array)) {
-    return [];
-  }
-  return array.slice(start, end);
-}
-
-export function safeMap<T, U>(array: T[] | undefined | null, callback: (item: T, index: number) => U): U[] {
-  if (!array || !Array.isArray(array)) {
-    return [];
-  }
-  return array.map(callback);
-}
-
 export function formatDate(dateString: string): string {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-GB', {

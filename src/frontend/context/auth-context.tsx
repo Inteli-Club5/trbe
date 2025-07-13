@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { apiClient } from '@/lib/api'
+import apiClient from '@/lib/api'
 import { useToast } from '@/hooks/use-toast'
 
 interface User {

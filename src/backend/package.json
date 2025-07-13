@@ -28,8 +28,7 @@
     "railway:deploy": "railway up",
     "railway:logs": "railway logs",
     "railway:status": "railway status",
-    "railway:variables": "railway variables",
-    "test:football": "node test-football-api.js"
+    "railway:variables": "railway variables"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
@@ -44,7 +43,6 @@
     "express-slow-down": "^2.0.1",
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
-    "is-extglob": "^2.1.1",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",

@@ -1,10 +1,5 @@
-<<<<<<< Updated upstream
 import { useState, useEffect } from 'react'
 import apiClient from '@/lib/api'
-=======
-import { useState, useEffect, useCallback } from "react";
-import { apiFootballClient } from "@/lib/api";
->>>>>>> Stashed changes
 
 interface FootballMatch {
   id: number
@@ -57,7 +52,6 @@ interface FootballTeam {
   email: string
 }
 
-<<<<<<< Updated upstream
 interface FootballCompetition {
   id: number
   name: string
@@ -380,85 +374,3 @@ export function useFootballTeamsByArea(areaId: string) {
 
   return { data, loading, error }
 } 
-=======
-function useFetchFootballApi<T>(
-  fetcher: () => Promise<T>,
-  dependencies: any[] = []
-): UseFootballApiReturn<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await fetcher();
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch data");
-    } finally {
-      setLoading(false);
-    }
-  }, dependencies);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// Now the specific hooks become very simple wrappers:
-
-export const useFootballCompetitions = () =>
-  useFetchFootballApi(() => apiFootballClient.getFootballCompetitions());
-
-export const useFootballTeamsByCompetition = (competitionId: string) =>
-  useFetchFootballApi(
-    () => apiFootballClient.getFootballTeamsByCompetition(competitionId),
-    [competitionId]
-  );
-
-export const useFootballCompetitionStandings = (competitionId: string) =>
-  useFetchFootballApi(
-    () => apiFootballClient.getFootballCompetitionStandings(competitionId),
-    [competitionId]
-  );
-
-export const useFootballTeam = (teamId: string) =>
-  useFetchFootballApi(() => apiFootballClient.getFootballTeam(teamId), [teamId]);
-
-export const useFootballTeamMatches = (
-  teamId: string,
-  options?: { dateFrom?: string; dateTo?: string; status?: string }
-) =>
-  useFetchFootballApi(
-    () => apiFootballClient.getFootballTeamMatches(teamId, options),
-    [teamId, JSON.stringify(options)]
-  );
-
-export const useFootballTeamUpcomingMatches = (teamId: string, limit: number = 5) =>
-  useFetchFootballApi(
-    () => apiFootballClient.getFootballTeamUpcomingMatches(teamId, limit),
-    [teamId, limit]
-  );
-
-export const useFootballTeamRecentMatches = (teamId: string, limit: number = 5) =>
-  useFetchFootballApi(
-    () => apiFootballClient.getFootballTeamRecentMatches(teamId, limit),
-    [teamId, limit]
-  );
-
-export const useFootballTeamSearch = (query: string) =>
-  useFetchFootballApi(
-    () => apiFootballClient.getFootballTeamSearch(query),
-    [query]
-  );
-
-export const useFootballAreas = () =>
-  useFetchFootballApi(() => apiFootballClient.getFootballAreas());
-
-export const useFootballTeamsByArea = (areaId: string) =>
-  useFetchFootballApi(() => apiFootballClient.getFootballTeamsByArea(areaId), [areaId]);
->>>>>>> Stashed changes
