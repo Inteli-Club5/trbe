@@ -32,15 +32,15 @@ const transactionsRoutes = require('./routes/transactions');
 const web3Routes = require('./routes/web3');
 
 // Use routes
-app.use('/api', healthRoutes);
-app.use('/api', userRoutes);
-app.use('/api', authRoutes);
-app.use('/api', clubsRoutes);
+app.use('/api/health', healthRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/club', clubsRoutes);
 app.use('/api/fan-groups', fanGroupsRoutes);
-app.use('/api', eventsRoutes);
-app.use('/api', tasksRoutes);
-app.use('/api', badgesRoutes);
-app.use('/api', checkInsRoutes);
+app.use('/api/event', eventsRoutes);
+app.use('/api/tasks', tasksRoutes);
+app.use('/api/badges', badgesRoutes);
+app.use('/api/checkin', checkInsRoutes);
 app.use('/api/games', gamesRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/transactions', transactionsRoutes);
