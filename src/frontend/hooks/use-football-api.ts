@@ -247,4 +247,35 @@ export function useFootballCompetitions() {
   }, [])
 
   return { data, loading, error }
+}
+
+export function useFootballTeamsByCompetition(competitionId: string) {
+  const [data, setData] = useState<{ teams: FootballTeam[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeamsByCompetition(competitionId)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch teams')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch teams')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (competitionId) {
+      fetchData()
+    }
+  }, [competitionId])
+
+  return { data, loading, error }
 } 
