@@ -278,4 +278,99 @@ export function useFootballTeamsByCompetition(competitionId: string) {
   }, [competitionId])
 
   return { data, loading, error }
+}
+
+export function useFootballTeamSearch(query: string) {
+  const [data, setData] = useState<{ teams: FootballTeam[] } | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!query || query.length < 2) {
+        setData(null)
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.searchFootballTeams(query)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to search teams')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to search teams')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const timeoutId = setTimeout(fetchData, 300) // Debounce search
+    return () => clearTimeout(timeoutId)
+  }, [query])
+
+  return { data, loading, error }
+}
+
+export function useFootballAreas() {
+  const [data, setData] = useState<{ areas: any[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballAreas()
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch areas')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch areas')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  return { data, loading, error }
+}
+
+export function useFootballTeamsByArea(areaId: string) {
+  const [data, setData] = useState<{ teams: FootballTeam[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeamsByArea(areaId)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch teams by area')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch teams by area')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (areaId) {
+      fetchData()
+    }
+  }, [areaId])
+
+  return { data, loading, error }
 } 
