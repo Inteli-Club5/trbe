@@ -73,6 +73,9 @@ WORKDIR /app/src/backend
 RUN npm install --only=production
 RUN npm install next@latest typescript @types/react @types/node ts-node
 
+# Set working directory to app root for the startup script
+WORKDIR /app
+
 # Copy Prisma client from backend builder
 COPY --from=backend-builder /app/src/backend/node_modules/.prisma ./node_modules/.prisma/
 

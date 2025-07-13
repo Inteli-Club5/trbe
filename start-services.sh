@@ -12,7 +12,7 @@ sleep 2
 # Start the main backend service
 echo "Starting main backend service..."
 cd /app/src/backend
-node custom-server.js &
+node server.js &
 MAIN_BACKEND_PID=$!
 
 # Function to cleanup processes on exit
