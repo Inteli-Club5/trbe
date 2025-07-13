@@ -15,6 +15,17 @@ const handle = app.getRequestHandler();
 // Import routes
 const healthRoutes = require('./routes/health');
 const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
+const clubsRoutes = require('./routes/clubs');
+const fanGroupsRoutes = require('./routes/fan-groups');
+const eventsRoutes = require('./routes/events');
+const tasksRoutes = require('./routes/tasks');
+const badgesRoutes = require('./routes/badges');
+const checkInsRoutes = require('./routes/check-ins');
+const gamesRoutes = require('./routes/games');
+const notificationsRoutes = require('./routes/notifications');
+const transactionsRoutes = require('./routes/transactions');
+const footballRoutes = require('./routes/football');
 
 app.prepare().then(() => {
   const server = express();
@@ -23,6 +34,17 @@ app.prepare().then(() => {
   // Use API routes
   server.use('/api', healthRoutes);
   server.use('/api', userRoutes);
+  server.use('/api', authRoutes);
+  server.use('/api', clubsRoutes);
+  server.use('/api', fanGroupsRoutes);
+  server.use('/api', eventsRoutes);
+  server.use('/api', tasksRoutes);
+  server.use('/api', badgesRoutes);
+  server.use('/api', checkInsRoutes);
+  server.use('/api/games', gamesRoutes);
+  server.use('/api/notifications', notificationsRoutes);
+  server.use('/api/transactions', transactionsRoutes);
+  server.use('/api/football', footballRoutes);
 
   // Blockchain setup
   const RPC_URL = process.env.RPC_URL;
