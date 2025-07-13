@@ -13,7 +13,7 @@ import Image from "next/image"
 import { useTheme } from "@/components/theme-provider"
 import { useAuth } from "@/context/auth-context"
 import { ProtectedRoute } from "@/components/protected-route"
-import { useFootballTeamUpcomingMatches } from "@/hooks/use-football-api"
+import { useFootballTeamUpcomingMatches } from "@/hooks/use-football-api-web3"
 
 export default function HomePage() {
   const [notifications, setNotifications] = useState(3)

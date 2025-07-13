@@ -101,6 +101,18 @@ class ApiClient {
     return response;
   }
 
+  async loginWithTwitter(twitterUserId: string) {
+    const response = await this.request<{ success: boolean; data: { user: any; token: string } }>('/auth/login/twitter', {
+      method: 'POST',
+      body: JSON.stringify({ twitterUserId }),
+    });
+    this.setToken(response.data.token);
+    return {
+      user: response.data.user,
+      token: response.data.token
+    };
+  }
+
   // Users
   async getUserProfile(userId?: string) {
     const endpoint = userId ? `/users/${userId}` : '/users/profile';

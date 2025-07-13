@@ -21,7 +21,7 @@ import {
   useFootballTeamSearch,
   useFootballAreas,
   useFootballTeamsByArea
-} from '@/hooks/use-football-api';
+} from '@/hooks/use-football-api-web3';
 
 export default function FootballDemoPage() {
   const [selectedCompetition, setSelectedCompetition] = useState<string>('');

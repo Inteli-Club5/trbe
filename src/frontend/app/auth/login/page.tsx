@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,8 +19,28 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isTwitterLoading, setIsTwitterLoading] = useState(false)
   const { theme } = useTheme()
-  const { login } = useAuth()
+  const { login, loginWithTwitter } = useAuth()
+
+  // Listen for Twitter OAuth success
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.data.type === 'twitter-auth-success') {
+        setIsTwitterLoading(true)
+        try {
+          await loginWithTwitter(event.data.userId)
+        } catch (error) {
+          console.error('Twitter login failed:', error)
+        } finally {
+          setIsTwitterLoading(false)
+        }
+      }
+    }
+
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [loginWithTwitter])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +53,22 @@ export default function LoginPage() {
       // Error is handled by the auth context
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleTwitterLogin = () => {
+    setIsTwitterLoading(true)
+    // Open Twitter OAuth window
+    const authWindow = window.open(
+      'http://localhost:5000/auth/twitter/start',
+      'twitter-auth',
+      'width=600,height=600,scrollbars=yes,resizable=yes'
+    )
+
+    // Check if window was blocked
+    if (!authWindow) {
+      alert('Please allow popups for this site to login with Twitter')
+      setIsTwitterLoading(false)
     }
   }
 
@@ -138,9 +174,23 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button variant="outline" className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 bg-transparent">
-            <Twitter className="h-4 w-4 mr-2" />
-            Twitter
+          <Button 
+            variant="outline" 
+            className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 bg-transparent"
+            onClick={handleTwitterLogin}
+            disabled={isTwitterLoading}
+          >
+            {isTwitterLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              <>
+                <Twitter className="h-4 w-4 mr-2" />
+                Twitter
+              </>
+            )}
           </Button>
           <center>
             <ConnectButton></ConnectButton>

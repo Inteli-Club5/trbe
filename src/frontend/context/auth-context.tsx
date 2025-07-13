@@ -35,6 +35,7 @@ interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
+  loginWithTwitter: (twitterUserId: string) => Promise<void>
   signup: (userData: any) => Promise<void>
   logout: () => Promise<void>
   updateUser: (data: Partial<User>) => Promise<void>
@@ -88,6 +89,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast({
         title: "Login failed",
         description: error.message || "Invalid credentials",
+        variant: "destructive",
+      })
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const loginWithTwitter = async (twitterUserId: string) => {
+    try {
+      setIsLoading(true)
+      const response = await apiClient.loginWithTwitter(twitterUserId)
+      setUser(response.user)
+      toast({
+        title: "Welcome back!",
+        description: `Hello ${response.user.firstName}!`,
+      })
+      router.push('/homepage')
+    } catch (error: any) {
+      toast({
+        title: "Twitter login failed",
+        description: error.message || "Failed to login with Twitter",
         variant: "destructive",
       })
       throw error
@@ -174,6 +197,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     isAuthenticated,
     login,
+    loginWithTwitter,
     signup,
     logout,
     updateUser,

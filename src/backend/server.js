@@ -31,6 +31,9 @@ app.use(session({
 
 app.use(express.json());
 
+// Import middleware
+const { web3AuthMiddleware } = require('./middleware/web3-auth');
+
 // Import routes
 const healthRoutes = require('./routes/health');
 const userRoutes = require('./routes/users');
@@ -47,6 +50,9 @@ const transactionsRoutes = require('./routes/transactions');
 const web3Routes = require('./routes/web3');
 const oauthRoutes = require('./routes/oauth');
 const footballRoutes = require('./routes/football');
+
+// Apply Web3 authentication middleware to all API routes
+app.use('/api', web3AuthMiddleware);
 
 // Use routes
 app.use('/api/health', healthRoutes);

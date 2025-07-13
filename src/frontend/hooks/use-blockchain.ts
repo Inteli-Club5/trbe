@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { ethers } from "ethers";
-import { useAppKitAccount, useAppKit } from "@reown/appkit/react";
+import { useWeb3Operations } from "./use-web3-operations";
 import {
   getFanClubsContract,
   getScoreUserContract,
@@ -49,8 +49,7 @@ interface TransactionState {
 }
 
 export function useBlockchain() {
-  const { address, isConnected } = useAppKitAccount();
-  const appKit = useAppKit();
+  const { address, isConnected, connectWallet, disconnectWallet, executeBlockchainOperation } = useWeb3Operations();
   const { toast } = useToast();
 
   const [state, setState] = useState<BlockchainState>({
@@ -445,18 +444,7 @@ export function useBlockchain() {
     return formatEther(amount);
   }, []);
 
-  // Connect wallet
-  const connectWallet = useCallback(() => {
-    if (!isConnected) {
-      appKit.open();
-    }
-  }, [isConnected, appKit]);
-
-  // Disconnect wallet
-  const disconnectWallet = useCallback(() => {
-    // For now, just close the AppKit modal
-    appKit.close();
-  }, [appKit]);
+  // Wallet functions are provided by useWeb3Operations
 
   return {
     // State

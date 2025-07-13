@@ -2,16 +2,18 @@
 const express = require('express');
 const router = express.Router();
 
-// Imports (ajuste conforme necessário)
-const { fanClubsContract, scoreUserContract, erc20Abi } = require('../utils/contracts');
+// Imports
+const { fanClubsContract, scoreUserContract, erc20Abi, isValidAddress } = require('../utils/contracts');
 const { ethers } = require('ethers');
+const { getUserAddress } = require('../middleware/web3-auth');
 
 // --- Reputação ---
 router.post('/reputation', async (req, res) => {
-    const { user, likes, comments, retweets, hashtag, checkEvents, gamesId, reports } = req.body;
+    const { likes, comments, retweets, hashtag, checkEvents, gamesId, reports } = req.body;
+    const userAddress = getUserAddress(req);
   
     if (
-      !user ||
+      !userAddress ||
       likes === undefined ||
       comments === undefined ||
       retweets === undefined ||
@@ -20,16 +22,12 @@ router.post('/reputation', async (req, res) => {
       gamesId === undefined ||
       reports === undefined
     ) {
-      return res.status(400).json({ error: 'All parameters are required.' });
-    }
-  
-    if (!isValidAddress(user)) {
-      return res.status(400).json({ error: 'Invalid user address.' });
+      return res.status(400).json({ error: 'All parameters are required and user must be authenticated.' });
     }
   
     try {
       const tx = await scoreUserContract.calculateReputation(
-        user,
+        userAddress,
         likes,
         comments,
         retweets,

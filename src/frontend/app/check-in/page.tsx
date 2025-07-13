@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, MapPin, Camera, Share2, Trophy, CheckCircle, Home, Smartphone } from "lucide-react"
 import Link from "next/link"
-import { useFootballTeamUpcomingMatches } from "@/hooks/use-football-api"
+import { useFootballTeamUpcomingMatches } from "@/hooks/use-football-api-web3"
 
 export default function CheckInPage() {
   const [checkInType, setCheckInType] = useState<"stadium" | "home" | null>(null)

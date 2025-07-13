@@ -34,7 +34,7 @@ import {
   Flame,
 } from "lucide-react"
 import Link from "next/link"
-import { useFootballCompetitions, useFootballTeamsByCompetition } from "@/hooks/use-football-api"
+import { useFootballCompetitions, useFootballTeamsByCompetition } from "@/hooks/use-football-api-web3"
 
 export default function ClubsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)

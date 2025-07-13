@@ -67,11 +67,12 @@ export const useFootballTeamsByCompetition = (competitionId: string): UseFootbal
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching competition standings
-export const useFootballCompetitionStandings = (competitionId: string): UseFootballApiReturn<any> => {
+// Hook for fetching matches by competition
+export const useFootballMatchesByCompetition = (competitionId: string): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { getFootballMatches } = useWeb3Api();
 
   const fetchData = useCallback(async () => {
     if (!competitionId) return;
@@ -79,14 +80,14 @@ export const useFootballCompetitionStandings = (competitionId: string): UseFootb
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballCompetitionStandings(competitionId);
-      setData(response.data);
+      const response = await getFootballMatches(competitionId);
+      setData(response);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch standings');
+      setError(err instanceof Error ? err.message : 'Failed to fetch matches');
     } finally {
       setLoading(false);
     }
-  }, [competitionId]);
+  }, [competitionId, getFootballMatches]);
 
   useEffect(() => {
     fetchData();
@@ -95,7 +96,37 @@ export const useFootballCompetitionStandings = (competitionId: string): UseFootb
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching team details
+// Hook for fetching competition standings (using matches data)
+export const useFootballCompetitionStandings = (competitionId: string): UseFootballApiReturn<any> => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { getFootballMatches } = useWeb3Api();
+
+  const fetchData = useCallback(async () => {
+    if (!competitionId) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getFootballMatches(competitionId);
+      // Process matches to create standings
+      setData(response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch standings');
+    } finally {
+      setLoading(false);
+    }
+  }, [competitionId, getFootballMatches]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+};
+
+// Hook for fetching team details (placeholder for future implementation)
 export const useFootballTeam = (teamId: string): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -107,8 +138,8 @@ export const useFootballTeam = (teamId: string): UseFootballApiReturn<any> => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballTeam(teamId);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch team');
     } finally {
@@ -123,7 +154,7 @@ export const useFootballTeam = (teamId: string): UseFootballApiReturn<any> => {
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching team matches
+// Hook for fetching team matches (placeholder for future implementation)
 export const useFootballTeamMatches = (teamId: string, options?: any): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -135,8 +166,8 @@ export const useFootballTeamMatches = (teamId: string, options?: any): UseFootba
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballTeamMatches(teamId, options);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch team matches');
     } finally {
@@ -151,7 +182,7 @@ export const useFootballTeamMatches = (teamId: string, options?: any): UseFootba
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching upcoming matches
+// Hook for fetching upcoming matches (placeholder for future implementation)
 export const useFootballTeamUpcomingMatches = (teamId: string, limit?: number): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -163,8 +194,8 @@ export const useFootballTeamUpcomingMatches = (teamId: string, limit?: number): 
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballTeamUpcomingMatches(teamId, limit);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch upcoming matches');
     } finally {
@@ -179,7 +210,7 @@ export const useFootballTeamUpcomingMatches = (teamId: string, limit?: number): 
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching recent matches
+// Hook for fetching recent matches (placeholder for future implementation)
 export const useFootballTeamRecentMatches = (teamId: string, limit?: number): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -191,8 +222,8 @@ export const useFootballTeamRecentMatches = (teamId: string, limit?: number): Us
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballTeamRecentMatches(teamId, limit);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch recent matches');
     } finally {
@@ -207,7 +238,7 @@ export const useFootballTeamRecentMatches = (teamId: string, limit?: number): Us
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching team statistics
+// Hook for fetching team statistics (placeholder for future implementation)
 export const useFootballTeamStats = (teamId: string, competitionId: string): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -219,8 +250,8 @@ export const useFootballTeamStats = (teamId: string, competitionId: string): Use
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballTeamStats(teamId, competitionId);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch team statistics');
     } finally {
@@ -235,7 +266,7 @@ export const useFootballTeamStats = (teamId: string, competitionId: string): Use
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for searching teams
+// Hook for searching teams (placeholder for future implementation)
 export const useFootballTeamSearch = (query: string): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -250,8 +281,8 @@ export const useFootballTeamSearch = (query: string): UseFootballApiReturn<any> 
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.searchFootballTeams(query);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to search teams');
     } finally {
@@ -270,7 +301,7 @@ export const useFootballTeamSearch = (query: string): UseFootballApiReturn<any> 
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching areas
+// Hook for fetching areas (placeholder for future implementation)
 export const useFootballAreas = (): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -280,8 +311,8 @@ export const useFootballAreas = (): UseFootballApiReturn<any> => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballAreas();
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch areas');
     } finally {
@@ -296,7 +327,7 @@ export const useFootballAreas = (): UseFootballApiReturn<any> => {
   return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for fetching teams by area
+// Hook for fetching teams by area (placeholder for future implementation)
 export const useFootballTeamsByArea = (areaId: string): UseFootballApiReturn<any> => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -308,8 +339,8 @@ export const useFootballTeamsByArea = (areaId: string): UseFootballApiReturn<any
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getFootballTeamsByArea(areaId);
-      setData(response.data);
+      // This would need to be implemented in the Web3 API
+      setData(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch teams by area');
     } finally {
