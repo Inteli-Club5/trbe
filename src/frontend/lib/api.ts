@@ -101,18 +101,6 @@ class ApiClient {
     return response;
   }
 
-  async loginWithTwitter(twitterUserId: string) {
-    const response = await this.request<{ success: boolean; data: { user: any; token: string } }>('/login/twitter', {
-      method: 'POST',
-      body: JSON.stringify({ twitterUserId }),
-    });
-    this.setToken(response.data.token);
-    return {
-      user: response.data.user,
-      token: response.data.token
-    };
-  }
-
   // Users
   async getUserProfile(userId?: string) {
     const endpoint = userId ? `/users/${userId}` : '/users/profile';
@@ -132,45 +120,14 @@ class ApiClient {
   }
 
   // Tasks
-  async getTasks(page = 1, limit = 20, filters?: any) {
-    const params = new URLSearchParams();
-    if (page) params.append('page', page.toString());
-    if (limit) params.append('limit', limit.toString());
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, value.toString());
-        }
-      });
-    }
+  async getTasks(filters?: any) {
+    const params = new URLSearchParams(filters);
     return this.request<any>(`/tasks?${params}`);
   }
 
-  async getUserTasks(page = 1, limit = 20, filters?: any) {
-    const params = new URLSearchParams();
-    if (page) params.append('page', page.toString());
-    if (limit) params.append('limit', limit.toString());
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, value.toString());
-        }
-      });
-    }
-    return this.request<any>(`/tasks/user/tasks?${params}`);
-  }
-
-  async assignTaskToUser(taskId: string) {
-    return this.request<any>(`/tasks/${taskId}/start`, {
-      method: 'POST',
-    });
-  }
-
-  async updateTaskProgress(taskId: string, progress: number) {
-    return this.request<any>(`/tasks/${taskId}/progress`, {
-      method: 'PUT',
-      body: JSON.stringify({ progress }),
-    });
+  async getUserTasks(filters?: any) {
+    const params = new URLSearchParams(filters);
+    return this.request<any>(`/tasks/user?${params}`);
   }
 
   async completeTask(taskId: string, data?: any) {
@@ -249,36 +206,13 @@ class ApiClient {
   }
 
   // Events
-  async getEvents(page = 1, limit = 20, filters?: any) {
-    const params = new URLSearchParams();
-    if (page) params.append('page', page.toString());
-    if (limit) params.append('limit', limit.toString());
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, value.toString());
-        }
-      });
-    }
+  async getEvents(filters?: any) {
+    const params = new URLSearchParams(filters);
     return this.request<any>(`/events?${params}`);
   }
 
   async getEvent(eventId: string) {
     return this.request<any>(`/events/${eventId}`);
-  }
-
-  async getUserEvents(page = 1, limit = 20, filters?: any) {
-    const params = new URLSearchParams();
-    if (page) params.append('page', page.toString());
-    if (limit) params.append('limit', limit.toString());
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, value.toString());
-        }
-      });
-    }
-    return this.request<any>(`/events/user?${params}`);
   }
 
   async registerForEvent(eventId: string) {

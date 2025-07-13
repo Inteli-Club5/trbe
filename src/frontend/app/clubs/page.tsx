@@ -53,22 +53,7 @@ export default function ClubsPage() {
     team.area?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || []
 
-  // Transform teams data to include fallback values for missing properties
-  const transformedTeams = filteredTeams.map((team: any) => ({
-    ...team,
-    fans: team.fans || Math.floor(Math.random() * 1000000) + 10000,
-    trophies: team.trophies || Math.floor(Math.random() * 20) + 1,
-    stadium: team.venue || 'Unknown Stadium',
-    capacity: team.capacity || Math.floor(Math.random() * 80000) + 20000,
-    level: team.level || 'respectable',
-    category: team.category || 'standard',
-    tags: team.tags || ['Football', 'Sports'],
-    nickname: team.shortName || team.name,
-    league: team.area?.name || 'Unknown League',
-    description: team.description || `${team.name} is a professional football club.`
-  }))
-
-  const sortedTeams = [...transformedTeams].sort((a: any, b: any) => {
+  const sortedTeams = [...filteredTeams].sort((a: any, b: any) => {
     if (sortOrder === "asc") {
       return a.name.localeCompare(b.name)
     } else {
@@ -171,54 +156,9 @@ export default function ClubsPage() {
           </CardContent>
         </Card>
 
-        {/* Loading State */}
-        {(teamsLoading || competitionsLoading) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-                <CardHeader className="pb-3">
-                  <div className="animate-pulse">
-                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="animate-pulse space-y-3">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                      <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Error State */}
-        {(teamsError || competitionsError) && (
-          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-            <CardContent className="p-8 text-center">
-              <div className="text-red-500 mb-4">
-                <Shield className="h-12 w-12 mx-auto mb-2" />
-                <h3 className="text-lg font-semibold">Error Loading Data</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {teamsError || competitionsError}
-                </p>
-              </div>
-              <Button onClick={() => window.location.reload()} variant="outline">
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Clubs Grid */}
-        {!teamsLoading && !competitionsLoading && !teamsError && !competitionsError && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedTeams.map((team: any) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedTeams.map((team: any) => {
             const LevelIcon = getLevelIcon(team.level)
             return (
               <Card key={team.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
@@ -294,9 +234,8 @@ export default function ClubsPage() {
             )
           })}
         </div>
-        )}
 
-        {sortedTeams.length === 0 && !teamsLoading && !competitionsLoading && !teamsError && !competitionsError && (
+        {sortedTeams.length === 0 && (
           <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
             <CardContent className="p-8 text-center">
               <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />

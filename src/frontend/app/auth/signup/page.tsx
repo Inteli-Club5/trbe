@@ -99,7 +99,6 @@ function SignupForm() {
         walletAddress: address,
         oauthProvider,
         oauthId,
-        twitterId: oauthProvider === 'twitter' ? oauthId : undefined,
         acceptTerms,
         acceptPrivacy,
         acceptDataUsage,
