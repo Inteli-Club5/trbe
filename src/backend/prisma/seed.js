@@ -541,19 +541,17 @@ async function main() {
       data: {
         title: 'Check-in to Stadium',
         description: 'Check-in to your team\'s stadium during a match',
-        category: 'CHECK_IN',
-        type: 'ATTENDANCE',
+        category: 'PRESENCE',
+        type: 'DAILY',
         difficulty: 'EASY',
-        requirement: 'Use the app to check-in at the stadium',
         maxProgress: 1,
         tokens: 25,
         experience: 50,
+        reputationPoints: 10,
         isActive: true,
-        isRecurring: true,
-        recurrenceType: 'WEEKLY',
-        recurrenceValue: 1,
-        clubId: clubs[0].id,
-        tags: ['check-in', 'stadium', 'attendance']
+        isRepeatable: true,
+        maxCompletions: 7,
+        clubId: clubs[0].id
       }
     }),
     prisma.task.create({
@@ -561,37 +559,66 @@ async function main() {
         title: 'Share Match Experience',
         description: 'Share your match day experience on social media',
         category: 'SOCIAL',
-        type: 'SHARING',
+        type: 'WEEKLY',
         difficulty: 'MEDIUM',
-        requirement: 'Post about the match with team hashtags',
         maxProgress: 1,
         tokens: 50,
         experience: 100,
+        reputationPoints: 20,
         isActive: true,
-        isRecurring: true,
-        recurrenceType: 'WEEKLY',
-        recurrenceValue: 1,
-        clubId: clubs[0].id,
-        tags: ['social', 'sharing', 'match']
+        isRepeatable: true,
+        maxCompletions: 4,
+        clubId: clubs[0].id
       }
     }),
     prisma.task.create({
       data: {
         title: 'Predict Match Result',
         description: 'Make a prediction for the upcoming match',
-        category: 'PREDICTION',
-        type: 'FORECAST',
+        category: 'ENGAGEMENT',
+        type: 'WEEKLY',
         difficulty: 'HARD',
-        requirement: 'Correctly predict the match outcome',
         maxProgress: 1,
         tokens: 100,
         experience: 200,
+        reputationPoints: 50,
         isActive: true,
-        isRecurring: true,
-        recurrenceType: 'WEEKLY',
-        recurrenceValue: 1,
-        clubId: clubs[0].id,
-        tags: ['prediction', 'match', 'forecast']
+        isRepeatable: true,
+        maxCompletions: 4,
+        clubId: clubs[0].id
+      }
+    }),
+    prisma.task.create({
+      data: {
+        title: 'Join Fan Group',
+        description: 'Join an official fan group to connect with other supporters',
+        category: 'COMMUNITY',
+        type: 'ONE_TIME',
+        difficulty: 'EASY',
+        maxProgress: 1,
+        tokens: 75,
+        experience: 150,
+        reputationPoints: 25,
+        isActive: true,
+        isRepeatable: false,
+        fanGroupId: fanGroups[0].id
+      }
+    }),
+    prisma.task.create({
+      data: {
+        title: 'Attend Away Match',
+        description: 'Travel to support your team at an away match',
+        category: 'PRESENCE',
+        type: 'SEASONAL',
+        difficulty: 'EXPERT',
+        maxProgress: 1,
+        tokens: 200,
+        experience: 500,
+        reputationPoints: 100,
+        isActive: true,
+        isRepeatable: true,
+        maxCompletions: 2,
+        clubId: clubs[0].id
       }
     })
   ]);
@@ -701,7 +728,6 @@ async function main() {
         taskId: tasks[0].id,
         status: 'COMPLETED',
         progress: 1,
-        assignedAt: new Date('2024-01-20'),
         completedAt: new Date('2024-01-21')
       }
     }),
@@ -711,7 +737,6 @@ async function main() {
         taskId: tasks[1].id,
         status: 'COMPLETED',
         progress: 1,
-        assignedAt: new Date('2024-01-22'),
         completedAt: new Date('2024-01-23')
       }
     }),
@@ -720,8 +745,7 @@ async function main() {
         userId: users[1].id,
         taskId: tasks[0].id,
         status: 'IN_PROGRESS',
-        progress: 0,
-        assignedAt: new Date('2024-02-25')
+        progress: 0
       }
     })
   ]);

@@ -2,260 +2,524 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Progress } from "@/components/ui/progress"
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Calendar, 
+  Edit, 
+  Save, 
+  X, 
+  Trophy, 
+  Star, 
+  Target,
+  Award,
+  Activity,
+  Settings,
+  Shield,
+  Crown,
+  Zap,
+  TrendingUp,
+  Users,
+  CalendarDays,
+  CheckCircle,
+  Clock
+} from "lucide-react"
+import { useAuth } from "@/context/auth-context"
+import { ProtectedRoute } from "@/components/protected-route"
+import { useToast } from "@/hooks/use-toast"
 import { Sidebar } from "@/components/sidebar"
-import { Menu, Settings, MapPin, TrendingUp, CheckCircle, Wallet, BarChart3 } from "lucide-react"
-import Link from "next/link"
+import { BottomNavigation } from "@/components/bottom-navigation"
 
 export default function ProfilePage() {
+  const { user, updateUser, isLoading } = useAuth()
+  const { toast } = useToast()
+  const [isEditing, setIsEditing] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const userStats = {
-    totalTokens: 15420,
-    level: 12,
-    gamesAttended: 28,
-    activitiesCompleted: 156,
-    currentRanking: 156,
-    memberSince: "January 2024",
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    displayName: user?.displayName || "",
+    bio: user?.bio || "",
+    phoneNumber: user?.phoneNumber || "",
+    location: user?.location || "",
+    gender: user?.gender || "",
+  })
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
-  const badges = [
-    { name: "Loyal Fan", description: "10 consecutive games", icon: "🏆", rarity: "gold" },
-    { name: "Social Media", description: "100 posts shared", icon: "📱", rarity: "silver" },
-    { name: "First Timer", description: "First check-in", icon: "🎯", rarity: "bronze" },
-    { name: "Shopper", description: "5 store purchases", icon: "🛍️", rarity: "silver" },
-    { name: "Veteran", description: "1 year in app", icon: "⭐", rarity: "gold" },
-    { name: "Engaged", description: "500 activities", icon: "🔥", rarity: "platinum" },
-  ]
-
-  const recentActivities = [
-    { type: "check-in", description: "Check-in at Stamford Bridge", tokens: 200, date: "2 hours ago" },
-    { type: "social", description: "Post shared", tokens: 50, date: "Yesterday" },
-    { type: "purchase", description: "Official store purchase", tokens: 150, date: "2 days ago" },
-    { type: "event", description: "Event participation", tokens: 300, date: "3 days ago" },
-    { type: "challenge", description: "Challenge completed", tokens: 100, date: "1 week ago" },
-  ]
-
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case "platinum":
-        return "text-cyan-600 bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-700"
-      case "gold":
-        return "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700"
-      case "silver":
-        return "text-gray-600 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-      case "bronze":
-        return "text-orange-600 bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-700"
-      default:
-        return "text-gray-600 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+  const handleSave = async () => {
+    try {
+      await updateUser(formData)
+      setIsEditing(false)
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully.",
+      })
+    } catch (error: any) {
+      toast({
+        title: "Update failed",
+        description: error.message || "Failed to update profile",
+        variant: "destructive",
+      })
     }
   }
 
+  const handleCancel = () => {
+    setFormData({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      displayName: user?.displayName || "",
+      bio: user?.bio || "",
+      phoneNumber: user?.phoneNumber || "",
+      location: user?.location || "",
+      gender: user?.gender || "",
+    })
+    setIsEditing(false)
+  }
+
+  const getLevelProgress = () => {
+    if (!user) return 0
+    return Math.min(100, (user.experience % 1000) / 10)
+  }
+
+  const getNextLevelExp = () => {
+    if (!user) return 1000
+    return user.level * 1000
+  }
+
+  const getReputationColor = (score: number) => {
+    if (score >= 800) return "text-green-600 dark:text-green-400"
+    if (score >= 600) return "text-blue-600 dark:text-blue-400"
+    if (score >= 400) return "text-yellow-600 dark:text-yellow-400"
+    return "text-red-600 dark:text-red-400"
+  }
+
+  const getReputationBadge = (score: number) => {
+    if (score >= 800) return { text: "Legendary", color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" }
+    if (score >= 600) return { text: "Respected", color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" }
+    if (score >= 400) return { text: "Active", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" }
+    return { text: "New", color: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200" }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading profile...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="bg-white dark:bg-black text-gray-900 dark:text-white">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      {/* Header */}
-      <header className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 p-4 shadow-sm dark:shadow-none">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" onClick={() => setSidebarOpen(true)}>
-            <Menu className="h-6 w-6" />
-          </Button>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">My Profile</h1>
-          <Link href="/settings">
-            <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-              <Settings className="h-6 w-6" />
+    <ProtectedRoute>
+      <div className="bg-white dark:bg-black text-gray-900 dark:text-white min-h-screen">
+        <div className="max-w-4xl mx-auto p-4 pb-28">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">Profile</h1>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden"
+            >
+              <User className="h-5 w-5" />
             </Button>
-          </Link>
-        </div>
-      </header>
+          </div>
 
-      <div className="p-4 space-y-6">
-        {/* Profile Header */}
-        <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4 mb-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src="/placeholder.svg?height=80&width=80" />
-                <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-xl">JS</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">John Smith</h2>
-                <p className="text-gray-600 dark:text-gray-400">@johnsmith</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-blue-600 text-white">Chelsea FC</Badge>
-                  <Badge variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
-                    Blue Pride
-                  </Badge>
-                </div>
-              </div>
-            </div>
+          <Tabs defaultValue="overview" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="stats">Stats</TabsTrigger>
+              <TabsTrigger value="achievements">Achievements</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Level {userStats.level}</span>
-                <span className="text-sm text-black dark:text-white">75% to next level</span>
-              </div>
-              <Progress value={75} className="h-2 bg-gray-200 dark:bg-gray-800">
-                <div className="h-full bg-black dark:bg-white rounded-full" style={{ width: "75%" }} />
-              </Progress>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-black dark:text-white">{userStats.totalTokens.toLocaleString()}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Total Tokens</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-black dark:text-white">#{userStats.currentRanking}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Overall Ranking</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-            <CardContent className="p-4 text-center">
-              <MapPin className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.gamesAttended}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Games Attended</div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-            <CardContent className="p-4 text-center">
-              <CheckCircle className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.activitiesCompleted}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Activities</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-4">
-          <Link href="/wallet">
-            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
-              <CardContent className="p-4 text-center">
-                <Wallet className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">Wallet</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Manage Tokens</div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/stats">
-            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer shadow-sm">
-              <CardContent className="p-4 text-center">
-                <BarChart3 className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">Stats</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">View Analytics</div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
-        {/* Tabs */}
-        <Tabs defaultValue="badges" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
-            <TabsTrigger value="badges" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
-              Badges
-            </TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
-              History
-            </TabsTrigger>
-            <TabsTrigger value="stats" className="data-[state=active]:bg-black dark:data-[state=active]:bg-white data-[state=active]:text-white dark:data-[state=active]:text-black">
-              Statistics
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="badges" className="space-y-4">
-            <div className="mb-4">
-              <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Recent Badges</h3>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {badges.map((badge, index) => (
-                  <Card key={index} className={`bg-white dark:bg-gray-900 border ${getRarityColor(badge.rarity)} shadow-sm`}>
-                    <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">{badge.icon}</div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{badge.name}</h3>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{badge.description}</p>
-                      <Badge variant="outline" className={`mt-2 text-xs ${getRarityColor(badge.rarity)}`}>
-                        {badge.rarity}
-                      </Badge>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              <div className="flex justify-center">
-                <Link href="/badges">
-                  <Button size="sm" className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
-                    View All Badges
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="history" className="space-y-3">
-            {recentActivities.map((activity, index) => (
-              <Card key={index} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-                <CardContent className="p-4">
+            <TabsContent value="overview" className="space-y-6">
+              {/* Profile Card */}
+              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardHeader>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-black/10 dark:bg-white/20 rounded-full">
-                        <CheckCircle className="h-4 w-4 text-black dark:text-white" />
+                    <CardTitle>Personal Information</CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditing(!isEditing)}
+                    >
+                      {isEditing ? <X className="h-4 w-4 mr-2" /> : <Edit className="h-4 w-4 mr-2" />}
+                      {isEditing ? "Cancel" : "Edit"}
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-lg">
+                        {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <h3 className="text-xl font-semibold">
+                          {isEditing ? (
+                            <Input
+                              value={formData.displayName}
+                              onChange={(e) => handleInputChange("displayName", e.target.value)}
+                              className="text-xl font-semibold"
+                            />
+                          ) : (
+                            user?.displayName || `${user?.firstName} ${user?.lastName}`
+                          )}
+                        </h3>
+                        <Badge variant="outline" className={getReputationBadge(user?.reputationScore || 0).color}>
+                          {getReputationBadge(user?.reputationScore || 0).text}
+                        </Badge>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{activity.description}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{activity.date}</p>
-                      </div>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        @{user?.username}
+                      </p>
+                      {user?.bio && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                          {isEditing ? (
+                            <Textarea
+                              value={formData.bio}
+                              onChange={(e) => handleInputChange("bio", e.target.value)}
+                              placeholder="Tell us about yourself..."
+                              className="resize-none"
+                            />
+                          ) : (
+                            user.bio
+                          )}
+                        </p>
+                      )}
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-green-600 dark:text-green-400">+{activity.tokens}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">tokens</div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">First Name</Label>
+                      {isEditing ? (
+                        <Input
+                          value={formData.firstName}
+                          onChange={(e) => handleInputChange("firstName", e.target.value)}
+                        />
+                      ) : (
+                        <p className="text-sm">{user?.firstName}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Last Name</Label>
+                      {isEditing ? (
+                        <Input
+                          value={formData.lastName}
+                          onChange={(e) => handleInputChange("lastName", e.target.value)}
+                        />
+                      ) : (
+                        <p className="text-sm">{user?.lastName}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Email</Label>
+                      <p className="text-sm">{user?.email}</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Phone</Label>
+                      {isEditing ? (
+                        <Input
+                          value={formData.phoneNumber}
+                          onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                          placeholder="Enter phone number"
+                        />
+                      ) : (
+                        <p className="text-sm">{user?.phoneNumber || "Not provided"}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Location</Label>
+                      {isEditing ? (
+                        <Input
+                          value={formData.location}
+                          onChange={(e) => handleInputChange("location", e.target.value)}
+                          placeholder="Enter location"
+                        />
+                      ) : (
+                        <p className="text-sm">{user?.location || "Not provided"}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Gender</Label>
+                      {isEditing ? (
+                        <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="MALE">Male</SelectItem>
+                            <SelectItem value="FEMALE">Female</SelectItem>
+                            <SelectItem value="OTHER">Other</SelectItem>
+                            <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <p className="text-sm">{user?.gender || "Not specified"}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {isEditing && (
+                    <div className="flex space-x-2 pt-4">
+                      <Button onClick={handleSave} className="flex-1">
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Changes
+                      </Button>
+                      <Button variant="outline" onClick={handleCancel} className="flex-1">
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Level & Progress */}
+              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Level & Progress</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Crown className="h-5 w-5 text-yellow-500" />
+                        <span className="font-semibold">Level {user?.level}</span>
+                      </div>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {user?.experience} / {getNextLevelExp()} XP
+                      </span>
+                    </div>
+                    <Progress value={getLevelProgress()} className="h-2" />
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {getNextLevelExp() - (user?.experience || 0)} XP to next level
+                      </span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {getLevelProgress()}% complete
+                      </span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="stats" className="space-y-4">
-            <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-black dark:text-white" />
-                  Activity Statistics
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-black dark:text-white">28</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Games Attended</div>
+            <TabsContent value="stats" className="space-y-6">
+              {/* Statistics Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-2">
+                      <Trophy className="h-5 w-5 text-yellow-500" />
+                      <div>
+                        <p className="text-2xl font-bold">{user?.tokens || 0}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Tokens</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-2">
+                      <Star className="h-5 w-5 text-blue-500" />
+                      <div>
+                        <p className="text-2xl font-bold">{user?.reputationScore || 0}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Reputation</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <div>
+                        <p className="text-2xl font-bold">{user?.totalCheckIns || 0}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Check-ins</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-2">
+                      <Award className="h-5 w-5 text-purple-500" />
+                      <div>
+                        <p className="text-2xl font-bold">{user?.totalBadges || 0}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Badges</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Detailed Stats */}
+              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Activity Statistics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <CalendarDays className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm">Total Events</span>
+                        </div>
+                        <span className="font-semibold">{user?.totalEvents || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Target className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm">Total Tasks</span>
+                        </div>
+                        <span className="font-semibold">{user?.totalTasks || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm">Social Shares</span>
+                        </div>
+                        <span className="font-semibold">{user?.totalSocialShares || 0}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Zap className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm">Current Streak</span>
+                        </div>
+                        <span className="font-semibold">{user?.currentStreak || 0} days</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <TrendingUp className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm">Longest Streak</span>
+                        </div>
+                        <span className="font-semibold">{user?.longestStreak || 0} days</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm">Last Activity</span>
+                        </div>
+                        <span className="font-semibold text-sm">
+                          {user?.lastActivityDate ? new Date(user.lastActivityDate).toLocaleDateString() : "Never"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-black dark:text-white">156</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Activities Completed</div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="achievements" className="space-y-6">
+              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Achievements</CardTitle>
+                  <CardDescription>Your earned badges and accomplishments</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 dark:text-gray-400">No achievements yet</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500">
+                      Complete tasks and participate in events to earn badges
+                    </p>
                   </div>
-                  <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-black dark:text-white">12</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Badges Earned</div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-6">
+              <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Account Settings</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">Email Notifications</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Receive updates via email
+                        </p>
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {user?.emailNotifications ? "Enabled" : "Disabled"}
+                      </div>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">Push Notifications</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Receive push notifications
+                        </p>
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {user?.pushNotifications ? "Enabled" : "Disabled"}
+                      </div>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">Auto Check-in</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Automatically check in at events
+                        </p>
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {user?.autoCheckIn ? "Enabled" : "Disabled"}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-2xl font-bold text-black dark:text-white">156</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Days Active</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <BottomNavigation />
       </div>
-    </div>
+    </ProtectedRoute>
   )
 }

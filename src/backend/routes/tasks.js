@@ -1,6 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { body, validationResult } = require('express-validator');
+const { authenticateUser, optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -19,7 +20,7 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 // Get all tasks
-router.get('/', async (req, res) => {
+router.get('/', optionalAuth, async (req, res) => {
   try {
     const { 
       page = 1, 
@@ -108,12 +109,14 @@ router.get('/', async (req, res) => {
 
     res.json({
       success: true,
-      data: tasks,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
+      data: {
+        tasks: tasks,
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total,
+          pages: Math.ceil(total / limit)
+        }
       }
     });
   } catch (error) {
@@ -381,24 +384,12 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Get user's tasks
-router.get('/user/tasks', async (req, res) => {
+router.get('/user/tasks', authenticateUser, async (req, res) => {
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided'
-      });
-    }
-
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-
     const { page = 1, limit = 20, status, category, type } = req.query;
     const skip = (page - 1) * limit;
 
-    const where = { userId: decoded.userId };
+    const where = { userId: req.user.id };
 
     if (status) {
       where.status = status;
@@ -454,12 +445,14 @@ router.get('/user/tasks', async (req, res) => {
 
     res.json({
       success: true,
-      data: userTasks,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
+      data: {
+        userTasks: userTasks,
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total,
+          pages: Math.ceil(total / limit)
+        }
       }
     });
   } catch (error) {
@@ -562,20 +555,9 @@ router.get('/user/available', async (req, res) => {
 });
 
 // Start task
-router.post('/:id/start', async (req, res) => {
+router.post('/:id/start', authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided'
-      });
-    }
-
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
 
     // Check if task exists and is active
     const task = await prisma.task.findUnique({
@@ -600,7 +582,7 @@ router.post('/:id/start', async (req, res) => {
     const existingUserTask = await prisma.userTask.findUnique({
       where: {
         userId_taskId: {
-          userId: decoded.userId,
+          userId: req.user.id,
           taskId: id
         }
       }
@@ -616,7 +598,7 @@ router.post('/:id/start', async (req, res) => {
     // Create user task
     const userTask = await prisma.userTask.create({
       data: {
-        userId: decoded.userId,
+        userId: req.user.id,
         taskId: id,
         status: 'IN_PROGRESS',
         progress: 0
@@ -664,27 +646,16 @@ router.post('/:id/start', async (req, res) => {
 router.put('/:id/progress', [
   body('progress').isInt({ min: 0 }),
   handleValidationErrors
-], async (req, res) => {
+], authenticateUser, async (req, res) => {
   try {
     const { id } = req.params;
     const { progress } = req.body;
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided'
-      });
-    }
-
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
 
     // Get user task
     const userTask = await prisma.userTask.findUnique({
       where: {
         userId_taskId: {
-          userId: decoded.userId,
+          userId: req.user.id,
           taskId: id
         }
       },
@@ -735,7 +706,7 @@ router.put('/:id/progress', [
       // Award rewards
       if (userTask.task.tokens > 0) {
         await prisma.user.update({
-          where: { id: decoded.userId },
+          where: { id: req.user.id },
           data: {
             tokens: { increment: userTask.task.tokens }
           }
@@ -744,7 +715,7 @@ router.put('/:id/progress', [
 
       if (userTask.task.experience > 0) {
         await prisma.user.update({
-          where: { id: decoded.userId },
+          where: { id: req.user.id },
           data: {
             experience: { increment: userTask.task.experience }
           }
@@ -753,7 +724,7 @@ router.put('/:id/progress', [
 
       if (userTask.task.reputationPoints > 0) {
         await prisma.user.update({
-          where: { id: decoded.userId },
+          where: { id: req.user.id },
           data: {
             reputationScore: { increment: userTask.task.reputationPoints }
           }
@@ -762,7 +733,7 @@ router.put('/:id/progress', [
 
       // Update user stats
       await prisma.user.update({
-        where: { id: decoded.userId },
+        where: { id: req.user.id },
         data: {
           totalTasks: { increment: 1 }
         }
@@ -773,7 +744,7 @@ router.put('/:id/progress', [
     const updatedUserTask = await prisma.userTask.update({
       where: {
         userId_taskId: {
-          userId: decoded.userId,
+          userId: req.user.id,
           taskId: id
         }
       },
