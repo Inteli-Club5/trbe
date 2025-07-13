@@ -1,5 +1,15 @@
+<<<<<<< HEAD
+<<<<<<< Updated upstream
 import { useState, useEffect } from 'react'
 import apiClient from '@/lib/api'
+=======
+import { useState, useEffect, useCallback } from "react";
+import { apiFootballClient } from "@/lib/api";
+>>>>>>> Stashed changes
+=======
+import { useState, useEffect } from 'react'
+import apiClient from '@/lib/api'
+>>>>>>> 63834b673c58e2916cb3c44ff8f79173cfc57ba8
 
 interface FootballMatch {
   id: number
@@ -52,6 +62,10 @@ interface FootballTeam {
   email: string
 }
 
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+>>>>>>> 63834b673c58e2916cb3c44ff8f79173cfc57ba8
 interface FootballCompetition {
   id: number
   name: string
@@ -69,6 +83,7 @@ interface FootballCompetition {
     winner: any
   }
 }
+<<<<<<< HEAD
 
 interface FootballStanding {
   position: number
@@ -374,3 +389,392 @@ export function useFootballTeamsByArea(areaId: string) {
 
   return { data, loading, error }
 } 
+=======
+function useFetchFootballApi<T>(
+  fetcher: () => Promise<T>,
+  dependencies: any[] = []
+): UseFootballApiReturn<T> {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await fetcher();
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  }, dependencies);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+}
+
+// Now the specific hooks become very simple wrappers:
+
+export const useFootballCompetitions = () =>
+  useFetchFootballApi(() => apiFootballClient.getFootballCompetitions());
+
+export const useFootballTeamsByCompetition = (competitionId: string) =>
+  useFetchFootballApi(
+    () => apiFootballClient.getFootballTeamsByCompetition(competitionId),
+    [competitionId]
+  );
+
+export const useFootballCompetitionStandings = (competitionId: string) =>
+  useFetchFootballApi(
+    () => apiFootballClient.getFootballCompetitionStandings(competitionId),
+    [competitionId]
+  );
+
+export const useFootballTeam = (teamId: string) =>
+  useFetchFootballApi(() => apiFootballClient.getFootballTeam(teamId), [teamId]);
+
+export const useFootballTeamMatches = (
+  teamId: string,
+  options?: { dateFrom?: string; dateTo?: string; status?: string }
+) =>
+  useFetchFootballApi(
+    () => apiFootballClient.getFootballTeamMatches(teamId, options),
+    [teamId, JSON.stringify(options)]
+  );
+
+export const useFootballTeamUpcomingMatches = (teamId: string, limit: number = 5) =>
+  useFetchFootballApi(
+    () => apiFootballClient.getFootballTeamUpcomingMatches(teamId, limit),
+    [teamId, limit]
+  );
+
+export const useFootballTeamRecentMatches = (teamId: string, limit: number = 5) =>
+  useFetchFootballApi(
+    () => apiFootballClient.getFootballTeamRecentMatches(teamId, limit),
+    [teamId, limit]
+  );
+
+export const useFootballTeamSearch = (query: string) =>
+  useFetchFootballApi(
+    () => apiFootballClient.getFootballTeamSearch(query),
+    [query]
+  );
+
+export const useFootballAreas = () =>
+  useFetchFootballApi(() => apiFootballClient.getFootballAreas());
+
+export const useFootballTeamsByArea = (areaId: string) =>
+  useFetchFootballApi(() => apiFootballClient.getFootballTeamsByArea(areaId), [areaId]);
+>>>>>>> Stashed changes
+=======
+
+interface FootballStanding {
+  position: number
+  team: {
+    id: number
+    name: string
+    shortName: string
+    tla: string
+    crest: string
+  }
+  playedGames: number
+  form: string
+  won: number
+  draw: number
+  lost: number
+  points: number
+  goalsFor: number
+  goalsAgainst: number
+  goalDifference: number
+}
+
+interface ApiResponse<T> {
+  success: boolean
+  data: T
+  message?: string
+}
+
+export function useFootballTeamUpcomingMatches(teamId: string, limit?: number) {
+  const [data, setData] = useState<{ matches: FootballMatch[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeamUpcomingMatches(teamId, limit)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch upcoming matches')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch upcoming matches')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (teamId) {
+      fetchData()
+    }
+  }, [teamId, limit])
+
+  return { data, loading, error }
+}
+
+export function useFootballTeamRecentMatches(teamId: string, limit?: number) {
+  const [data, setData] = useState<{ matches: FootballMatch[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeamRecentMatches(teamId, limit)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch recent matches')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch recent matches')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (teamId) {
+      fetchData()
+    }
+  }, [teamId, limit])
+
+  return { data, loading, error }
+}
+
+export function useFootballTeam(teamId: string) {
+  const [data, setData] = useState<FootballTeam | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeam(teamId)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch team data')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch team data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (teamId) {
+      fetchData()
+    }
+  }, [teamId])
+
+  return { data, loading, error }
+}
+
+export function useFootballCompetitionStandings(competitionId: string) {
+  const [data, setData] = useState<{ standings: FootballStanding[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballCompetitionStandings(competitionId)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch standings')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch standings')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (competitionId) {
+      fetchData()
+    }
+  }, [competitionId])
+
+  return { data, loading, error }
+}
+
+export function useFootballCompetitions() {
+  const [data, setData] = useState<{ competitions: FootballCompetition[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballCompetitions()
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch competitions')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch competitions')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  return { data, loading, error }
+}
+
+export function useFootballTeamsByCompetition(competitionId: string) {
+  const [data, setData] = useState<{ teams: FootballTeam[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeamsByCompetition(competitionId)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch teams')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch teams')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (competitionId) {
+      fetchData()
+    }
+  }, [competitionId])
+
+  return { data, loading, error }
+}
+
+export function useFootballTeamSearch(query: string) {
+  const [data, setData] = useState<{ teams: FootballTeam[] } | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!query || query.length < 2) {
+        setData(null)
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.searchFootballTeams(query)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to search teams')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to search teams')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const timeoutId = setTimeout(fetchData, 300) // Debounce search
+    return () => clearTimeout(timeoutId)
+  }, [query])
+
+  return { data, loading, error }
+}
+
+export function useFootballAreas() {
+  const [data, setData] = useState<{ areas: any[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballAreas()
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch areas')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch areas')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  return { data, loading, error }
+}
+
+export function useFootballTeamsByArea(areaId: string) {
+  const [data, setData] = useState<{ teams: FootballTeam[] } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await apiClient.getFootballTeamsByArea(areaId)
+        if (response.success) {
+          setData(response.data)
+        } else {
+          setError(response.message || 'Failed to fetch teams by area')
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch teams by area')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (areaId) {
+      fetchData()
+    }
+  }, [areaId])
+
+  return { data, loading, error }
+} 
+>>>>>>> 63834b673c58e2916cb3c44ff8f79173cfc57ba8

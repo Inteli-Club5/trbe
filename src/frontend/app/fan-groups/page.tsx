@@ -346,7 +346,7 @@ export default function FanGroupsPage() {
                   </div>
 
                   <div className="flex gap-2 mb-4">
-                    {group.tags.slice(0, 2).map((tag, index) => (
+                    {(group.tags || []).slice(0, 2).map((tag, index) => (
                       <Badge key={index} variant="outline" className="text-xs border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
                         {tag}
                       </Badge>

@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = process.env.NODE_ENV === 'development' 
+  ? '/api' 
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api'); 
 
 class ApiClient {
   private baseURL: string;
@@ -6,26 +8,42 @@ class ApiClient {
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
-    this.loadToken();
+    // Don't load token during SSR
+    if (typeof window !== 'undefined') {
+      this.loadToken();
+    }
   }
 
   private loadToken() {
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('auth_token');
+    try {
+      if (typeof window !== 'undefined') {
+        this.token = localStorage.getItem('auth_token');
+      }
+    } catch (error) {
+      // Ignore localStorage errors during SSR
+      this.token = null;
     }
   }
 
   private setToken(token: string) {
     this.token = token;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('auth_token', token);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('auth_token', token);
+      }
+    } catch (error) {
+      // Ignore localStorage errors during SSR
     }
   }
 
   private clearToken() {
     this.token = null;
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth_token');
+      }
+    } catch (error) {
+      // Ignore localStorage errors during SSR
     }
   }
 
@@ -342,67 +360,97 @@ class ApiClient {
     return this.request<any>('/health');
   }
 
-  // Football API
+  // Football API - Updated to use backend proxy
   async getFootballCompetitions() {
-    return this.request<any>('/football/competitions');
+    const response = await this.request<any>('/football/competitions');
+    return response.data;
   }
 
   async getFootballTeamsByCompetition(competitionId: string) {
-    return this.request<any>(`/football/competitions/${competitionId}/teams`);
+    const response = await this.request<any>(`/football/competitions/${competitionId}/teams`);
+    return response.data;
   }
 
   async getFootballCompetitionStandings(competitionId: string) {
-    return this.request<any>(`/football/competitions/${competitionId}/standings`);
+    const response = await this.request<any>(`/football/competitions/${competitionId}/standings`);
+    return response.data;
   }
 
-  async getFootballCompetitionMatches(competitionId: string, options?: any) {
-    const params = new URLSearchParams(options);
-    return this.request<any>(`/football/competitions/${competitionId}/matches?${params}`);
+  async getFootballCompetitionMatches(competitionId: string, options?: { dateFrom?: string; dateTo?: string; status?: string }) {
+    const params = new URLSearchParams();
+    if (options?.dateFrom) params.append('dateFrom', options.dateFrom);
+    if (options?.dateTo) params.append('dateTo', options.dateTo);
+    if (options?.status) params.append('status', options.status);
+    const response = await this.request<any>(`/football/competitions/${competitionId}/matches?${params.toString()}`);
+    return response.data;
   }
 
   async getFootballTeam(teamId: string) {
-    return this.request<any>(`/football/teams/${teamId}`);
+    const response = await this.request<any>(`/football/teams/${teamId}`);
+    return response.data;
   }
 
-  async getFootballTeamMatches(teamId: string, options?: any) {
-    const params = new URLSearchParams(options);
-    return this.request<any>(`/football/teams/${teamId}/matches?${params}`);
+  async getFootballTeamMatches(teamId: string, options?: { dateFrom?: string; dateTo?: string; status?: string }) {
+    const params = new URLSearchParams();
+    if (options?.dateFrom) params.append('dateFrom', options.dateFrom);
+    if (options?.dateTo) params.append('dateTo', options.dateTo);
+    if (options?.status) params.append('status', options.status);
+    const response = await this.request<any>(`/football/teams/${teamId}/matches?${params.toString()}`);
+    return response.data;
   }
 
-  async getFootballTeamUpcomingMatches(teamId: string, limit?: number) {
-    const params = limit ? `?limit=${limit}` : '';
-    return this.request<any>(`/football/teams/${teamId}/upcoming-matches${params}`);
+  async getFootballTeamUpcomingMatches(teamId: string, limit: number = 5) {
+    const response = await this.request<any>(`/football/teams/${teamId}/upcoming-matches?limit=${limit}`);
+    return response.data;
   }
 
-  async getFootballTeamRecentMatches(teamId: string, limit?: number) {
-    const params = limit ? `?limit=${limit}` : '';
-    return this.request<any>(`/football/teams/${teamId}/recent-matches${params}`);
+  async getFootballTeamRecentMatches(teamId: string, limit: number = 5) {
+    const response = await this.request<any>(`/football/teams/${teamId}/recent-matches?limit=${limit}`);
+    return response.data;
   }
 
-  async getFootballTeamStats(teamId: string, competitionId: string) {
-    return this.request<any>(`/football/teams/${teamId}/stats/${competitionId}`);
+  async getFootballTeamSearch(query: string) {
+    const response = await this.request<any>(`/football/teams/search?name=${encodeURIComponent(query)}`);
+    return response.data;
   }
 
   async getFootballMatch(matchId: string) {
-    return this.request<any>(`/football/matches/${matchId}`);
+    const response = await this.request<any>(`/football/matches/${matchId}`);
+    return response.data;
   }
 
   async getFootballAreas() {
-    return this.request<any>('/football/areas');
+    const response = await this.request<any>('/football/areas');
+    return response.data;
   }
 
   async getFootballTeamsByArea(areaId: string) {
-    return this.request<any>(`/football/areas/${areaId}/teams`);
-  }
-
-  async searchFootballTeams(query: string) {
-    return this.request<any>(`/football/search/teams?query=${encodeURIComponent(query)}`);
-  }
-
-  async getFootballCurrentSeason(competitionId: string) {
-    return this.request<any>(`/football/competitions/${competitionId}/current-season`);
+    const response = await this.request<any>(`/football/areas/${areaId}/teams`);
+    return response.data;
   }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL);
-export default apiClient; 
+// Export the class for potential reuse
+export { ApiClient };
+
+// Create instances safely for SSR
+let apiClientInstance: ApiClient | null = null;
+let apiFootballClientInstance: ApiClient | null = null;
+
+function getApiClient(): ApiClient {
+  if (!apiClientInstance) {
+    apiClientInstance = new ApiClient(API_BASE_URL);
+  }
+  return apiClientInstance;
+}
+
+function getApiFootballClient(): ApiClient {
+  if (!apiFootballClientInstance) {
+    apiFootballClientInstance = new ApiClient(API_BASE_URL);
+  }
+  return apiFootballClientInstance;
+}
+
+export const apiClient = getApiClient();
+export const apiFootballClient = getApiFootballClient();
+export default { apiClient, apiFootballClient }; 
