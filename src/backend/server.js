@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const fs = require('fs');
 const path = require('path');
 const { ethers } = require('ethers');
@@ -10,8 +11,22 @@ const app = express();
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? process.env.FRONTEND_URL || 'https://your-domain.railway.app'
-    : 'http://localhost:3000',
+    : [
+        'http://localhost:3000'
+      ],
   credentials: true
+}));
+
+// Session configuration
+app.use(session({
+  secret: process.env.JWT_SECRET || 'your-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: false, // Set to true in production with HTTPS
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
 }));
 
 app.use(express.json());
@@ -30,6 +45,8 @@ const gamesRoutes = require('./routes/games');
 const notificationsRoutes = require('./routes/notifications');
 const transactionsRoutes = require('./routes/transactions');
 const web3Routes = require('./routes/web3');
+const oauthRoutes = require('./routes/oauth');
+const footballRoutes = require('./routes/football');
 
 // Use routes
 app.use('/api/health', healthRoutes);
@@ -45,6 +62,8 @@ app.use('/api/games', gamesRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/transactions', transactionsRoutes);
 app.use('/api/web3', web3Routes);
+app.use('/api/oauth', oauthRoutes);
+app.use('/api/football', footballRoutes);
 
 // Debug endpoint to check file structure
 app.get('/api/debug/files', (req, res) => {

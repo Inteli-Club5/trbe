@@ -55,13 +55,13 @@ function SignupForm() {
 
   const handleTwitterAuth = () => {
     const popup = window.open(
-      "http://localhost:5000/auth/twitter/start",
+      "http://localhost:5001/api/oauth/twitter/start",
       "TwitterAuth",
       "width=600,height=700"
     )
   
     const listener = (event: MessageEvent) => {
-      if (event.origin !== "http://localhost:5000") return
+      if (event.origin !== "http://localhost:5001") return
       if (event.data.type === "twitter-auth-success") {
         setOauthProvider("twitter")
         setOauthId(event.data.userId)
