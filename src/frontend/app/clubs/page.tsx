@@ -641,10 +641,7 @@ export default function ClubsPage() {
     return matchesSearch && matchesCategory
   })
 
-<<<<<<< HEAD
 <<<<<<< Updated upstream
-=======
->>>>>>> 63834b673c58e2916cb3c44ff8f79173cfc57ba8
   // Transform teams data to include fallback values for missing properties
   const transformedTeams = filteredTeams.map((team: any) => ({
     ...team,
@@ -782,10 +779,7 @@ export default function ClubsPage() {
           </CardContent>
         </Card>
 
-<<<<<<< HEAD
 <<<<<<< Updated upstream
-=======
->>>>>>> 63834b673c58e2916cb3c44ff8f79173cfc57ba8
         {/* Loading State */}
         {(teamsLoading || competitionsLoading) && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -830,7 +824,6 @@ export default function ClubsPage() {
           </Card>
         )}
 
-<<<<<<< HEAD
         {/* Clubs Grid */}
         {!teamsLoading && !competitionsLoading && !teamsError && !competitionsError && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -892,12 +885,6 @@ export default function ClubsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedTeams.map((team) => {
 >>>>>>> Stashed changes
-=======
-        {/* Clubs Grid */}
-        {!teamsLoading && !competitionsLoading && !teamsError && !competitionsError && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedTeams.map((team: any) => {
->>>>>>> 63834b673c58e2916cb3c44ff8f79173cfc57ba8
             const LevelIcon = getLevelIcon(team.level)
             return (
               <Card key={team.id} className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
