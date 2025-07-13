@@ -14,9 +14,6 @@ interface User {
   displayName?: string
   avatar?: string
   bio?: string
-  phoneNumber?: string
-  location?: string
-  gender?: string
   walletAddress?: string
   level: number
   experience: number
@@ -27,13 +24,8 @@ interface User {
   totalEvents: number
   totalTasks: number
   totalBadges: number
-  totalSocialShares?: number
   currentStreak: number
   longestStreak: number
-  lastActivityDate?: string
-  emailNotifications?: boolean
-  pushNotifications?: boolean
-  autoCheckIn?: boolean
   createdAt: string
   lastLoginAt?: string
 }
@@ -47,7 +39,6 @@ interface AuthContextType {
   logout: () => Promise<void>
   updateUser: (data: Partial<User>) => Promise<void>
   refreshUser: () => Promise<void>
-  loginWithTwitter: (twitterUserId: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -178,28 +169,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const loginWithTwitter = async (twitterUserId: string) => {
-    try {
-      setIsLoading(true)
-      const response = await apiClient.loginWithTwitter(twitterUserId)
-      setUser(response.user)
-      toast({
-        title: "Welcome back!",
-        description: `Hello ${response.user.firstName || response.user.username}!`,
-      })
-      router.push('/homepage')
-    } catch (error: any) {
-      toast({
-        title: "Twitter login failed",
-        description: error.message || "Could not log in with Twitter",
-        variant: "destructive",
-      })
-      throw error
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const value: AuthContextType = {
     user,
     isLoading,
@@ -209,7 +178,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     updateUser,
     refreshUser,
-    loginWithTwitter,
   }
 
   return (

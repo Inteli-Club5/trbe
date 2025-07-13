@@ -20,8 +20,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { theme } = useTheme()
-  const { login, loginWithTwitter } = useAuth()
-  const [twitterLoading, setTwitterLoading] = useState(false)
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,32 +35,6 @@ export default function LoginPage() {
       setIsLoading(false)
     }
   }
-
-  const handleTwitterLogin = () => {
-    setTwitterLoading(true);
-    const popup = window.open(
-      'http://localhost:5000/auth/twitter/start',
-      'TwitterAuth',
-      'width=600,height=700'
-    );
-
-    const listener = async (event: MessageEvent) => {
-      if (event.origin !== 'http://localhost:5000') return;
-      if (event.data.type === 'twitter-auth-success') {
-        try {
-          // Call backend to login with Twitter userId
-          await loginWithTwitter(event.data.userId);
-        } catch (error) {
-          // Error handled by auth context
-        } finally {
-          setTwitterLoading(false);
-        }
-        popup?.close();
-        window.removeEventListener('message', listener);
-      }
-    };
-    window.addEventListener('message', listener);
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center p-4 pb-28">
@@ -165,12 +138,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button variant="outline" className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 bg-transparent"
-            onClick={handleTwitterLogin}
-            disabled={twitterLoading}
-          >
+          <Button variant="outline" className="w-full border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 bg-transparent">
             <Twitter className="h-4 w-4 mr-2" />
-            {twitterLoading ? 'Signing in with Twitter...' : 'Twitter'}
+            Twitter
           </Button>
           <center>
             <ConnectButton></ConnectButton>

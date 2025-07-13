@@ -1,7 +1,6 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { body, validationResult } = require('express-validator');
-const { authenticateUser, optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -20,7 +19,7 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 // Get all tasks
-router.get('/', optionalAuth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { 
       page = 1, 
@@ -109,254 +108,7 @@ router.get('/', optionalAuth, async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        tasks: tasks,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total,
-          pages: Math.ceil(total / limit)
-        }
-      }
-    });
-  } catch (error) {
-    console.error('Get tasks error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
-
-// Get user's tasks
-router.get('/user/tasks', authenticateUser, async (req, res) => {
-  try {
-    const { page = 1, limit = 20, status, category, type } = req.query;
-    const skip = (page - 1) * limit;
-
-    const where = { userId: req.user.id };
-
-    if (status) {
-      where.status = status;
-    }
-
-    if (category) {
-      where.task = { category };
-    }
-
-    if (type) {
-      where.task = { ...where.task, type };
-    }
-
-    const [userTasks, total] = await Promise.all([
-      prisma.userTask.findMany({
-        where,
-        skip: parseInt(skip),
-        take: parseInt(limit),
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          status: true,
-          progress: true,
-          completedAt: true,
-          failedAt: true,
-          failedReason: true,
-          createdAt: true,
-          updatedAt: true,
-          task: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              category: true,
-              difficulty: true,
-              type: true,
-              maxProgress: true,
-              timeLimit: true,
-              deadline: true,
-              tokens: true,
-              experience: true,
-              reputationPoints: true,
-              isActive: true,
-              isRepeatable: true,
-              maxCompletions: true,
-              expiresAt: true
-            }
-          }
-        }
-      }),
-      prisma.userTask.count({ where })
-    ]);
-
-    res.json({
-      success: true,
-      data: {
-        userTasks: userTasks,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total,
-          pages: Math.ceil(total / limit)
-        }
-      }
-    });
-  } catch (error) {
-    console.error('Get user tasks error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
-
-// Get user's available tasks
-router.get('/user/available', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided'
-      });
-    }
-
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-
-    // Get user info
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      select: {
-        level: true,
-        reputationScore: true,
-        clubFollow: {
-          select: { clubId: true }
-        },
-        fanGroupMembership: {
-          select: { fanGroupId: true }
-        }
-      }
-    });
-
-    // Find available tasks
-    const availableTasks = await prisma.task.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { userLevel: null },
-          { userLevel: { lte: user.level } }
-        ],
-        OR: [
-          { userReputation: null },
-          { userReputation: { lte: user.reputationScore } }
-        ],
-        OR: [
-          { clubId: null },
-          { clubId: user.clubFollow?.clubId }
-        ],
-        OR: [
-          { fanGroupId: null },
-          { fanGroupId: user.fanGroupMembership?.fanGroupId }
-        ],
-        OR: [
-          { expiresAt: null },
-          { expiresAt: { gt: new Date() } }
-        ]
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        category: true,
-        difficulty: true,
-        type: true,
-        maxProgress: true,
-        timeLimit: true,
-        deadline: true,
-        tokens: true,
-        experience: true,
-        reputationPoints: true,
-        isActive: true,
-        isRepeatable: true,
-        maxCompletions: true,
-        expiresAt: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    });
-
-    res.json({
-      success: true,
-      data: availableTasks
-    });
-  } catch (error) {
-    console.error('Get available tasks error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
-
-// Get user's completed tasks
-router.get('/user/completed', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided'
-      });
-    }
-
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-
-    const { page = 1, limit = 20 } = req.query;
-    const skip = (page - 1) * limit;
-
-    const [completedTasks, total] = await Promise.all([
-      prisma.userTask.findMany({
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        },
-        skip: parseInt(skip),
-        take: parseInt(limit),
-        orderBy: { completedAt: 'desc' },
-        select: {
-          id: true,
-          progress: true,
-          completedAt: true,
-          createdAt: true,
-          task: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              category: true,
-              difficulty: true,
-              type: true,
-              tokens: true,
-              experience: true,
-              reputationPoints: true
-            }
-          }
-        }
-      }),
-      prisma.userTask.count({
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        }
-      })
-    ]);
-
-    res.json({
-      success: true,
-      data: completedTasks,
+      data: tasks,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -365,133 +117,7 @@ router.get('/user/completed', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Get completed tasks error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
-
-// Get user's task statistics
-router.get('/user/stats', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'No token provided'
-      });
-    }
-
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-
-    const [
-      totalTasks,
-      completedTasks,
-      inProgressTasks,
-      failedTasks,
-      totalTokensEarned,
-      totalExperienceEarned,
-      totalReputationEarned,
-      tasksByCategory,
-      tasksByDifficulty
-    ] = await Promise.all([
-      prisma.userTask.count({
-        where: { userId: decoded.userId }
-      }),
-      prisma.userTask.count({
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        }
-      }),
-      prisma.userTask.count({
-        where: {
-          userId: decoded.userId,
-          status: 'IN_PROGRESS'
-        }
-      }),
-      prisma.userTask.count({
-        where: {
-          userId: decoded.userId,
-          status: 'FAILED'
-        }
-      }),
-      prisma.userTask.aggregate({
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        },
-        _sum: {
-          task: {
-            select: {
-              tokens: true
-            }
-          }
-        }
-      }),
-      prisma.userTask.aggregate({
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        },
-        _sum: {
-          task: {
-            select: {
-              experience: true
-            }
-          }
-        }
-      }),
-      prisma.userTask.aggregate({
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        },
-        _sum: {
-          task: {
-            select: {
-              reputationPoints: true
-            }
-          }
-        }
-      }),
-      prisma.userTask.groupBy({
-        by: ['task'],
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        },
-        _count: true
-      }),
-      prisma.userTask.groupBy({
-        by: ['task'],
-        where: {
-          userId: decoded.userId,
-          status: 'COMPLETED'
-        },
-        _count: true
-      })
-    ]);
-
-    res.json({
-      success: true,
-      data: {
-        totalTasks,
-        completedTasks,
-        inProgressTasks,
-        failedTasks,
-        completionRate: totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0,
-        totalTokensEarned: totalTokensEarned._sum.task?.tokens || 0,
-        totalExperienceEarned: totalExperienceEarned._sum.task?.experience || 0,
-        totalReputationEarned: totalReputationEarned._sum.task?.reputationPoints || 0
-      }
-    });
-  } catch (error) {
-    console.error('Get task stats error:', error);
+    console.error('Get tasks error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -754,10 +380,202 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Get user's tasks
+router.get('/user/tasks', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+
+    const { page = 1, limit = 20, status, category, type } = req.query;
+    const skip = (page - 1) * limit;
+
+    const where = { userId: decoded.userId };
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (category) {
+      where.task = { category };
+    }
+
+    if (type) {
+      where.task = { ...where.task, type };
+    }
+
+    const [userTasks, total] = await Promise.all([
+      prisma.userTask.findMany({
+        where,
+        skip: parseInt(skip),
+        take: parseInt(limit),
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          status: true,
+          progress: true,
+          completedAt: true,
+          failedAt: true,
+          failedReason: true,
+          createdAt: true,
+          updatedAt: true,
+          task: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              category: true,
+              difficulty: true,
+              type: true,
+              maxProgress: true,
+              timeLimit: true,
+              deadline: true,
+              tokens: true,
+              experience: true,
+              reputationPoints: true,
+              isActive: true,
+              isRepeatable: true,
+              maxCompletions: true,
+              expiresAt: true
+            }
+          }
+        }
+      }),
+      prisma.userTask.count({ where })
+    ]);
+
+    res.json({
+      success: true,
+      data: userTasks,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get user tasks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get user's available tasks
+router.get('/user/available', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+
+    // Get user info
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: {
+        level: true,
+        reputationScore: true,
+        clubFollow: {
+          select: { clubId: true }
+        },
+        fanGroupMembership: {
+          select: { fanGroupId: true }
+        }
+      }
+    });
+
+    // Find available tasks
+    const availableTasks = await prisma.task.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { userLevel: null },
+          { userLevel: { lte: user.level } }
+        ],
+        OR: [
+          { userReputation: null },
+          { userReputation: { lte: user.reputationScore } }
+        ],
+        OR: [
+          { clubId: null },
+          { clubId: user.clubFollow?.clubId }
+        ],
+        OR: [
+          { fanGroupId: null },
+          { fanGroupId: user.fanGroupMembership?.fanGroupId }
+        ],
+        OR: [
+          { expiresAt: null },
+          { expiresAt: { gt: new Date() } }
+        ]
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+        difficulty: true,
+        type: true,
+        maxProgress: true,
+        timeLimit: true,
+        deadline: true,
+        tokens: true,
+        experience: true,
+        reputationPoints: true,
+        isActive: true,
+        isRepeatable: true,
+        maxCompletions: true,
+        expiresAt: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
+
+    res.json({
+      success: true,
+      data: availableTasks
+    });
+  } catch (error) {
+    console.error('Get available tasks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
 // Start task
-router.post('/:id/start', authenticateUser, async (req, res) => {
+router.post('/:id/start', async (req, res) => {
   try {
     const { id } = req.params;
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
 
     // Check if task exists and is active
     const task = await prisma.task.findUnique({
@@ -782,7 +600,7 @@ router.post('/:id/start', authenticateUser, async (req, res) => {
     const existingUserTask = await prisma.userTask.findUnique({
       where: {
         userId_taskId: {
-          userId: req.user.id,
+          userId: decoded.userId,
           taskId: id
         }
       }
@@ -798,7 +616,7 @@ router.post('/:id/start', authenticateUser, async (req, res) => {
     // Create user task
     const userTask = await prisma.userTask.create({
       data: {
-        userId: req.user.id,
+        userId: decoded.userId,
         taskId: id,
         status: 'IN_PROGRESS',
         progress: 0
@@ -846,16 +664,27 @@ router.post('/:id/start', authenticateUser, async (req, res) => {
 router.put('/:id/progress', [
   body('progress').isInt({ min: 0 }),
   handleValidationErrors
-], authenticateUser, async (req, res) => {
+], async (req, res) => {
   try {
     const { id } = req.params;
     const { progress } = req.body;
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
 
     // Get user task
     const userTask = await prisma.userTask.findUnique({
       where: {
         userId_taskId: {
-          userId: req.user.id,
+          userId: decoded.userId,
           taskId: id
         }
       },
@@ -906,7 +735,7 @@ router.put('/:id/progress', [
       // Award rewards
       if (userTask.task.tokens > 0) {
         await prisma.user.update({
-          where: { id: req.user.id },
+          where: { id: decoded.userId },
           data: {
             tokens: { increment: userTask.task.tokens }
           }
@@ -915,7 +744,7 @@ router.put('/:id/progress', [
 
       if (userTask.task.experience > 0) {
         await prisma.user.update({
-          where: { id: req.user.id },
+          where: { id: decoded.userId },
           data: {
             experience: { increment: userTask.task.experience }
           }
@@ -924,7 +753,7 @@ router.put('/:id/progress', [
 
       if (userTask.task.reputationPoints > 0) {
         await prisma.user.update({
-          where: { id: req.user.id },
+          where: { id: decoded.userId },
           data: {
             reputationScore: { increment: userTask.task.reputationPoints }
           }
@@ -933,7 +762,7 @@ router.put('/:id/progress', [
 
       // Update user stats
       await prisma.user.update({
-        where: { id: req.user.id },
+        where: { id: decoded.userId },
         data: {
           totalTasks: { increment: 1 }
         }
@@ -944,7 +773,7 @@ router.put('/:id/progress', [
     const updatedUserTask = await prisma.userTask.update({
       where: {
         userId_taskId: {
-          userId: req.user.id,
+          userId: decoded.userId,
           taskId: id
         }
       },
@@ -988,6 +817,206 @@ router.put('/:id/progress', [
     });
   } catch (error) {
     console.error('Update task progress error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get user's completed tasks
+router.get('/user/completed', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+
+    const { page = 1, limit = 20 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const [completedTasks, total] = await Promise.all([
+      prisma.userTask.findMany({
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        },
+        skip: parseInt(skip),
+        take: parseInt(limit),
+        orderBy: { completedAt: 'desc' },
+        select: {
+          id: true,
+          progress: true,
+          completedAt: true,
+          createdAt: true,
+          task: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              category: true,
+              difficulty: true,
+              type: true,
+              tokens: true,
+              experience: true,
+              reputationPoints: true
+            }
+          }
+        }
+      }),
+      prisma.userTask.count({
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        }
+      })
+    ]);
+
+    res.json({
+      success: true,
+      data: completedTasks,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get completed tasks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get user's task statistics
+router.get('/user/stats', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+
+    const [
+      totalTasks,
+      completedTasks,
+      inProgressTasks,
+      failedTasks,
+      totalTokensEarned,
+      totalExperienceEarned,
+      totalReputationEarned,
+      tasksByCategory,
+      tasksByDifficulty
+    ] = await Promise.all([
+      prisma.userTask.count({
+        where: { userId: decoded.userId }
+      }),
+      prisma.userTask.count({
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        }
+      }),
+      prisma.userTask.count({
+        where: {
+          userId: decoded.userId,
+          status: 'IN_PROGRESS'
+        }
+      }),
+      prisma.userTask.count({
+        where: {
+          userId: decoded.userId,
+          status: 'FAILED'
+        }
+      }),
+      prisma.userTask.aggregate({
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        },
+        _sum: {
+          task: {
+            select: {
+              tokens: true
+            }
+          }
+        }
+      }),
+      prisma.userTask.aggregate({
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        },
+        _sum: {
+          task: {
+            select: {
+              experience: true
+            }
+          }
+        }
+      }),
+      prisma.userTask.aggregate({
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        },
+        _sum: {
+          task: {
+            select: {
+              reputationPoints: true
+            }
+          }
+        }
+      }),
+      prisma.userTask.groupBy({
+        by: ['task'],
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        },
+        _count: true
+      }),
+      prisma.userTask.groupBy({
+        by: ['task'],
+        where: {
+          userId: decoded.userId,
+          status: 'COMPLETED'
+        },
+        _count: true
+      })
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        totalTasks,
+        completedTasks,
+        inProgressTasks,
+        failedTasks,
+        completionRate: totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0,
+        totalTokensEarned: totalTokensEarned._sum.task?.tokens || 0,
+        totalExperienceEarned: totalExperienceEarned._sum.task?.experience || 0,
+        totalReputationEarned: totalReputationEarned._sum.task?.reputationPoints || 0
+      }
+    });
+  } catch (error) {
+    console.error('Get task stats error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'

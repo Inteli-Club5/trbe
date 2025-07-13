@@ -66,8 +66,7 @@ router.post('/signup', [
         gender,
         phoneNumber,
         location,
-        walletAddress,
-        twitterId: req.body.twitterId,
+        walletAddress
       },
       select: {
         id: true,
@@ -157,8 +156,7 @@ router.post('/register', [
         gender,
         phoneNumber,
         location,
-        walletAddress,
-        twitterId: req.body.twitterId,
+        walletAddress
       },
       select: {
         id: true,
@@ -283,100 +281,6 @@ router.post('/login', [
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-});
-
-// Twitter login
-router.post('/login/twitter', async (req, res) => {
-  try {
-    const { twitterUserId } = req.body;
-    if (!twitterUserId) {
-      return res.status(400).json({
-        success: false,
-        message: 'twitterUserId is required'
-      });
-    }
-    
-    // Try to find existing user with this Twitter ID
-    let user = await prisma.user.findFirst({
-      where: { twitterId: twitterUserId },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        displayName: true,
-        avatar: true,
-        status: true,
-        role: true,
-        level: true,
-        experience: true,
-        tokens: true,
-        reputationScore: true,
-        lastLoginAt: true
-      }
-    });
-    
-    // If user doesn't exist, create a new one
-    if (!user) {
-      // Create a new user with Twitter ID
-      user = await prisma.user.create({
-        data: {
-          twitterId: twitterUserId,
-          username: `twitter_${twitterUserId}`,
-          email: `twitter_${twitterUserId}@twitter.com`, // Placeholder email
-          password: 'twitter_oauth_user', // Placeholder password for OAuth users
-          firstName: 'Twitter',
-          lastName: 'User',
-          displayName: `Twitter User ${twitterUserId}`,
-          status: 'ACTIVE',
-          role: 'USER',
-          level: 1,
-          experience: 0,
-          tokens: 100, // Starting tokens
-          reputationScore: 0
-        },
-        select: {
-          id: true,
-          email: true,
-          username: true,
-          firstName: true,
-          lastName: true,
-          displayName: true,
-          avatar: true,
-          status: true,
-          role: true,
-          level: true,
-          experience: true,
-          tokens: true,
-          reputationScore: true,
-          lastLoginAt: true
-        }
-      });
-    }
-    
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '7d' }
-    );
-    
-    res.json({
-      success: true,
-      message: user.lastLoginAt ? 'Twitter login successful' : 'Welcome! Account created successfully',
-      data: {
-        user,
-        token
-      }
-    });
-  } catch (error) {
-    console.error('Twitter login error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'

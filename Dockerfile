@@ -42,12 +42,6 @@ COPY src/backend/package*.json ./src/backend/
 WORKDIR /app/src/backend
 RUN npm install
 
-# Copy and install Twitter auth dependencies
-COPY src/backend/auth/package*.json ./auth/
-WORKDIR /app/src/backend/auth
-RUN npm install
-WORKDIR /app/src/backend
-
 # Copy Prisma schema and generate client
 COPY src/backend/prisma ./prisma/
 RUN npx prisma generate
@@ -71,19 +65,13 @@ COPY src/backend/package*.json ./src/backend/
 # Install only production dependencies
 WORKDIR /app/src/backend
 RUN npm install --only=production
-RUN npm install next@latest typescript @types/react @types/node ts-node
-
-# Set working directory to app root for the startup script
-WORKDIR /app
+RUN npm install next@latest typescript @types/react @types/node
 
 # Copy Prisma client from backend builder
 COPY --from=backend-builder /app/src/backend/node_modules/.prisma ./node_modules/.prisma/
 
 # Copy backend source code
 COPY src/backend/ ./
-
-# Copy Twitter auth source code
-COPY src/backend/auth/ ./auth/
 
 # Copy frontend source code and dependencies for Next.js
 COPY --from=frontend-builder /app/src/frontend ./frontend/
@@ -92,10 +80,6 @@ COPY --from=frontend-builder /app/src/frontend ./frontend/
 COPY --from=frontend-builder /app/src/frontend/.next ./frontend/.next
 COPY --from=frontend-builder /app/src/frontend/public ./frontend/public
 COPY --from=frontend-builder /app/src/frontend/package.json ./frontend/package.json
-
-# Copy startup script
-COPY start-services.sh ./start-services.sh
-RUN chmod +x ./start-services.sh
 
 # Debug: List the contents to verify
 RUN ls -la ./frontend/ && ls -la ./frontend/.next/ || echo "No .next directory found"
@@ -121,4 +105,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
-CMD ["./start-services.sh"] 
+CMD ["node", "custom-server.js"] 
